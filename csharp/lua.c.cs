@@ -398,7 +398,7 @@ namespace lua40mod
 			globalL = L;
 			if ((argv.Length>0) && (argv[0]!="")) progname = argv[0];
 			Lua.lua_gc(L, Lua.LUA_GCSTOP, 0);  /* stop collector during initialization */
-			Lua.luaL_openlibs(L);  /* open libraries */
+			luaL_openlibs(L);  /* open libraries */
 			Lua.lua_gc(L, Lua.LUA_GCRESTART, 0);
 			s.status = handle_luainit(L);
 			if (s.status != 0) return 0;
@@ -476,7 +476,7 @@ namespace lua40mod
 			}
 			if (L_ == null) {
 				L_ = Lua.luaL_newstate();
-				Lua.luaL_openlibs(L_);
+				luaL_openlibs(L_);
 			}
 
 			if (DEBUG_) {
@@ -531,5 +531,37 @@ namespace lua40mod
 			}
 			return 0;
 		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		private readonly static Lua.luaL_Reg[] lualibs = {
+		  new Lua.luaL_Reg("", Lua.luaopen_base),
+//		  new Lua.luaL_Reg(Lua.LUA_LOADLIBNAME, Lua.luaopen_package),
+//		  new Lua.luaL_Reg(Lua.LUA_TABLIBNAME, Lua.luaopen_table),
+		  new Lua.luaL_Reg(Lua.LUA_IOLIBNAME, Lua.luaopen_io),
+//		  new Lua.luaL_Reg(Lua.LUA_OSLIBNAME, Lua.luaopen_os),
+		  new Lua.luaL_Reg(Lua.LUA_STRLIBNAME, Lua.luaopen_string),
+		  new Lua.luaL_Reg(Lua.LUA_MATHLIBNAME, Lua.luaopen_math),
+		  new Lua.luaL_Reg(Lua.LUA_DBLIBNAME, Lua.luaopen_debug),
+		  new Lua.luaL_Reg(null, null)
+		};
+
+
+		public static void luaL_openlibs (Lua.lua_State L) {
+		  for (int i=0; i<lualibs.Length-1; i++)
+		  {
+			Lua.luaL_Reg lib = lualibs[i];
+			Lua.lua_pushcfunction(L, lib.func);
+			Lua.lua_pushstring(L, lib.name);
+			Lua.lua_call(L, 1, 0);
+		  }
+		}		
 	}
 }
