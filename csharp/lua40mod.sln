@@ -1,0 +1,18 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+# SharpDevelop 4.4
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lua40mod", "lua40mod.csproj", "{701A9FCB-A398-4389-8A10-7B2676A53B8E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{701A9FCB-A398-4389-8A10-7B2676A53B8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{701A9FCB-A398-4389-8A10-7B2676A53B8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{701A9FCB-A398-4389-8A10-7B2676A53B8E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{701A9FCB-A398-4389-8A10-7B2676A53B8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+EndGlobal
