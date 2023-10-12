@@ -1708,6 +1708,29 @@ namespace lua40mod
 			}
 			return num;
 		}
+		
+		//FIXME:???
+		public static int fputc(byte c, StreamProxy stream)
+		{
+			int num_bytes = 1;
+			byte[] bytes = new byte[num_bytes];
+			bytes[0] = c;
+			try
+			{
+				stream.Write(bytes, 0, num_bytes);
+			}
+			catch
+			{
+				return 0;
+			}
+			return num_bytes;
+		}
+		
+		//FIXME:???
+		public static void perror(CharPtr s)
+		{
+			printf(s);
+		}
 
 		public static int strcmp(CharPtr s1, CharPtr s2)
 		{

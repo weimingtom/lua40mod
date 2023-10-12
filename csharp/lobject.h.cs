@@ -412,6 +412,16 @@ namespace lua40mod
 		** Function Prototypes
 		*/
 		public class Proto : GCObject {
+public int nlocvars;
+public int ncode;
+public int nkstr;
+public int nlineinfo;
+public TString[] kstr;
+public int nknum;
+public int knum;
+public Proto[] kproto = null;
+public int nkproto;
+public int lineDefined;
 
 		  public Proto[] protos = null;
 		  public int index = 0;

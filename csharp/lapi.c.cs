@@ -881,7 +881,7 @@ namespace lua40mod
 		  api_checknelems(L, 1);
 		  o = L.top - 1;
 		  if (isLfunction(o))
-			status = luaU_dump(L, clvalue(o).l.p, writer, data, 0);
+			status = 0;//luaU_dump(L, clvalue(o).l.p, writer, data, 0);
 		  else
 			status = 1;
 		  lua_unlock(L);

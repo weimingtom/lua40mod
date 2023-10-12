@@ -182,7 +182,7 @@ namespace lua40mod
 		  Lua.StreamProxy D= (output==null) ? Lua.stdout : Lua.fopen(output,"wb");
 		  if (D==null) cannot("open");
 		  Lua.lua_lock(L);
-		  Lua.luaU_dump(L,f,writer,D,stripping);
+		  //Lua.luaU_dump(L,f,writer,D,stripping);
 		  Lua.lua_unlock(L);
 		  if (Lua.ferror(D)!=0) cannot("write");
 		  if (Lua.fclose(D)!=0) cannot("close");

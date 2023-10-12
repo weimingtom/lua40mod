@@ -18,7 +18,9 @@ namespace lua40mod
 
 	public partial class Lua
 	{
-
+public const int SIZE_INSTRUCTION = 32;
+		
+		
 		//typedef LUAI_UINT32 lu_int32;
 
 		//typedef LUAI_UMEM lu_mem;

@@ -16,6 +16,10 @@ namespace lua40mod
 
 	public partial class Lua
 	{
+		public static byte luaU_endianess() {
+			return 0;
+		}
+		
 
 		public class LoadState{
 			public lua_State L;
