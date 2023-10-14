@@ -81,9 +81,6 @@ namespace lua40mod
 		private static FilePtr newfile (lua_State L) {
 
 		  FilePtr pf = (FilePtr)lua_newuserdata(L, typeof(FilePtr));
-		  pf.file = null;  /* file file is currently `closed' */
-		  luaL_getmetatable(L, LUA_FILEHANDLE);
-		  lua_setmetatable(L, -2);
 		  return pf;
 		}
 
@@ -285,40 +282,12 @@ namespace lua40mod
 		private static int read_line (lua_State L, StreamProxy f) {
 		  luaL_Buffer b = new luaL_Buffer();
 		  luaL_buffinit(L, b);
-		  for (;;) {
-			uint l;
-			CharPtr p = luaL_prepbuffer(b);
-			if (fgets(p, f) == null) {  /* eof? */
-			  luaL_pushresult(b);  /* close buffer */
-				return (lua_objlen(L, -1) > 0) ? 1 : 0;  /* check whether read something */
-			}
-			l = (uint)strlen(p);
-			if (l == 0 || p[l-1] != '\n')
-			  luaL_addsize(b, (int)l);
-			else {
-			  luaL_addsize(b, (int)(l - 1));  /* do not include `eol' */
-			  luaL_pushresult(b);  /* close buffer */
-			  return 1;  /* read at least an `eol' */
-			}
-		  }
+		  return 0;
 		}
 
 
 		private static int read_chars (lua_State L, StreamProxy f, uint n) {
-		  uint rlen;  /* how much to read */
-		  uint nr;  /* number of chars actually read */
-		  luaL_Buffer b = new luaL_Buffer();
-		  luaL_buffinit(L, b);
-		  rlen = LUAL_BUFFERSIZE;  /* try to read that much each time */
-		  do {
-			CharPtr p = luaL_prepbuffer(b);
-			if (rlen > n) rlen = n;  /* cannot read more than asked */
-			nr = (uint)fread(p, GetUnmanagedSize(typeof(char)), (int)rlen, f);
-			luaL_addsize(b, (int)nr);
-			n -= nr;  /* still have to read `n' chars */
-		  } while (n > 0 && nr == rlen);  /* until end of count or eof */
-		  luaL_pushresult(b);  /* close buffer */
-		  return (n == 0 || lua_objlen(L, -1) > 0) ? 1 : 0;
+			return 0;
 		}
 
 
@@ -402,21 +371,7 @@ namespace lua40mod
 
 
 		private static int g_write (lua_State L, StreamProxy f, int arg) {
-		  int nargs = lua_gettop(L) - 1;
-		  int status = 1;
-		  for (; (nargs--) != 0; arg++) {
-			if (lua_type(L, arg) == LUA_TNUMBER) {
-			  /* optimization: could be done exactly as for strings */
-			  status = ((status!=0) &&
-				  (fprintf(f, LUA_NUMBER_FMT, lua_tonumber(L, arg)) > 0)) ? 1 : 0;
-			}
-			else {
-			  uint l;
-			  CharPtr s = luaL_checklstring(L, arg, out l);
-			  status = ((status!=0) && (fwrite(s, GetUnmanagedSize(typeof(char)), (int)l, f) == l)) ? 1 : 0;
-			}
-		  }
-		  return pushresult(L, status, null);
+		  return 0;
 		}
 
 
@@ -432,18 +387,7 @@ namespace lua40mod
 		
 
 		private static int f_seek (lua_State L) {
-		  int[] mode = { SEEK_SET, SEEK_CUR, SEEK_END };
-		  CharPtr[] modenames = { "set", "cur", "end", null };
-		  StreamProxy f = tofile(L);
-		  int op = luaL_checkoption(L, 2, "cur", modenames);
-		  long offset = luaL_optlong(L, 3, 0);
-		  op = fseek(f, offset, mode[op]);
-		  if (op != 0)
-			return pushresult(L, 0, null);  /* error */
-		  else {
-			lua_pushinteger(L, ftell(f));
-			return 1;
-		  }
+			return 0;
 		}
 
 		private static int f_setvbuf (lua_State L) {
@@ -468,33 +412,33 @@ namespace lua40mod
 		}
 
 
-		private readonly static luaL_Reg[] iolib = {
-		  new luaL_Reg("close", io_close),
-		  new luaL_Reg("flush", io_flush),
-		  new luaL_Reg("input", io_input),
-		  new luaL_Reg("lines", io_lines),
-		  new luaL_Reg("open", io_open),
-		  new luaL_Reg("output", io_output),
-		  new luaL_Reg("popen", io_popen),
-		  new luaL_Reg("read", io_read),
-		  new luaL_Reg("tmpfile", io_tmpfile),
-		  new luaL_Reg("type", io_type),
-		  new luaL_Reg("write", io_write),
-		  new luaL_Reg(null, null)
+		private readonly static luaL_reg[] iolib = {
+		  new luaL_reg("close", io_close),
+		  new luaL_reg("flush", io_flush),
+		  new luaL_reg("input", io_input),
+		  new luaL_reg("lines", io_lines),
+		  new luaL_reg("open", io_open),
+		  new luaL_reg("output", io_output),
+		  new luaL_reg("popen", io_popen),
+		  new luaL_reg("read", io_read),
+		  new luaL_reg("tmpfile", io_tmpfile),
+		  new luaL_reg("type", io_type),
+		  new luaL_reg("write", io_write),
+		  new luaL_reg(null, null)
 		};
 
 
-		private readonly static luaL_Reg[] flib = {
-		  new luaL_Reg("close", io_close),
-		  new luaL_Reg("flush", f_flush),
-		  new luaL_Reg("lines", f_lines),
-		  new luaL_Reg("read", f_read),
-		  new luaL_Reg("seek", f_seek),
-		  new luaL_Reg("setvbuf", f_setvbuf),
-		  new luaL_Reg("write", f_write),
-		  new luaL_Reg("__gc", io_gc),
-		  new luaL_Reg("__tostring", io_tostring),
-		  new luaL_Reg(null, null)
+		private readonly static luaL_reg[] flib = {
+		  new luaL_reg("close", io_close),
+		  new luaL_reg("flush", f_flush),
+		  new luaL_reg("lines", f_lines),
+		  new luaL_reg("read", f_read),
+		  new luaL_reg("seek", f_seek),
+		  new luaL_reg("setvbuf", f_setvbuf),
+		  new luaL_reg("write", f_write),
+		  new luaL_reg("__gc", io_gc),
+		  new luaL_reg("__tostring", io_tostring),
+		  new luaL_reg(null, null)
 		};
 
 
@@ -502,7 +446,6 @@ namespace lua40mod
 		  luaL_newmetatable(L, LUA_FILEHANDLE);  /* create metatable for file files */
 		  lua_pushvalue(L, -1);  /* push metatable */
 		  lua_setfield(L, -2, "__index");  /* metatable.__index = metatable */
-		  luaL_register(L, null, flib);  /* file methods */
 		}
 
 
@@ -531,7 +474,6 @@ namespace lua40mod
 		  newfenv(L, io_fclose);
 		  lua_replace(L, LUA_ENVIRONINDEX);
 		  /* open library */
-		  luaL_register(L, LUA_IOLIBNAME, iolib);
 		  /* create (and set) default files */
 		  newfenv(L, io_noclose);  /* close function for default files */
 		  createstdfile(L, stdin, IO_INPUT, "stdin");

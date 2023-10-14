@@ -53,9 +53,7 @@ namespace lua40mod
 
 
 		public static int luaL_typerror (lua_State L, int narg, CharPtr tname) {
-		  CharPtr msg = lua_pushfstring(L, "%s expected, got %s",
-											tname, luaL_typename(L, narg));
-		  return luaL_argerror(L, narg, msg);
+		  return 0;
 		}
 
 
@@ -147,8 +145,8 @@ namespace lua40mod
 		}
 
 
-		public static CharPtr luaL_checklstring(lua_State L, int narg) {uint len; return luaL_checklstring(L, narg, out len);}
-		public static CharPtr luaL_checklstring (lua_State L, int narg, out uint len) {
+		public static CharPtr luaL_check_lstr(lua_State L, int narg) {uint len; return luaL_check_lstr(L, narg, out len);}
+		public static CharPtr luaL_check_lstr (lua_State L, int narg, out uint len) {
 		  CharPtr s = lua_tolstring(L, narg, out len);
 		  if (s==null) tag_error(L, narg, LUA_TSTRING);
 		  return s;
@@ -162,11 +160,11 @@ namespace lua40mod
 			len = (uint)((def != null) ? strlen(def) : 0);
 			return def;
 		  }
-		  else return luaL_checklstring(L, narg, out len);
+		  else return luaL_check_lstr(L, narg, out len);
 		}
 
 
-		public static lua_Number luaL_checknumber (lua_State L, int narg) {
+		public static lua_Number luaL_check_number (lua_State L, int narg) {
 		  lua_Number d = lua_tonumber(L, narg);
 		  if ((d == 0) && (lua_isnumber(L, narg)==0))  /* avoid extra test when d is not 0 */
 			tag_error(L, narg, LUA_TNUMBER);
@@ -174,8 +172,8 @@ namespace lua40mod
 		}
 
 
-		public static lua_Number luaL_optnumber (lua_State L, int narg, lua_Number def) {
-		  return luaL_opt(L, luaL_checknumber, narg, def);
+		public static lua_Number luaL_opt_number (lua_State L, int narg, lua_Number def) {
+		  return 0;
 		}
 
 
@@ -188,7 +186,7 @@ namespace lua40mod
 
 
 		public static lua_Integer luaL_optinteger (lua_State L, int narg, lua_Integer def) {
-		  return luaL_opt_integer(L, luaL_checkinteger, narg, def);
+		  return 0;
 		}
 
 
@@ -218,21 +216,20 @@ namespace lua40mod
 		}
 
 
-		public static void luaL_register(lua_State L, CharPtr libname,
-										luaL_Reg[] l) {
-		  luaI_openlib(L, libname, l, 0);
+		public static void luaL_openlib(lua_State L, luaL_reg[] l, int n) {
+		
 		}
 
 		// we could just take the .Length member here, but let's try
 		// to keep it as close to the C implementation as possible.
-		private static int libsize (luaL_Reg[] l) {
+		private static int libsize (luaL_reg[] l) {
 		  int size = 0;
 		  for (; l[size].name!=null; size++);
 		  return size;
 		}
 
 		public static void luaI_openlib (lua_State L, CharPtr libname,
-									  luaL_Reg[] l, int nup) {		  
+									  luaL_reg[] l, int nup) {		  
 		  if (libname!=null) {
 			int size = libsize(l);
 			/* check whether lib already exists */
@@ -383,7 +380,7 @@ namespace lua40mod
 		*/
 
 
-		private static int bufflen(luaL_Buffer B)	{return B.p;}
+		private static int bufflen(luaL_Buffer B)	{return 0;}
 		private static int bufffree(luaL_Buffer B)	{return LUAL_BUFFERSIZE - bufflen(B);}
 
 		public const int LIMIT = LUA_MINSTACK / 2;
@@ -394,28 +391,28 @@ namespace lua40mod
 		  if (l == 0) return 0;  /* put nothing on stack */
 		  else {
 			lua_pushlstring(B.L, B.buffer, l);
-			B.p = 0;
-			B.lvl++;
+			B.p = null;
+			B.level++;
 			return 1;
 		  }
 		}
 
 
 		private static void adjuststack (luaL_Buffer B) {
-		  if (B.lvl > 1) {
+		  if (B.level > 1) {
 			lua_State L = B.L;
 			int toget = 1;  /* number of levels to concat */
 			uint toplen = lua_strlen(L, -1);
 			do {
 			  uint l = lua_strlen(L, -(toget+1));
-			  if (B.lvl - toget + 1 >= LIMIT || toplen > l) {
+			  if (B.level - toget + 1 >= LIMIT || toplen > l) {
 				toplen += l;
 				toget++;
 			  }
 			  else break;
-			} while (toget < B.lvl);
+			} while (toget < B.level);
 			lua_concat(L, toget);
-			B.lvl = B.lvl - toget + 1;
+			B.level = B.level - toget + 1;
 		  }
 		}
 
@@ -423,7 +420,7 @@ namespace lua40mod
 		public static CharPtr luaL_prepbuffer (luaL_Buffer B) {
 		  if (emptybuffer(B) != 0)
 			adjuststack(B);
-			return new CharPtr(B.buffer, B.p);
+			return null;
 		}
 
 
@@ -433,7 +430,6 @@ namespace lua40mod
 				l--;
 				char c = s[0];
 				s = s.next();
-				luaL_addchar(B, c);
 			}
 		}
 
@@ -445,8 +441,8 @@ namespace lua40mod
 
 		public static void luaL_pushresult (luaL_Buffer B) {
 		  emptybuffer(B);
-		  lua_concat(B.L, B.lvl);
-		  B.lvl = 1;
+		  lua_concat(B.L, B.level);
+		  B.level = 1;
 		}
 
 
@@ -455,17 +451,12 @@ namespace lua40mod
 		  uint vl;
 		  CharPtr s = lua_tolstring(L, -1, out vl);
 		  if (vl <= bufffree(B)) {  /* fit into buffer? */
-			CharPtr dst = new CharPtr(B.buffer.chars, B.buffer.index + B.p);
-			CharPtr src = new CharPtr(s.chars, s.index);
-			for (uint i = 0; i < vl; i++)
-				dst[i] = src[i];
-			B.p += (int)vl;
-			lua_pop(L, 1);  /* remove from stack */
+		  	
 		  }
 		  else {
 			if (emptybuffer(B) != 0)
 			  lua_insert(L, -2);  /* put buffer before new value */
-			B.lvl++;  /* add new value into B stack */
+			B.level++;  /* add new value into B stack */
 			adjuststack(B);
 		  }
 		}
@@ -473,8 +464,8 @@ namespace lua40mod
 
 		public static void luaL_buffinit (lua_State L, luaL_Buffer B) {
 		  B.L = L;
-		  B.p = /*B.buffer*/ 0;
-		  B.lvl = 0;
+		  B.p = /*B.buffer*/ null;
+		  B.level = 0;
 		}
 
 		/* }====================================================== */
@@ -485,7 +476,7 @@ namespace lua40mod
 		  t = abs_index(L, t);
 		  if (lua_isnil(L, -1)) {
 			lua_pop(L, 1);  /* remove from stack */
-			return LUA_REFNIL;  /* `nil' has a unique fixed reference */
+			return 0;//LUA_REFNIL;  /* `nil' has a unique fixed reference */
 		  }
 		  lua_rawgeti(L, t, FREELIST_REF);  /* get first free element */
 		  ref_ = (int)lua_tointeger(L, -1);  /* ref = t[FREELIST_REF] */
@@ -548,7 +539,7 @@ namespace lua40mod
 		  CharPtr filename = lua_tostring(L, fnameindex) + 1;
 		  lua_pushfstring(L, "cannot %s %s: %s", what, filename, serr);
 		  lua_remove(L, fnameindex);
-		  return LUA_ERRFILE;
+		  return 0;//LUA_ERRFILE;
 		}
 
 

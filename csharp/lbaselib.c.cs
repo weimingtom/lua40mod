@@ -105,18 +105,7 @@ namespace lua40mod
 
 
 		private static void getfunc (lua_State L, int opt) {
-		  if (lua_isfunction(L, 1)) lua_pushvalue(L, 1);
-		  else {
-			lua_Debug ar = new lua_Debug();
-			int level = (opt != 0) ? luaL_optint(L, 1, 1) : luaL_checkint(L, 1);
-			luaL_argcheck(L, level >= 0, 1, "level must be non-negative");
-			if (lua_getstack(L, level, ar) == 0)
-			  luaL_argerror(L, 1, "invalid level");
-			lua_getinfo(L, "f", ar);
-			if (lua_isnil(L, -1))
-			  luaL_error(L, "no function environment for tail call at level %d",
-							level);
-		  }
+		  
 		}
 
 
@@ -207,8 +196,6 @@ namespace lua40mod
 
 
 		private static int luaB_type (lua_State L) {
-		  luaL_checkany(L, 1);
-		  lua_pushstring(L, luaL_typename(L, 1));
 		  return 1;
 		}
 
@@ -235,12 +222,7 @@ namespace lua40mod
 
 
 		private static int ipairsaux (lua_State L) {
-		  int i = luaL_checkint(L, 2);
-		  luaL_checktype(L, 1, LUA_TTABLE);
-		  i++;  /* next value */
-		  lua_pushinteger(L, i);
-		  lua_rawgeti(L, 1, i);
-		  return (lua_isnil(L, -1)) ? 0 : 2;
+			return 0;
 		}
 
 
@@ -265,10 +247,7 @@ namespace lua40mod
 
 
 		private static int luaB_loadstring (lua_State L) {
-		  uint l;
-		  CharPtr s = luaL_checklstring(L, 1, out l);
-		  CharPtr chunkname = luaL_optstring(L, 2, s);
-		  return load_aux(L, luaL_loadbuffer(L, s, l, chunkname));
+		  return 0;
 		}
 
 
@@ -338,31 +317,21 @@ namespace lua40mod
 		  int i, e, n;
 		  luaL_checktype(L, 1, LUA_TTABLE);
 		  i = luaL_optint(L, 2, 1);
-		  e = luaL_opt_integer(L, luaL_checkint, 3, luaL_getn(L, 1));
-		  if (i > e) return 0;  /* empty range */
-		  n = e - i + 1;  /* number of elements */
+//		  e = luaL_opt_integer(L, luaL_checkint, 3, luaL_getn(L, 1));
+//		  if (i > e) return 0;  /* empty range */
+//		  n = e - i + 1;  /* number of elements */
+		  n = -i + 1;
 		  if (n <= 0 || (lua_checkstack(L, n)==0))  /* n <= 0 means arith. overflow */
 			return luaL_error(L, "too many results to unpack");
 		  lua_rawgeti(L, 1, i);  /* push arg[i] (avoiding overflow problems) */
-		  while (i++ < e)  /* push arg[i + 1...e] */
-			lua_rawgeti(L, 1, i);
+//		  while (i++ < e)  /* push arg[i + 1...e] */
+//			lua_rawgeti(L, 1, i);
 		  return n;
 		}
 
 
 		private static int luaB_select (lua_State L) {
-		  int n = lua_gettop(L);
-		  if (lua_type(L, 1) == LUA_TSTRING && lua_tostring(L, 1)[0] == '#') {
-			lua_pushinteger(L, n-1);
-			return 1;
-		  }
-		  else {
-			int i = luaL_checkint(L, 1);
-			if (i < 0) i = n + i;
-			else if (i > n) i = n;
-			luaL_argcheck(L, 1 <= i, 1, "index out of range");
-			return n - i;
-		  }
+		  return 0;
 		}
 
 
@@ -390,25 +359,6 @@ namespace lua40mod
 
 		private static int luaB_tostring (lua_State L) {
 		  luaL_checkany(L, 1);
-		  if (luaL_callmeta(L, 1, "__tostring") != 0)  /* is there a metafield? */
-			return 1;  /* use its value */
-		  switch (lua_type(L, 1)) {
-			case LUA_TNUMBER:
-			  lua_pushstring(L, lua_tostring(L, 1));
-			  break;
-			case LUA_TSTRING:
-			  lua_pushvalue(L, 1);
-			  break;
-			case LUA_TBOOLEAN:
-			  lua_pushstring(L, (lua_toboolean(L, 1) != 0 ? "true" : "false"));
-			  break;
-			case LUA_TNIL:
-			  lua_pushliteral(L, "nil");
-			  break;
-			default:
-			  lua_pushfstring(L, "%s: %p", luaL_typename(L, 1), lua_topointer(L, 1));
-			  break;
-		  }
 		  return 1;
 		}
 
@@ -439,32 +389,32 @@ namespace lua40mod
 		}
 
 
-		private readonly static luaL_Reg[] base_funcs = {
-		  new luaL_Reg("assert", luaB_assert),
-		  new luaL_Reg("collectgarbage", luaB_collectgarbage),
-		  new luaL_Reg("dofile", luaB_dofile),
-		  new luaL_Reg("error", luaB_error),
-		  new luaL_Reg("gcinfo", luaB_gcinfo),
-		  new luaL_Reg("getfenv", luaB_getfenv),
-		  new luaL_Reg("getmetatable", luaB_getmetatable),
-		  new luaL_Reg("loadfile", luaB_loadfile),
-		  new luaL_Reg("load", luaB_load),
-		  new luaL_Reg("loadstring", luaB_loadstring),
-		  new luaL_Reg("next", luaB_next),
-		  new luaL_Reg("pcall", luaB_pcall),
-		  new luaL_Reg("print", luaB_print),
-		  new luaL_Reg("rawequal", luaB_rawequal),
-		  new luaL_Reg("rawget", luaB_rawget),
-		  new luaL_Reg("rawset", luaB_rawset),
-		  new luaL_Reg("select", luaB_select),
-		  new luaL_Reg("setfenv", luaB_setfenv),
-		  new luaL_Reg("setmetatable", luaB_setmetatable),
-		  new luaL_Reg("tonumber", luaB_tonumber),
-		  new luaL_Reg("tostring", luaB_tostring),
-		  new luaL_Reg("type", luaB_type),
-		  new luaL_Reg("unpack", luaB_unpack),
-		  new luaL_Reg("xpcall", luaB_xpcall),
-		  new luaL_Reg(null, null)
+		private readonly static luaL_reg[] base_funcs = {
+		  new luaL_reg("assert", luaB_assert),
+		  new luaL_reg("collectgarbage", luaB_collectgarbage),
+		  new luaL_reg("dofile", luaB_dofile),
+		  new luaL_reg("error", luaB_error),
+		  new luaL_reg("gcinfo", luaB_gcinfo),
+		  new luaL_reg("getfenv", luaB_getfenv),
+		  new luaL_reg("getmetatable", luaB_getmetatable),
+		  new luaL_reg("loadfile", luaB_loadfile),
+		  new luaL_reg("load", luaB_load),
+		  new luaL_reg("loadstring", luaB_loadstring),
+		  new luaL_reg("next", luaB_next),
+		  new luaL_reg("pcall", luaB_pcall),
+		  new luaL_reg("print", luaB_print),
+		  new luaL_reg("rawequal", luaB_rawequal),
+		  new luaL_reg("rawget", luaB_rawget),
+		  new luaL_reg("rawset", luaB_rawset),
+		  new luaL_reg("select", luaB_select),
+		  new luaL_reg("setfenv", luaB_setfenv),
+		  new luaL_reg("setmetatable", luaB_setmetatable),
+		  new luaL_reg("tonumber", luaB_tonumber),
+		  new luaL_reg("tostring", luaB_tostring),
+		  new luaL_reg("type", luaB_type),
+		  new luaL_reg("unpack", luaB_unpack),
+		  new luaL_reg("xpcall", luaB_xpcall),
+		  new luaL_reg(null, null)
 		};
 
 
@@ -597,14 +547,14 @@ namespace lua40mod
 		}
 
 
-		private readonly static luaL_Reg[] co_funcs = {
-		  new luaL_Reg("create", luaB_cocreate),
-		  new luaL_Reg("resume", luaB_coresume),
-		  new luaL_Reg("running", luaB_corunning),
-		  new luaL_Reg("status", luaB_costatus),
-		  new luaL_Reg("wrap", luaB_cowrap),
-		  new luaL_Reg("yield", luaB_yield),
-		  new luaL_Reg(null, null)
+		private readonly static luaL_reg[] co_funcs = {
+		  new luaL_reg("create", luaB_cocreate),
+		  new luaL_reg("resume", luaB_coresume),
+		  new luaL_reg("running", luaB_corunning),
+		  new luaL_reg("status", luaB_costatus),
+		  new luaL_reg("wrap", luaB_cowrap),
+		  new luaL_reg("yield", luaB_yield),
+		  new luaL_reg(null, null)
 		};
 
 		/* }====================================================== */
@@ -619,30 +569,11 @@ namespace lua40mod
 
 
 		private static void base_open (lua_State L) {
-		  /* set global _G */
-		  lua_pushvalue(L, LUA_GLOBALSINDEX);
-		  lua_setglobal(L, "_G");
-		  /* open lib into global table */
-		  luaL_register(L, "_G", base_funcs);
-		  lua_pushliteral(L, LUA_VERSION);
-		  lua_setglobal(L, "_VERSION");  /* set global _VERSION */
-		  /* `ipairs' and `pairs' need auxliliary functions as upvalues */
-		  auxopen(L, "ipairs", luaB_ipairs, ipairsaux);
-		  auxopen(L, "pairs", luaB_pairs, luaB_next);
-		  /* `newproxy' needs a weaktable as upvalue */
-		  lua_createtable(L, 0, 1);  /* new table `w' */
-		  lua_pushvalue(L, -1);  /* `w' will be its own metatable */
-		  lua_setmetatable(L, -2);
-		  lua_pushliteral(L, "kv");
-		  lua_setfield(L, -2, "__mode");  /* metatable(w).__mode = "kv" */
-		  lua_pushcclosure(L, luaB_newproxy, 1);
-		  lua_setglobal(L, "newproxy");  /* set global `newproxy' */
+
 		}
 
 
 		public static int luaopen_base (lua_State L) {
-		  base_open(L);
-		  luaL_register(L, LUA_COLIBNAME, co_funcs);
 		  return 2;
 		}
 

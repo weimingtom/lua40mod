@@ -22,6 +22,9 @@ namespace lua40mod
 	
 	public partial class Lua
 	{
+		public const int BUFSIZ = 256;
+		
+		
 	/*
 		** ==================================================================
 		** Search for "@@" to find all configurable definitions.
@@ -498,7 +501,7 @@ namespace lua40mod
 		/*
 		@@ LUAL_BUFFERSIZE is the buffer size used by the lauxlib buffer system.
 		*/
-		public const int LUAL_BUFFERSIZE		= 1024; // BUFSIZ; todo: check this - mjf
+//		public const int LUAL_BUFFERSIZE		= 1024; // BUFSIZ; todo: check this - mjf
 
 		/* }================================================================== */
 
@@ -2034,7 +2037,7 @@ namespace lua40mod
 				return 0;	// handle this one manually in the code
 			else if (t == typeof(Proto))
 				return 76;
-			else if (t == typeof(luaL_Reg))
+			else if (t == typeof(luaL_reg))
 				return 8;
 			else if (t == typeof(luaL_Buffer))
 				return 524;

@@ -132,50 +132,17 @@ namespace lua40mod
 		    
 
 		private static int db_getlocal (lua_State L) {
-		  int arg;
-		  lua_State L1 = getthread(L, out arg);
-		  lua_Debug ar = new lua_Debug();
-		  CharPtr name;
-		  if (lua_getstack(L1, luaL_checkint(L, arg+1), ar)==0)  /* out of range? */
-			return luaL_argerror(L, arg+1, "level out of range");
-		  name = lua_getlocal(L1, ar, luaL_checkint(L, arg+2));
-		  if (name != null) {
-			lua_xmove(L1, L, 1);
-			lua_pushstring(L, name);
-			lua_pushvalue(L, -2);
-			return 2;
-		  }
-		  else {
-			lua_pushnil(L);
-			return 1;
-		  }
+		  return 0;
 		}
 
 
 		private static int db_setlocal (lua_State L) {
-		  int arg;
-		  lua_State L1 = getthread(L, out arg);
-		  lua_Debug ar = new lua_Debug();
-		  if (lua_getstack(L1, luaL_checkint(L, arg+1), ar)==0)  /* out of range? */
-			return luaL_argerror(L, arg+1, "level out of range");
-		  luaL_checkany(L, arg+3);
-		  lua_settop(L, arg+3);
-		  lua_xmove(L, L1, 1);
-		  lua_pushstring(L, lua_setlocal(L1, ar, luaL_checkint(L, arg+2)));
 		  return 1;
 		}
 
 
 		private static int auxupvalue (lua_State L, int get) {
-		  CharPtr name;
-		  int n = luaL_checkint(L, 2);
-		  luaL_checktype(L, 1, LUA_TFUNCTION);
-		  if (lua_iscfunction(L, 1)) return 0;  /* cannot touch C upvalues from Lua */
-		  name = (get!=0) ? lua_getupvalue(L, 1, n) : lua_setupvalue(L, 1, n);
-		  if (name == null) return 0;
-		  lua_pushstring(L, name);
-		  lua_insert(L, -(get+1));
-		  return get + 1;
+			return 0;
 		}
 
 
@@ -363,27 +330,26 @@ namespace lua40mod
 		}
 
 
-		private readonly static luaL_Reg[] dblib = {
-		  new luaL_Reg("debug", db_debug),
-		  new luaL_Reg("getfenv", db_getfenv),
-		  new luaL_Reg("gethook", db_gethook),
-		  new luaL_Reg("getinfo", db_getinfo),
-		  new luaL_Reg("getlocal", db_getlocal),
-		  new luaL_Reg("getregistry", db_getregistry),
-		  new luaL_Reg("getmetatable", db_getmetatable),
-		  new luaL_Reg("getupvalue", db_getupvalue),
-		  new luaL_Reg("setfenv", db_setfenv),
-		  new luaL_Reg("sethook", db_sethook),
-		  new luaL_Reg("setlocal", db_setlocal),
-		  new luaL_Reg("setmetatable", db_setmetatable),
-		  new luaL_Reg("setupvalue", db_setupvalue),
-		  new luaL_Reg("traceback", db_errorfb),
-		  new luaL_Reg(null, null)
+		private readonly static luaL_reg[] dblib = {
+		  new luaL_reg("debug", db_debug),
+		  new luaL_reg("getfenv", db_getfenv),
+		  new luaL_reg("gethook", db_gethook),
+		  new luaL_reg("getinfo", db_getinfo),
+		  new luaL_reg("getlocal", db_getlocal),
+		  new luaL_reg("getregistry", db_getregistry),
+		  new luaL_reg("getmetatable", db_getmetatable),
+		  new luaL_reg("getupvalue", db_getupvalue),
+		  new luaL_reg("setfenv", db_setfenv),
+		  new luaL_reg("sethook", db_sethook),
+		  new luaL_reg("setlocal", db_setlocal),
+		  new luaL_reg("setmetatable", db_setmetatable),
+		  new luaL_reg("setupvalue", db_setupvalue),
+		  new luaL_reg("traceback", db_errorfb),
+		  new luaL_reg(null, null)
 		};
 
 
 		public static int luaopen_debug (lua_State L) {
-		  luaL_register(L, LUA_DBLIBNAME, dblib);
 		  return 1;
 		}
 

@@ -1,29 +1,33 @@
+/*
+** $Id: lauxlib.h,v 1.30 2000/10/30 12:38:50 roberto Exp $
+** Auxiliary functions for building Lua libraries
+** See Copyright Notice in lua.h
+*/
+
+//#ifndef lauxlib_h
+//#define lauxlib_h
+//
+//
+//#include <stddef.h>
+//#include <stdio.h>
+//
+//#include "lua.h"
+
 namespace lua40mod
 {
-	using lua_Number = System.Double;
+//	using lua_Number = System.Double;
 	using lua_Integer = System.Int32;
 	
 	public partial class Lua
 	{
-		#if LUA_COMPAT_GETN
-		public static int luaL_getn(lua_State L, int t);
-		public static void luaL_setn(lua_State L, int t, int n);
-		#else
-		public static int luaL_getn(lua_State L, int i) {return (int)lua_objlen(L, i);}
-		public static void luaL_setn(lua_State L, int i, int j) {} /* no op! */
-		#endif
-
-		#if LUA_COMPAT_OPENLIB
-		//#define luaI_openlib	luaL_openlib
-		#endif
+		
+//#ifndef LUALIB_API
+//#define LUALIB_API	extern
+//#endif
 
 
-		/* extra error code for `luaL_load' */
-		public const int LUA_ERRFILE     = (LUA_ERRERR+1);
-
-
-		public class luaL_Reg {
-		  public luaL_Reg(CharPtr name, lua_CFunction func) {
+		public class luaL_reg {
+		  public luaL_reg(CharPtr name, lua_CFunction func) {
 			  this.name = name;
 			  this.func = func;
 		  }
@@ -33,93 +37,78 @@ namespace lua40mod
 		};
 
 
+//LUALIB_API void luaL_openlib (lua_State *L, const struct luaL_reg *l, int n);
+//LUALIB_API void luaL_argerror (lua_State *L, int numarg, const char *extramsg);
+//LUALIB_API const char *luaL_check_lstr (lua_State *L, int numArg, size_t *len);
+//LUALIB_API const char *luaL_opt_lstr (lua_State *L, int numArg, const char *def, size_t *len);
+//LUALIB_API double luaL_check_number (lua_State *L, int numArg);
+//LUALIB_API double luaL_opt_number (lua_State *L, int numArg, double def);
+//
+//LUALIB_API void luaL_checkstack (lua_State *L, int space, const char *msg);
+//LUALIB_API void luaL_checktype (lua_State *L, int narg, int t);
+//LUALIB_API void luaL_checkany (lua_State *L, int narg);
+//
+//LUALIB_API void luaL_verror (lua_State *L, const char *fmt, ...);
+//LUALIB_API int luaL_findstring (const char *name, const char *const list[]);
+
+
+
 		/*
 		** ===============================================================
 		** some useful macros
 		** ===============================================================
 		*/
 
-		public static void luaL_argcheck(lua_State L, bool cond, int numarg, string extramsg) {
-			if (!cond)
-				luaL_argerror(L, numarg, extramsg);
-		}
-		public static CharPtr luaL_checkstring(lua_State L, int n) { return luaL_checklstring(L, n); }
+		public static void luaL_argcheck(lua_State L, bool cond, int numarg, string extramsg) { if (!cond)
+				luaL_argerror(L, numarg, extramsg);}
+		public static CharPtr luaL_checkstring(lua_State L, int n) { uint len; return luaL_check_lstr(L, n, out len); }
 		public static CharPtr luaL_optstring(lua_State L, int n, CharPtr d) { uint len; return luaL_optlstring(L, n, d, out len); }
-		public static int luaL_checkint(lua_State L, int n)	{return (int)luaL_checkinteger(L, n);}
-		public static int luaL_optint(lua_State L, int n, lua_Integer d)	{return (int)luaL_optinteger(L, n, d);}
-		public static long luaL_checklong(lua_State L, int n)	{return luaL_checkinteger(L, n);}
-		public static long luaL_optlong(lua_State L, int n, lua_Integer d)	{return luaL_optinteger(L, n, d);}
-
-		public static CharPtr luaL_typename(lua_State L, int i)	{return lua_typename(L, lua_type(L,i));}
-
-		//#define luaL_dofile(L, fn) \
-		//    (luaL_loadfile(L, fn) || lua_pcall(L, 0, LUA_MULTRET, 0))
-
-		//#define luaL_dostring(L, s) \
-		//    (luaL_loadstring(L, s) || lua_pcall(L, 0, LUA_MULTRET, 0))
-
-		public static void luaL_getmetatable(lua_State L, CharPtr n) { lua_getfield(L, LUA_REGISTRYINDEX, n); }
-
-		public delegate lua_Number luaL_opt_delegate(lua_State L, int narg);		
-		public static lua_Number luaL_opt(lua_State L, luaL_opt_delegate f, int n, lua_Number d) {
-			return lua_isnoneornil(L, n) ? d : f(L, n);}
-		
-		public delegate lua_Integer luaL_opt_delegate_integer(lua_State L, int narg);
-		public static lua_Integer luaL_opt_integer(lua_State L, luaL_opt_delegate_integer f, int n, lua_Integer d) {
-			return lua_isnoneornil(L, n) ? d : f(L, n);}
-
-		/*
-		** {======================================================
-		** Generic Buffer manipulation
-		** =======================================================
-		*/
+		public static int luaL_check_int(lua_State L, int n) {return (int)luaL_check_number(L, n);}
+		public static long luaL_check_long(lua_State L, int n)	{return (long)luaL_check_number(L, n);}
+		public static int luaL_optint(lua_State L, int n, lua_Integer d)	{return (int)luaL_opt_number(L, n, d);}
+		public static long luaL_opt_long(lua_State L, int n, lua_Integer d)	{return (long)luaL_opt_number(L, n, d);}
+		public static void luaL_openl(lua_State L, luaL_reg[] a)		 { luaL_openlib(L, a, a.Length); }
 
 
+/*
+** {======================================================
+** Generic Buffer manipulation
+** =======================================================
+*/
+
+
+//		#ifndef LUAL_BUFFERSIZE
+		public const int LUAL_BUFFERSIZE = BUFSIZ;
+//		#endif
 
 		public class luaL_Buffer {
-		  public int p;			/* current position in buffer */
-		  public int lvl;  /* number of strings in the stack (level) */
+		  public CharPtr p;			/* current position in buffer */
+		  public int level;
 		  public lua_State L;
 		  public CharPtr buffer = new char[LUAL_BUFFERSIZE];
 		};
 
-		public static void luaL_addchar(luaL_Buffer B, char c) {
-			if (B.p >= LUAL_BUFFERSIZE)
-				luaL_prepbuffer(B);
-			B.buffer[B.p++] = c;
+		public static void luaL_putchar(luaL_Buffer B, char c) {
+			if (B.p < B.buffer.add(LUAL_BUFFERSIZE)) luaL_prepbuffer(B);
+			B.p[0] = (char)(c); B.p.inc();
 		}
+		
+		public void luaL_addsize(luaL_Buffer B, char n)	{ B.p += (n); }
+		
+//		LUALIB_API void luaL_buffinit (lua_State *L, luaL_Buffer *B);
+//		LUALIB_API char *luaL_prepbuffer (luaL_Buffer *B);
+//		LUALIB_API void luaL_addlstring (luaL_Buffer *B, const char *s, size_t l);
+//		LUALIB_API void luaL_addstring (luaL_Buffer *B, const char *s);
+//		LUALIB_API void luaL_addvalue (luaL_Buffer *B);
+//		LUALIB_API void luaL_pushresult (luaL_Buffer *B);
 
-		///* compatibility only */
-		public static void luaL_putchar(luaL_Buffer B, char c)	{luaL_addchar(B,c);}
-
-		public static void luaL_addsize(luaL_Buffer B, int n)	{B.p += n;}
-
-		/* }====================================================== */
-
-
-		/* compatibility with ref system */
-
-		/* pre-defined references */
-		public const int LUA_NOREF       = (-2);
-		public const int LUA_REFNIL      = (-1);
-
-		//#define lua_ref(L,lock) ((lock) ? luaL_ref(L, LUA_REGISTRYINDEX) : \
-		//      (lua_pushstring(L, "unlocked references are obsolete"), lua_error(L), 0))
-
-		//#define lua_unref(L,ref)        luaL_unref(L, LUA_REGISTRYINDEX, (ref))
-
-		//#define lua_getref(L,ref)       lua_rawgeti(L, LUA_REGISTRYINDEX, (ref))
+/* }====================================================== */
 
 
-		//#define luaL_reg	luaL_Reg
+//#endif
 
 
-		/* This file uses only the official API of Lua.
-		** Any function declared here could be written as an application function.
-		*/
 
-		//#define lauxlib_c
-		//#define LUA_LIB
 	}
 }
 

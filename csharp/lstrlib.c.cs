@@ -14,10 +14,8 @@ namespace lua40mod
 	public partial class Lua
 	{
 		private static int str_len (lua_State L) {
-		  uint l;
-		  luaL_checklstring(L, 1, out l);
-		  lua_pushinteger(L, (int)l);
-		  return 1;
+		  
+		  return 0;
 		}
 
 
@@ -29,98 +27,37 @@ namespace lua40mod
 
 
 		private static int str_sub (lua_State L) {
-		  uint l;
-		  CharPtr s = luaL_checklstring(L, 1, out l);
-		  ptrdiff_t start = posrelat(luaL_checkinteger(L, 2), l);
-		  ptrdiff_t end = posrelat(luaL_optinteger(L, 3, -1), l);
-		  if (start < 1) start = 1;
-		  if (end > (ptrdiff_t)l) end = (ptrdiff_t)l;
-		  if (start <= end)
-			lua_pushlstring(L, s+start-1, (uint)(end-start+1));
-		  else lua_pushliteral(L, "");
+		 
 		  return 1;
 		}
 
 
 		private static int str_reverse (lua_State L) {
-		  uint l;
-		  luaL_Buffer b = new luaL_Buffer();
-		  CharPtr s = luaL_checklstring(L, 1, out l);
-		  luaL_buffinit(L, b);
-		  while ((l--) != 0) luaL_addchar(b, s[l]);
-		  luaL_pushresult(b);
 		  return 1;
 		}
 
 
 		private static int str_lower (lua_State L) {
-		  uint l;
-		  uint i;
-		  luaL_Buffer b = new luaL_Buffer();
-		  CharPtr s = luaL_checklstring(L, 1, out l);
-		  luaL_buffinit(L, b);
-		  for (i=0; i<l; i++)
-			  luaL_addchar(b, tolower(s[i]));
-		  luaL_pushresult(b);
 		  return 1;
 		}
 
 
 		private static int str_upper (lua_State L) {
-		  uint l;
-		  uint i;
-		  luaL_Buffer b = new luaL_Buffer();
-		  CharPtr s = luaL_checklstring(L, 1, out l);
-		  luaL_buffinit(L, b);
-		  for (i=0; i<l; i++)
-			  luaL_addchar(b, toupper(s[i]));
-		  luaL_pushresult(b);
 		  return 1;
 		}
 
 		private static int str_rep (lua_State L) {
-		  uint l;
-		  luaL_Buffer b = new luaL_Buffer();
-		  CharPtr s = luaL_checklstring(L, 1, out l);
-		  int n = luaL_checkint(L, 2);
-		  luaL_buffinit(L, b);
-		  while (n-- > 0)
-			luaL_addlstring(b, s, l);
-		  luaL_pushresult(b);
 		  return 1;
 		}
 
 
 		private static int str_byte (lua_State L) {
-		  uint l;
-		  CharPtr s = luaL_checklstring(L, 1, out l);
-		  ptrdiff_t posi = posrelat(luaL_optinteger(L, 2, 1), l);
-		  ptrdiff_t pose = posrelat(luaL_optinteger(L, 3, posi), l);
-		  int n, i;
-		  if (posi <= 0) posi = 1;
-		  if ((uint)pose > l) pose = (int)l;
-		  if (posi > pose) return 0;  /* empty interval; return no values */
-		  n = (int)(pose -  posi + 1);
-		  if (posi + n <= pose)  /* overflow? */
-			luaL_error(L, "string slice too long");
-		  luaL_checkstack(L, n, "string slice too long");
-		  for (i=0; i<n; i++)
-			  lua_pushinteger(L, (byte)(s[posi + i - 1]));
-		  return n;
+		  
+		  return 0;
 		}
 
 
 		private static int str_char (lua_State L) {
-		  int n = lua_gettop(L);  /* number of arguments */
-		  int i;
-		  luaL_Buffer b = new luaL_Buffer();
-		  luaL_buffinit(L, b);
-		  for (i=1; i<=n; i++) {
-			int c = luaL_checkint(L, i);
-			luaL_argcheck(L, (byte)(c) == c, i, "invalid value");
-			luaL_addchar(b, (char)(byte)c);
-		  }
-		  luaL_pushresult(b);
 		  return 1;
 		}
 
@@ -496,49 +433,7 @@ namespace lua40mod
 
 
 		private static int str_find_aux (lua_State L, int find) {
-		  uint l1, l2;
-		  CharPtr s = luaL_checklstring(L, 1, out l1);
-		  CharPtr p = luaL_checklstring(L, 2, out l2);
-		  ptrdiff_t init = posrelat(luaL_optinteger(L, 3, 1), l1) - 1;
-		  if (init < 0) init = 0;
-		  else if ((uint)(init) > l1) init = (ptrdiff_t)l1;
-		  if ((find!=0) && ((lua_toboolean(L, 4)!=0) ||  /* explicit request? */
-			  strpbrk(p, SPECIALS) == null)) {  /* or no special characters? */
-			/* do a plain search */
-			CharPtr s2 = lmemfind(s+init, (uint)(l1-init), p, (uint)(l2));
-			if (s2 != null) {
-			  lua_pushinteger(L, s2-s+1);
-			  lua_pushinteger(L, (int)(s2-s+l2));
-			  return 2;
-			}
-		  }
-		  else {
-			MatchState ms = new MatchState();
-			int anchor = 0;
-			if (p[0] == '^')
-			{
-				p = p.next();
-				anchor = 1;
-			}
-			CharPtr s1=s+init;
-			ms.L = L;
-			ms.src_init = s;
-			ms.src_end = s+l1;
-			do {
-			  CharPtr res;
-			  ms.level = 0;
-			  if ((res=match(ms, s1, p)) != null) {
-				if (find != 0) {
-				  lua_pushinteger(L, s1-s+1);  /* start */
-				  lua_pushinteger(L, res-s);   /* end */
-				  return push_captures(ms, null, null) + 2;
-				}
-				else
-				  return push_captures(ms, s1, res);
-			  }
-			} while (((s1=s1.next()) <= ms.src_end) && (anchor==0));
-		  }
-		  lua_pushnil(L);  /* not found */
+		  
 		  return 1;
 		}
 
@@ -597,23 +492,7 @@ namespace lua40mod
 
 		private static void add_s (MatchState ms, luaL_Buffer b, CharPtr s,
 														   CharPtr e) {
-		  uint l, i;
-		  CharPtr news = lua_tolstring(ms.L, 3, out l);
-		  for (i = 0; i < l; i++) {
-			if (news[i] != L_ESC)
-			  luaL_addchar(b, news[i]);
-			else {
-			  i++;  /* skip ESC */
-			  if (!isdigit((byte)(news[i])))
-				luaL_addchar(b, news[i]);
-			  else if (news[i] == '0')
-				  luaL_addlstring(b, s, (uint)(e - s));
-			  else {
-				push_onecapture(ms, news[i] - '1', s, e);
-				luaL_addvalue(b);  /* add capture to accumulated result */
-			  }
-			}
-		  }
+			
 		}
 
 
@@ -643,56 +522,12 @@ namespace lua40mod
 			lua_pop(L, 1);
 			lua_pushlstring(L, s, (uint)(e - s));  /* keep original text */
 		  }
-		  else if (lua_isstring(L, -1)==0)
-			luaL_error(L, "invalid replacement value (a %s)", luaL_typename(L, -1)); 
 		  luaL_addvalue(b);  /* add result to accumulator */
 		}
 
 
 		private static int str_gsub (lua_State L) {
-		  uint srcl;
-		  CharPtr src = luaL_checklstring(L, 1, out srcl);
-		  CharPtr p = luaL_checkstring(L, 2);
-		  int  tr = lua_type(L, 3);
-		  int max_s = luaL_optint(L, 4, (int)(srcl+1));
-		  int anchor = 0;
-		  if (p[0] == '^')
-		  {
-			  p = p.next();
-			  anchor = 1;
-		  }
-		  int n = 0;
-		  MatchState ms = new MatchState();
-		  luaL_Buffer b = new luaL_Buffer();
-		  luaL_argcheck(L, tr == LUA_TNUMBER || tr == LUA_TSTRING ||
-						   tr == LUA_TFUNCTION || tr == LUA_TTABLE, 3,
-							  "string/function/table expected");
-		  luaL_buffinit(L, b);
-		  ms.L = L;
-		  ms.src_init = src;
-		  ms.src_end = src+srcl;
-		  while (n < max_s) {
-			CharPtr e;
-			ms.level = 0;
-			e = match(ms, src, p);
-			if (e != null) {
-			  n++;
-			  add_value(ms, b, src, e);
-			}
-			if ((e!=null) && e>src) /* non empty match? */
-			  src = e;  /* skip it */
-			else if (src < ms.src_end)
-			{
-				char c = src[0];
-				src = src.next();
-				luaL_addchar(b, c);
-			}
-			else break;
-			if (anchor != 0) break;
-		  }
-		  luaL_addlstring(b, src, (uint)(ms.src_end-src));
-		  luaL_pushresult(b);
-		  lua_pushinteger(L, n);  /* number of substitutions */
+		  
 		  return 2;
 		}
 
@@ -711,32 +546,7 @@ namespace lua40mod
 
 
 		private static void addquoted (lua_State L, luaL_Buffer b, int arg) {
-		  uint l;
-		  CharPtr s = luaL_checklstring(L, arg, out l);
-		  luaL_addchar(b, '"');
-		  while ((l--) != 0) {
-			switch (s[0]) {
-			  case '"': case '\\': case '\n': {
-				luaL_addchar(b, '\\');
-				luaL_addchar(b, s[0]);
-				break;
-			  }
-			  case '\r': {
-				luaL_addlstring(b, "\\r", 2);
-				break;
-			  }
-			  case '\0': {
-				luaL_addlstring(b, "\\000", 4);
-				break;
-			  }
-			  default: {
-				luaL_addchar(b, s[0]);
-				break;
-			  }
-			}
-			s = s.next();
-		  }
-		  luaL_addchar(b, '"');
+			
 		}
 
 		private static CharPtr scanformat (lua_State L, CharPtr strfrmt, CharPtr form) {
@@ -772,118 +582,28 @@ namespace lua40mod
 
 
 		private static int str_format (lua_State L) {
-		  int arg = 1;
-		  uint sfl;
-		  CharPtr strfrmt = luaL_checklstring(L, arg, out sfl);
-		  CharPtr strfrmt_end = strfrmt+sfl;
-		  luaL_Buffer b = new luaL_Buffer();
-		  luaL_buffinit(L, b);
-		  while (strfrmt < strfrmt_end) {
-			  if (strfrmt[0] != L_ESC)
-			  {
-				  luaL_addchar(b, strfrmt[0]);
-				  strfrmt = strfrmt.next();
-			  }
-			  else if (strfrmt[1] == L_ESC)
-			  {
-				  luaL_addchar(b, strfrmt[0]);  /* %% */
-				  strfrmt = strfrmt + 2;
-			  }
-			  else
-			  { /* format item */
-				  strfrmt = strfrmt.next();
-				  CharPtr form = new char[MAX_FORMAT];  /* to store the format (`%...') */
-				  CharPtr buff = new char[MAX_ITEM];  /* to store the formatted item */
-				  arg++;
-				  strfrmt = scanformat(L, strfrmt, form);
-				  char ch = strfrmt[0];
-				  strfrmt = strfrmt.next();
-				  switch (ch)
-				  {
-					  case 'c':
-						  {
-							  sprintf(buff, form, (int)luaL_checknumber(L, arg));
-							  break;
-						  }
-					  case 'd':
-					  case 'i':
-						  {
-							  addintlen(form);
-							  sprintf(buff, form, (LUA_INTFRM_T)luaL_checknumber(L, arg));
-							  break;
-						  }
-					  case 'o':
-					  case 'u':
-					  case 'x':
-					  case 'X':
-						  {
-							  addintlen(form);
-							  sprintf(buff, form, (UNSIGNED_LUA_INTFRM_T)luaL_checknumber(L, arg));
-							  break;
-						  }
-					  case 'e':
-					  case 'E':
-					  case 'f':
-					  case 'g':
-					  case 'G':
-						  {
-							  sprintf(buff, form, (double)luaL_checknumber(L, arg));
-							  break;
-						  }
-					  case 'q':
-						  {
-							  addquoted(L, b, arg);
-							  continue;  /* skip the 'addsize' at the end */
-						  }
-					  case 's':
-						  {
-							  uint l;
-							  CharPtr s = luaL_checklstring(L, arg, out l);
-							  if ((strchr(form, '.') == null) && l >= 100)
-							  {
-								  /* no precision and string is too long to be formatted;
-									 keep original string */
-								  lua_pushvalue(L, arg);
-								  luaL_addvalue(b);
-								  continue;  /* skip the `addsize' at the end */
-							  }
-							  else
-							  {
-								  sprintf(buff, form, s);
-								  break;
-							  }
-						  }
-					  default:
-						  {  /* also treat cases `pnLlh' */
-							  return luaL_error(L, "invalid option " + LUA_QL("%%%c") + " to " +
-												   LUA_QL("format"), strfrmt[-1]);
-						  }
-				  }
-				  luaL_addlstring(b, buff, (uint)strlen(buff));
-			  }
-		  }
-		  luaL_pushresult(b);
+		  
 		  return 1;
 		}
 
 
-		private readonly static luaL_Reg[] strlib = {
-		  new luaL_Reg("byte", str_byte),
-		  new luaL_Reg("char", str_char),
-		  new luaL_Reg("dump", str_dump),
-		  new luaL_Reg("find", str_find),
-		  new luaL_Reg("format", str_format),
-		  new luaL_Reg("gfind", gfind_nodef),
-		  new luaL_Reg("gmatch", gmatch),
-		  new luaL_Reg("gsub", str_gsub),
-		  new luaL_Reg("len", str_len),
-		  new luaL_Reg("lower", str_lower),
-		  new luaL_Reg("match", str_match),
-		  new luaL_Reg("rep", str_rep),
-		  new luaL_Reg("reverse", str_reverse),
-		  new luaL_Reg("sub", str_sub),
-		  new luaL_Reg("upper", str_upper),
-		  new luaL_Reg(null, null)
+		private readonly static luaL_reg[] strlib = {
+		  new luaL_reg("byte", str_byte),
+		  new luaL_reg("char", str_char),
+		  new luaL_reg("dump", str_dump),
+		  new luaL_reg("find", str_find),
+		  new luaL_reg("format", str_format),
+		  new luaL_reg("gfind", gfind_nodef),
+		  new luaL_reg("gmatch", gmatch),
+		  new luaL_reg("gsub", str_gsub),
+		  new luaL_reg("len", str_len),
+		  new luaL_reg("lower", str_lower),
+		  new luaL_reg("match", str_match),
+		  new luaL_reg("rep", str_rep),
+		  new luaL_reg("reverse", str_reverse),
+		  new luaL_reg("sub", str_sub),
+		  new luaL_reg("upper", str_upper),
+		  new luaL_reg(null, null)
 		};
 
 
@@ -903,12 +623,6 @@ namespace lua40mod
 		** Open string library
 		*/
 		public static int luaopen_string (lua_State L) {
-		  luaL_register(L, LUA_STRLIBNAME, strlib);
-		#if LUA_COMPAT_GFIND
-		  lua_getfield(L, -1, "gmatch");
-		  lua_setfield(L, -2, "gfind");
-		#endif
-		  createmetatable(L);
 		  return 1;
 		}
 
