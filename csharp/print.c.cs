@@ -71,86 +71,86 @@ namespace lua40mod
 
 		private static void PrintCode( Proto f)
 		{
-		 Instruction[] code = f.code;
-		 int pc,n=f.sizecode;
-		 for (pc=0; pc<n; pc++)
-		 {
-		  Instruction i = f.code[pc];
-		  OpCode o=GET_OPCODE(i);
-		  int a=GETARG_A(i);
-		  int b=GETARG_B(i);
-		  int c=GETARG_C(i);
-		  int bx=GETARG_Bx(i);
-		  int sbx=GETARG_sBx(i);
-		  int line=getline(f,pc);
-		  printf("\t%d\t",pc+1);
-		  if (line>0) printf("[%d]\t",line); else printf("[-]\t");
-		  printf("%-9s\t",luaP_opnames[(int)o]);
-		  switch (getOpMode(o))
-		  {
-		   case OpMode.iABC:
-			printf("%d",a);
-			if (getBMode(o) != OpArgMask.OpArgN) printf(" %d", (ISK(b) != 0) ? (-1 - INDEXK(b)) : b);
-			if (getCMode(o) != OpArgMask.OpArgN) printf(" %d", (ISK(c) != 0) ? (-1 - INDEXK(c)) : c);
-			break;
-		   case OpMode.iABx:
-			if (getBMode(o)==OpArgMask.OpArgK) printf("%d %d",a,-1-bx); else printf("%d %d",a,bx);
-			break;
-		   case OpMode.iAsBx:
-			if (o==OpCode.OP_JMP) printf("%d",sbx); else printf("%d %d",a,sbx);
-			break;
-		  }
-		  switch (o)
-		  {
-		   case OpCode.OP_LOADK:
-			printf("\t; "); PrintConstant(f,bx);
-			break;
-		   case OpCode.OP_GETUPVAL:
-		   case OpCode.OP_SETUPVAL:
-			printf("\t; %s", (f.sizeupvalues>0) ? getstr(f.upvalues[b]) : "-");
-			break;
-		   case OpCode.OP_GETGLOBAL:
-		   case OpCode.OP_SETGLOBAL:
-			printf("\t; %s",svalue(f.k[bx]));
-			break;
-		   case OpCode.OP_GETTABLE:
-		   case OpCode.OP_SELF:
-			if (ISK(c) != 0) { printf("\t; "); PrintConstant(f,INDEXK(c)); }
-			break;
-		   case OpCode.OP_SETTABLE:
-		   case OpCode.OP_ADD:
-		   case OpCode.OP_SUB:
-		   case OpCode.OP_MUL:
-		   case OpCode.OP_DIV:
-		   case OpCode.OP_POW:
-		   case OpCode.OP_EQ:
-		   case OpCode.OP_LT:
-		   case OpCode.OP_LE:
-			if (ISK(b)!=0 || ISK(c)!=0)
-			{
-			 printf("\t; ");
-			 if (ISK(b) != 0) PrintConstant(f,INDEXK(b)); else printf("-");
-			 printf(" ");
-			 if (ISK(c) != 0) PrintConstant(f,INDEXK(c)); else printf("-");
-			}
-			break;
-		   case OpCode.OP_JMP:
-		   case OpCode.OP_FORLOOP:
-		   case OpCode.OP_FORPREP:
-			printf("\t; to %d",sbx+pc+2);
-			break;
-		   case OpCode.OP_CLOSURE:
-			printf("\t; %p",VOID(f.p[bx]));
-			break;
-		   case OpCode.OP_SETLIST:
-			if (c==0) printf("\t; %d",(int)code[++pc]);
-			else printf("\t; %d",c);
-			break;
-		   default:
-			break;
-		  }
-		  printf("\n");
-		 }
+//		 Instruction[] code = f.code;
+//		 int pc,n=f.sizecode;
+//		 for (pc=0; pc<n; pc++)
+//		 {
+//		  Instruction i = f.code[pc];
+//		  OpCode o=GET_OPCODE(i);
+//		  int a=GETARG_A(i);
+//		  int b=GETARG_B(i);
+//		  int c=GETARG_C(i);
+//		  int bx=GETARG_Bx(i);
+//		  int sbx=GETARG_sBx(i);
+//		  int line=getline(f,pc);
+//		  printf("\t%d\t",pc+1);
+//		  if (line>0) printf("[%d]\t",line); else printf("[-]\t");
+//		  printf("%-9s\t",luaP_opnames[(int)o]);
+//		  switch (getOpMode(o))
+//		  {
+//		   case OpMode.iABC:
+//			printf("%d",a);
+//			if (getBMode(o) != OpArgMask.OpArgN) printf(" %d", (ISK(b) != 0) ? (-1 - INDEXK(b)) : b);
+//			if (getCMode(o) != OpArgMask.OpArgN) printf(" %d", (ISK(c) != 0) ? (-1 - INDEXK(c)) : c);
+//			break;
+//		   case OpMode.iABx:
+//			if (getBMode(o)==OpArgMask.OpArgK) printf("%d %d",a,-1-bx); else printf("%d %d",a,bx);
+//			break;
+//		   case OpMode.iAsBx:
+//			if (o==OpCode.OP_JMP) printf("%d",sbx); else printf("%d %d",a,sbx);
+//			break;
+//		  }
+//		  switch (o)
+//		  {
+//		   case OpCode.OP_LOADK:
+//			printf("\t; "); PrintConstant(f,bx);
+//			break;
+//		   case OpCode.OP_GETUPVAL:
+//		   case OpCode.OP_SETUPVAL:
+//			printf("\t; %s", (f.sizeupvalues>0) ? getstr(f.upvalues[b]) : "-");
+//			break;
+//		   case OpCode.OP_GETGLOBAL:
+//		   case OpCode.OP_SETGLOBAL:
+//			printf("\t; %s",svalue(f.k[bx]));
+//			break;
+//		   case OpCode.OP_GETTABLE:
+//		   case OpCode.OP_SELF:
+//			if (ISK(c) != 0) { printf("\t; "); PrintConstant(f,INDEXK(c)); }
+//			break;
+//		   case OpCode.OP_SETTABLE:
+//		   case OpCode.OP_ADD:
+//		   case OpCode.OP_SUB:
+//		   case OpCode.OP_MUL:
+//		   case OpCode.OP_DIV:
+//		   case OpCode.OP_POW:
+//		   case OpCode.OP_EQ:
+//		   case OpCode.OP_LT:
+//		   case OpCode.OP_LE:
+//			if (ISK(b)!=0 || ISK(c)!=0)
+//			{
+//			 printf("\t; ");
+//			 if (ISK(b) != 0) PrintConstant(f,INDEXK(b)); else printf("-");
+//			 printf(" ");
+//			 if (ISK(c) != 0) PrintConstant(f,INDEXK(c)); else printf("-");
+//			}
+//			break;
+//		   case OpCode.OP_JMP:
+//		   case OpCode.OP_FORLOOP:
+//		   case OpCode.OP_FORPREP:
+//			printf("\t; to %d",sbx+pc+2);
+//			break;
+//		   case OpCode.OP_CLOSURE:
+//			printf("\t; %p",VOID(f.p[bx]));
+//			break;
+//		   case OpCode.OP_SETLIST:
+//			if (c==0) printf("\t; %d",(int)code[++pc]);
+//			else printf("\t; %d",c);
+//			break;
+//		   default:
+//			break;
+//		  }
+//		  printf("\n");
+//		 }
 		}
 
 		public static string SS(int x) { return (x == 1) ? "" : "s"; }

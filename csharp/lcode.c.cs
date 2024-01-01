@@ -53,9 +53,9 @@ namespace lua40mod
 		  int jpc = fs.jpc;  /* save list of jumps to here */
 		  int j;
 		  fs.jpc = NO_JUMP;
-		  j = luaK_codeAsBx(fs, OpCode.OP_JMP, 0, NO_JUMP);
-		  luaK_concat(fs, ref j, jpc);  /* keep them on hold */
-		  return j;
+		  //j = luaK_codeAsBx(fs, OpCode.OP_JMP, 0, NO_JUMP);
+		  //luaK_concat(fs, ref j, jpc);  /* keep them on hold */
+		  return 0; //return j;
 		}
 
 
@@ -271,26 +271,26 @@ namespace lua40mod
 
 
 		public static void luaK_setreturns (FuncState fs, expdesc e, int nresults) {
-		  if (e.k == expkind.VCALL) {  /* expression is an open function call? */
-			SETARG_C(getcode(fs, e), nresults+1);
-		  }
-		  else if (e.k == expkind.VVARARG) {
-			SETARG_B(getcode(fs, e), nresults+1);
-			SETARG_A(getcode(fs, e), fs.freereg);
-			luaK_reserveregs(fs, 1);
-		  }
+//		  if (e.k == expkind.VCALL) {  /* expression is an open function call? */
+//			SETARG_C(getcode(fs, e), nresults+1);
+//		  }
+//		  else if (e.k == expkind.VVARARG) {
+//			SETARG_B(getcode(fs, e), nresults+1);
+//			SETARG_A(getcode(fs, e), fs.freereg);
+//			luaK_reserveregs(fs, 1);
+//		  }
 		}
 
 
 		public static void luaK_setoneret (FuncState fs, expdesc e) {
-		  if (e.k == expkind.VCALL) {  /* expression is an open function call? */
-			e.k = expkind.VNONRELOC;
-			e.u.s.info = GETARG_A(getcode(fs, e));
-		  }
-		  else if (e.k == expkind.VVARARG) {
-			SETARG_B(getcode(fs, e), 2);
-			e.k = expkind.VRELOCABLE;  /* can relocate its simple result */
-		  }
+//		  if (e.k == expkind.VCALL) {  /* expression is an open function call? */
+//			e.k = expkind.VNONRELOC;
+//			e.u.s.info = GETARG_A(getcode(fs, e));
+//		  }
+//		  else if (e.k == expkind.VVARARG) {
+//			SETARG_B(getcode(fs, e), 2);
+//			e.k = expkind.VRELOCABLE;  /* can relocate its simple result */
+//		  }
 		}
 
 
@@ -353,8 +353,8 @@ namespace lua40mod
 			  break;
 			}
 			case expkind.VRELOCABLE: {
-			  InstructionPtr pc = getcode(fs, e);
-			  SETARG_A(pc, reg);
+//			  InstructionPtr pc = getcode(fs, e);
+//			  SETARG_A(pc, reg);
 			  break;
 			}
 			case expkind.VNONRELOC: {
@@ -516,11 +516,11 @@ namespace lua40mod
 
 		private static int jumponcond (FuncState fs, expdesc e, int cond) {
 		  if (e.k == expkind.VRELOCABLE) {
-			InstructionPtr ie = getcode(fs, e);
-			if (GET_OPCODE(ie) == OpCode.OP_NOT) {
-			  fs.pc--;  /* remove previous OpCode.OP_NOT */
-			  return condjump(fs, OpCode.OP_TEST, GETARG_B(ie), 0, (cond==0) ? 1 : 0);
-			}
+//			InstructionPtr ie = getcode(fs, e);
+//			if (GET_OPCODE(ie) == OpCode.OP_NOT) {
+//			  fs.pc--;  /* remove previous OpCode.OP_NOT */
+//			  return condjump(fs, OpCode.OP_TEST, GETARG_B(ie), 0, (cond==0) ? 1 : 0);
+//			}
 			/* else go through */
 		  }
 		  discharge2anyreg(fs, e);
@@ -698,11 +698,11 @@ namespace lua40mod
 			  break;
 			}
 			case UnOpr.OPR_NOT: codenot(fs, e); break;
-			case UnOpr.OPR_LEN: {
-			  luaK_exp2anyreg(fs, e);  /* cannot operate on constants */
-			  codearith(fs, OpCode.OP_LEN, e, e2);
-			  break;
-			}
+//			case UnOpr.OPR_LEN: {
+//			  luaK_exp2anyreg(fs, e);  /* cannot operate on constants */
+//			  codearith(fs, OpCode.OP_LEN, e, e2);
+//			  break;
+//			}
 			default: lua_assert(0); break;
 		  }
 		}
@@ -722,11 +722,11 @@ namespace lua40mod
 			  luaK_exp2nextreg(fs, v);  /* operand must be on the `stack' */
 			  break;
 			}
-			case BinOpr.OPR_ADD: case BinOpr.OPR_SUB: case BinOpr.OPR_MUL: case BinOpr.OPR_DIV:
-			case BinOpr.OPR_MOD: case BinOpr.OPR_POW: {
-			  if ((isnumeral(v)==0)) luaK_exp2RK(fs, v);
-			  break;
-			}
+//			case BinOpr.OPR_ADD: case BinOpr.OPR_SUB: case BinOpr.OPR_MUL: case BinOpr.OPR_DIV:
+//			case BinOpr.OPR_MOD: case BinOpr.OPR_POW: {
+//			  if ((isnumeral(v)==0)) luaK_exp2RK(fs, v);
+//			  break;
+//			}
 			default: {
 			  luaK_exp2RK(fs, v);
 			  break;
@@ -752,24 +752,24 @@ namespace lua40mod
 			  break;
 			}
 			case BinOpr.OPR_CONCAT: {
-			  luaK_exp2val(fs, e2);
-			  if (e2.k == expkind.VRELOCABLE && GET_OPCODE(getcode(fs, e2)) == OpCode.OP_CONCAT) {
-				lua_assert(e1.u.s.info == GETARG_B(getcode(fs, e2))-1);
-				freeexp(fs, e1);
-				SETARG_B(getcode(fs, e2), e1.u.s.info);
-				e1.k = expkind.VRELOCABLE; e1.u.s.info = e2.u.s.info;
-			  }
-			  else {
-				luaK_exp2nextreg(fs, e2);  /* operand must be on the 'stack' */
-				codearith(fs, OpCode.OP_CONCAT, e1, e2);
-			  }
+//			  luaK_exp2val(fs, e2);
+//			  if (e2.k == expkind.VRELOCABLE && GET_OPCODE(getcode(fs, e2)) == OpCode.OP_CONCAT) {
+//				lua_assert(e1.u.s.info == GETARG_B(getcode(fs, e2))-1);
+//				freeexp(fs, e1);
+//				SETARG_B(getcode(fs, e2), e1.u.s.info);
+//				e1.k = expkind.VRELOCABLE; e1.u.s.info = e2.u.s.info;
+//			  }
+//			  else {
+//				luaK_exp2nextreg(fs, e2);  /* operand must be on the 'stack' */
+//				codearith(fs, OpCode.OP_CONCAT, e1, e2);
+//			  }
 			  break;
 			}
 			case BinOpr.OPR_ADD: codearith(fs, OpCode.OP_ADD, e1, e2); break;
 			case BinOpr.OPR_SUB: codearith(fs, OpCode.OP_SUB, e1, e2); break;
-			case BinOpr.OPR_MUL: codearith(fs, OpCode.OP_MUL, e1, e2); break;
+//			case BinOpr.OPR_MUL: codearith(fs, OpCode.OP_MUL, e1, e2); break;
 			case BinOpr.OPR_DIV: codearith(fs, OpCode.OP_DIV, e1, e2); break;
-			case BinOpr.OPR_MOD: codearith(fs, OpCode.OP_MOD, e1, e2); break;
+//			case BinOpr.OPR_MOD: codearith(fs, OpCode.OP_MOD, e1, e2); break;
 			case BinOpr.OPR_POW: codearith(fs, OpCode.OP_POW, e1, e2); break;
 			case BinOpr.OPR_EQ: codecomp(fs, OpCode.OP_EQ, 1, e1, e2); break;
 			case BinOpr.OPR_NE: codecomp(fs, OpCode.OP_EQ, 0, e1, e2); break;

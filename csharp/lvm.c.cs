@@ -50,51 +50,51 @@ namespace lua40mod
 
 
 		private static void traceexec (lua_State L, InstructionPtr pc) {
-		  lu_byte mask = L.hookmask;
-		  InstructionPtr oldpc = new InstructionPtr();
-		  InstructionPtr.Assign(L.savedpc, ref oldpc);
-		  InstructionPtr.Assign(pc, ref L.savedpc);
-		  if (((mask & LUA_MASKCOUNT) != 0) && (L.hookcount == 0)) {
-			resethookcount(L);
-			luaD_callhook(L, LUA_HOOKCOUNT, -1);
-		  }
-		  if ((mask & LUA_MASKLINE) != 0) {
-			Proto p = ci_func(L.ci).l.p;
-			int npc = pcRel(pc, p);
-			int newline = getline(p, npc);
-			/* call linehook when enter a new function, when jump back (loop),
-			   or when enter a new line */
-			if (npc == 0 || pc <= oldpc || newline != getline(p, pcRel(oldpc, p)))
-			  luaD_callhook(L, LUA_HOOKLINE, newline);
-		  }
+//		  lu_byte mask = L.hookmask;
+//		  InstructionPtr oldpc = new InstructionPtr();
+//		  InstructionPtr.Assign(L.savedpc, ref oldpc);
+//		  InstructionPtr.Assign(pc, ref L.savedpc);
+//		  if (((mask & LUA_MASKCOUNT) != 0) && (L.hookcount == 0)) {
+//			resethookcount(L);
+//			luaD_callhook(L, LUA_HOOKCOUNT, -1);
+//		  }
+//		  if ((mask & LUA_MASKLINE) != 0) {
+//			Proto p = ci_func(L.ci).l.p;
+//			int npc = pcRel(pc, p);
+//			int newline = getline(p, npc);
+//			/* call linehook when enter a new function, when jump back (loop),
+//			   or when enter a new line */
+//			if (npc == 0 || pc <= oldpc || newline != getline(p, pcRel(oldpc, p)))
+//			  luaD_callhook(L, LUA_HOOKLINE, newline);
+//		  }
 		}
 
 
 		private static void callTMres (lua_State L, StkId res, TValue f,
 								TValue p1, TValue p2) {
-		  ptrdiff_t result = savestack(L, res);
-		  setobj2s(L, L.top, f);  /* push function */
-		  setobj2s(L, L.top+1, p1);  /* 1st argument */
-		  setobj2s(L, L.top+2, p2);  /* 2nd argument */
-		  luaD_checkstack(L, 3);
-		  L.top += 3;
-		  luaD_call(L, L.top-3, 1);
-		  res = restorestack(L, result);
-		  StkId.dec(ref L.top);
-		  setobjs2s(L, res, L.top);
+//		  ptrdiff_t result = savestack(L, res);
+//		  setobj2s(L, L.top, f);  /* push function */
+//		  setobj2s(L, L.top+1, p1);  /* 1st argument */
+//		  setobj2s(L, L.top+2, p2);  /* 2nd argument */
+//		  luaD_checkstack(L, 3);
+//		  L.top += 3;
+//		  luaD_call(L, L.top-3, 1);
+//		  res = restorestack(L, result);
+//		  StkId.dec(ref L.top);
+//		  setobjs2s(L, res, L.top);
 		}
 
 
 
 		private static void callTM (lua_State L, TValue f, TValue p1,
 							TValue p2, TValue p3) {
-		  setobj2s(L, L.top, f);  /* push function */
-		  setobj2s(L, L.top + 1, p1);  /* 1st argument */
-		  setobj2s(L, L.top + 2, p2);  /* 2nd argument */
-		  setobj2s(L, L.top + 3, p3);  /* 3th argument */
-		  luaD_checkstack(L, 4);
-		  L.top += 4;
-		  luaD_call(L, L.top - 4, 0);
+//		  setobj2s(L, L.top, f);  /* push function */
+//		  setobj2s(L, L.top + 1, p1);  /* 1st argument */
+//		  setobj2s(L, L.top + 2, p2);  /* 2nd argument */
+//		  setobj2s(L, L.top + 3, p3);  /* 3th argument */
+//		  luaD_checkstack(L, 4);
+//		  L.top += 4;
+//		  luaD_call(L, L.top - 4, 0);
 		}
 
 
@@ -719,16 +719,16 @@ namespace lua40mod
 				if (b != 0) L.top = ra + b;  /* else previous instruction set top */
 				InstructionPtr.Assign(pc, ref L.savedpc);
 				switch (luaD_precall(L, ra, nresults)) {
-				  case PCRLUA: {
-					nexeccalls++;
-					goto reentry;  /* restart luaV_execute over new Lua function */
-				  }
-				  case PCRC: {
-					/* it was a C function (`precall' called it); adjust results */
-					if (nresults >= 0) L.top = L.ci.top;
-					base_ = L.base_;
-					continue;
-				  }
+//				  case PCRLUA: {
+//					nexeccalls++;
+//					goto reentry;  /* restart luaV_execute over new Lua function */
+//				  }
+//				  case PCRC: {
+//					/* it was a C function (`precall' called it); adjust results */
+//					if (nresults >= 0) L.top = L.ci.top;
+//					base_ = L.base_;
+//					continue;
+//				  }
 				  default: {
 					return;  /* yield */
 				  }
@@ -740,27 +740,27 @@ namespace lua40mod
 				InstructionPtr.Assign(pc, ref L.savedpc);
 				lua_assert(GETARG_C(i) - 1 == LUA_MULTRET);
 				switch (luaD_precall(L, ra, LUA_MULTRET)) {
-				  case PCRLUA: {
-					/* tail call: put new frame in place of previous one */
-					CallInfo ci = L.ci - 1;  /* previous frame */
-					int aux;
-					StkId func = ci.func;
-					StkId pfunc = (ci+1).func;  /* previous function index */
-					if (L.openupval != null) luaF_close(L, ci.base_);
-					L.base_ = ci.base_ = ci.func + (ci[1].base_ - pfunc);
-					for (aux = 0; pfunc+aux < L.top; aux++)  /* move frame down */
-					  setobjs2s(L, func+aux, pfunc+aux);
-					ci.top = L.top = func+aux;  /* correct top */
-					lua_assert(L.top == L.base_ + clvalue(func).l.p.maxstacksize);
-					InstructionPtr.Assign(L.savedpc, ref ci.savedpc);
-					ci.tailcalls++;  /* one more call lost */
-					CallInfo.dec(ref L.ci);  /* remove new frame */
-					goto reentry;
-				  }
-				  case PCRC: {  /* it was a C function (`precall' called it) */
-					base_ = L.base_;
-					continue;
-				  }
+//				  case PCRLUA: {
+//					/* tail call: put new frame in place of previous one */
+//					CallInfo ci = L.ci - 1;  /* previous frame */
+//					int aux;
+//					StkId func = ci.func;
+//					StkId pfunc = (ci+1).func;  /* previous function index */
+//					if (L.openupval != null) luaF_close(L, ci.base_);
+//					L.base_ = ci.base_ = ci.func + (ci[1].base_ - pfunc);
+//					for (aux = 0; pfunc+aux < L.top; aux++)  /* move frame down */
+//					  setobjs2s(L, func+aux, pfunc+aux);
+//					ci.top = L.top = func+aux;  /* correct top */
+//					lua_assert(L.top == L.base_ + clvalue(func).l.p.maxstacksize);
+//					InstructionPtr.Assign(L.savedpc, ref ci.savedpc);
+//					ci.tailcalls++;  /* one more call lost */
+//					CallInfo.dec(ref L.ci);  /* remove new frame */
+//					goto reentry;
+//				  }
+//				  case PCRC: {  /* it was a C function (`precall' called it) */
+//					base_ = L.base_;
+//					continue;
+//				  }
 				  default: {
 					return;  /* yield */
 				  }

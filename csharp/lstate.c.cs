@@ -93,7 +93,7 @@ namespace lua40mod
 		  L.hookmask = 0;
 		  L.basehookcount = 0;
 		  L.allowhook = 1;
-		  resethookcount(L);
+//		  resethookcount(L);
 		  L.openupval = null;
 		  L.size_ci = 0;
 		  L.nCcalls = L.baseCcalls = 0;
@@ -130,7 +130,7 @@ namespace lua40mod
 		  L1.hookmask = L.hookmask;
 		  L1.basehookcount = L.basehookcount;
 		  L1.hook = L.hook;
-		  resethookcount(L1);
+//		  resethookcount(L1);
 		  lua_assert(iswhite(obj2gco(L1)));
 		  return L1;
 		}
@@ -146,55 +146,56 @@ namespace lua40mod
 
 
 		public static lua_State lua_newstate (lua_Alloc f, object ud) {
-		  int i;
-		  lua_State L;
-		  global_State g;
-		  //object l = f(ud, null, 0, (uint)state_size(typeof(LG)));
-		  object l = f(typeof(LG));
-		  if (l == null) return null;
-		  L = tostate(l);
-		  g = (L as LG).g;
-		  L.next = null;
-		  L.tt = LUA_TTHREAD;
-		  g.currentwhite = (lu_byte)bit2mask(WHITE0BIT, FIXEDBIT);
-		  L.marked = luaC_white(g);
-		  lu_byte marked = L.marked;	// can't pass properties in as ref
-		  set2bits(ref marked, FIXEDBIT, SFIXEDBIT);
-		  L.marked = marked;
-		  preinit_state(L, g);
-		  g.frealloc = f;
-		  g.ud = ud;
-		  g.mainthread = L;
-		  g.uvhead.u.l.prev = g.uvhead;
-		  g.uvhead.u.l.next = g.uvhead;
-		  g.GCthreshold = 0;  /* mark it as unfinished state */
-		  g.strt.size = 0;
-		  g.strt.nuse = 0;
-		  g.strt.hash = null;
-		  setnilvalue(registry(L));
-		  luaZ_initbuffer(L, g.buff);
-		  g.panic = null;
-		  g.gcstate = GCSpause;
-		  g.rootgc = obj2gco(L);
-		  g.sweepstrgc = 0;
-		  g.sweepgc = new RootGCRef(g);
-		  g.gray = null;
-		  g.grayagain = null;
-		  g.weak = null;
-		  g.tmudata = null;
-		  g.totalbytes = (uint)GetUnmanagedSize(typeof(LG));
-		  g.gcpause = LUAI_GCPAUSE;
-		  g.gcstepmul = LUAI_GCMUL;
-		  g.gcdept = 0;
-		  for (i=0; i<NUM_TAGS; i++) g.mt[i] = null;
-		  if (luaD_rawrunprotected(L, f_luaopen, null) != 0) {
-			/* memory allocation error: free partial state */
-			close_state(L);
-			L = null;
-		  }
-		  else
-			luai_userstateopen(L);
-		  return L;
+//		  int i;
+//		  lua_State L;
+//		  global_State g;
+//		  //object l = f(ud, null, 0, (uint)state_size(typeof(LG)));
+//		  object l = f(typeof(LG));
+//		  if (l == null) return null;
+//		  L = tostate(l);
+//		  g = (L as LG).g;
+//		  L.next = null;
+//		  L.tt = LUA_TTHREAD;
+//		  g.currentwhite = (lu_byte)bit2mask(WHITE0BIT, FIXEDBIT);
+//		  L.marked = luaC_white(g);
+//		  lu_byte marked = L.marked;	// can't pass properties in as ref
+//		  set2bits(ref marked, FIXEDBIT, SFIXEDBIT);
+//		  L.marked = marked;
+//		  preinit_state(L, g);
+//		  g.frealloc = f;
+//		  g.ud = ud;
+//		  g.mainthread = L;
+//		  g.uvhead.u.l.prev = g.uvhead;
+//		  g.uvhead.u.l.next = g.uvhead;
+//		  g.GCthreshold = 0;  /* mark it as unfinished state */
+//		  g.strt.size = 0;
+//		  g.strt.nuse = 0;
+//		  g.strt.hash = null;
+//		  setnilvalue(registry(L));
+//		  luaZ_initbuffer(L, g.buff);
+//		  g.panic = null;
+//		  g.gcstate = GCSpause;
+//		  g.rootgc = obj2gco(L);
+//		  g.sweepstrgc = 0;
+//		  g.sweepgc = new RootGCRef(g);
+//		  g.gray = null;
+//		  g.grayagain = null;
+//		  g.weak = null;
+//		  g.tmudata = null;
+//		  g.totalbytes = (uint)GetUnmanagedSize(typeof(LG));
+//		  g.gcpause = LUAI_GCPAUSE;
+//		  g.gcstepmul = LUAI_GCMUL;
+//		  g.gcdept = 0;
+//		  for (i=0; i<NUM_TAGS; i++) g.mt[i] = null;
+//		  if (luaD_rawrunprotected(L, f_luaopen, null) != 0) {
+//			/* memory allocation error: free partial state */
+//			close_state(L);
+//			L = null;
+//		  }
+//		  else
+//			luai_userstateopen(L);
+//		  return L;
+			return null;
 		}
 
 
@@ -205,19 +206,19 @@ namespace lua40mod
 
 
 		public static void lua_close (lua_State L) {
-		  L = G(L).mainthread;  /* only the main thread can be closed */
-		  lua_lock(L);
-		  luaF_close(L, L.stack[0]);  /* close all upvalues for this thread */
-		  luaC_separateudata(L, 1);  /* separate udata that have GC metamethods */
-		  L.errfunc = 0;  /* no error function during GC metamethods */
-		  do {  /* repeat until no more errors */
-			L.ci = L.base_ci[0];
-			L.base_ = L.top = L.ci.base_;
-			L.nCcalls = L.baseCcalls = 0;
-		  } while (luaD_rawrunprotected(L, callallgcTM, null) != 0);
-		  lua_assert(G(L).tmudata == null);
-		  luai_userstateclose(L);
-		  close_state(L);
+//		  L = G(L).mainthread;  /* only the main thread can be closed */
+//		  lua_lock(L);
+//		  luaF_close(L, L.stack[0]);  /* close all upvalues for this thread */
+//		  luaC_separateudata(L, 1);  /* separate udata that have GC metamethods */
+//		  L.errfunc = 0;  /* no error function during GC metamethods */
+//		  do {  /* repeat until no more errors */
+//			L.ci = L.base_ci[0];
+//			L.base_ = L.top = L.ci.base_;
+//			L.nCcalls = L.baseCcalls = 0;
+//		  } while (luaD_rawrunprotected(L, callallgcTM, null) != 0);
+//		  lua_assert(G(L).tmudata == null);
+//		  luai_userstateclose(L);
+//		  close_state(L);
 		}
 
 	}

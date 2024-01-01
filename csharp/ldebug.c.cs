@@ -16,19 +16,21 @@ namespace lua40mod
 
 
 		private static int currentpc (lua_State L, CallInfo ci) {
-		  if (!isLua(ci)) return -1;  /* function is not a Lua function? */
-		  if (ci == L.ci)
-			InstructionPtr.Assign(L.savedpc, ref ci.savedpc);
-		  return pcRel(ci.savedpc, ci_func(ci).l.p);
+//		  if (!isLua(ci)) return -1;  /* function is not a Lua function? */
+//		  if (ci == L.ci)
+//			InstructionPtr.Assign(L.savedpc, ref ci.savedpc);
+//		  return pcRel(ci.savedpc, ci_func(ci).l.p);
+			return 0;
 		}
 
 
 		private static int currentline (lua_State L, CallInfo ci) {
-		  int pc = currentpc(L, ci);
-		  if (pc < 0)
-			return -1;  /* only active lua functions have current-line information */
-		  else
-			return getline(ci_func(ci).l.p, pc);
+//		  int pc = currentpc(L, ci);
+//		  if (pc < 0)
+//			return -1;  /* only active lua functions have current-line information */
+//		  else
+//			return getline(ci_func(ci).l.p, pc);
+			return 0;
 		}
 
 
@@ -36,14 +38,14 @@ namespace lua40mod
 		** this function can be called asynchronous (e.g. during a signal)
 		*/
 		public static int lua_sethook (lua_State L, lua_Hook func, int mask, int count) {
-		  if (func == null || mask == 0) {  /* turn off hooks? */
-			mask = 0;
-			func = null;
-		  }
-		  L.hook = func;
-		  L.basehookcount = count;
-		  resethookcount(L);
-		  L.hookmask = cast_byte(mask);
+//		  if (func == null || mask == 0) {  /* turn off hooks? */
+//			mask = 0;
+//			func = null;
+//		  }
+//		  L.hook = func;
+//		  L.basehookcount = count;
+//		  resethookcount(L);
+//		  L.hookmask = cast_byte(mask);
 		  return 1;
 		}
 
@@ -604,15 +606,15 @@ namespace lua40mod
 
 
 		public static void luaG_errormsg (lua_State L) {
-		  if (L.errfunc != 0) {  /* is there an error handling function? */
-			StkId errfunc = restorestack(L, L.errfunc);
-			if (!ttisfunction(errfunc)) luaD_throw(L, LUA_ERRERR);
-			setobjs2s(L, L.top, L.top - 1);  /* move argument */
-			setobjs2s(L, L.top - 1, errfunc);  /* push function */
-			incr_top(L);
-			luaD_call(L, L.top - 2, 1);  /* call it */
-		  }
-		  luaD_throw(L, LUA_ERRRUN);
+//		  if (L.errfunc != 0) {  /* is there an error handling function? */
+//			StkId errfunc = restorestack(L, L.errfunc);
+//			if (!ttisfunction(errfunc)) luaD_throw(L, LUA_ERRERR);
+//			setobjs2s(L, L.top, L.top - 1);  /* move argument */
+//			setobjs2s(L, L.top - 1, errfunc);  /* push function */
+//			incr_top(L);
+//			luaD_call(L, L.top - 2, 1);  /* call it */
+//		  }
+//		  luaD_throw(L, LUA_ERRRUN);
 		}
 
 		public static void luaG_runerror(lua_State L, CharPtr fmt, params object[] argp)

@@ -89,15 +89,15 @@ namespace lua40mod
 
 		public static int lua_checkstack (lua_State L, int size) {
 		  int res = 1;
-		  lua_lock(L);
-		  if (size > LUAI_MAXCSTACK || (L.top - L.base_ + size) > LUAI_MAXCSTACK)
-			res = 0;  /* stack overflow */
-		  else if (size > 0) {
-			luaD_checkstack(L, size);
-			if (L.ci.top < L.top + size)
-			  L.ci.top = L.top + size;
-		  }
-		  lua_unlock(L);
+//		  lua_lock(L);
+//		  if (size > LUAI_MAXCSTACK || (L.top - L.base_ + size) > LUAI_MAXCSTACK)
+//			res = 0;  /* stack overflow */
+//		  else if (size > 0) {
+//			luaD_checkstack(L, size);
+//			if (L.ci.top < L.top + size)
+//			  L.ci.top = L.top + size;
+//		  }
+//		  lua_unlock(L);
 		  return res;
 		}
 
@@ -805,25 +805,26 @@ namespace lua40mod
 
 
 		public static int lua_pcall (lua_State L, int nargs, int nresults, int errfunc) {
-		  CallS c = new CallS();
-		  int status;
-		  ptrdiff_t func;
-		  lua_lock(L);
-		  api_checknelems(L, nargs+1);
-		  checkresults(L, nargs, nresults);
-		  if (errfunc == 0)
-			func = 0;
-		  else {
-			StkId o = index2adr(L, errfunc);
-			api_checkvalidindex(L, o);
-			func = savestack(L, o);
-		  }
-		  c.func = L.top - (nargs+1);  /* function to be called */
-		  c.nresults = nresults;
-		  status = luaD_pcall(L, f_call, c, savestack(L, c.func), func);
-		  adjustresults(L, nresults);
-		  lua_unlock(L);
-		  return status;
+//		  CallS c = new CallS();
+//		  int status;
+//		  ptrdiff_t func;
+//		  lua_lock(L);
+//		  api_checknelems(L, nargs+1);
+//		  checkresults(L, nargs, nresults);
+//		  if (errfunc == 0)
+//			func = 0;
+//		  else {
+//			StkId o = index2adr(L, errfunc);
+//			api_checkvalidindex(L, o);
+//			func = savestack(L, o);
+//		  }
+//		  c.func = L.top - (nargs+1);  /* function to be called */
+//		  c.nresults = nresults;
+//		  status = luaD_pcall(L, f_call, c, savestack(L, c.func), func);
+//		  adjustresults(L, nresults);
+//		  lua_unlock(L);
+//		  return status;
+			return 0;
 		}
 
 
@@ -850,14 +851,15 @@ namespace lua40mod
 
 
 		public static int lua_cpcall (lua_State L, lua_CFunction func, object ud) {
-		  CCallS c = new CCallS();
-		  int status;
-		  lua_lock(L);
-		  c.func = func;
-		  c.ud = ud;
-		  status = luaD_pcall(L, f_Ccall, c, savestack(L, L.top), 0);
-		  lua_unlock(L);
-		  return status;
+//		  CCallS c = new CCallS();
+//		  int status;
+//		  lua_lock(L);
+//		  c.func = func;
+//		  c.ud = ud;
+//		  status = luaD_pcall(L, f_Ccall, c, savestack(L, L.top), 0);
+//		  lua_unlock(L);
+//		  return status;
+			return 0;
 		}
 
 

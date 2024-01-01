@@ -461,7 +461,7 @@ namespace lua40mod
 		private static void lastlistfield (FuncState fs, ConsControl cc) {
 		  if (cc.tostore == 0) return;
 		  if (hasmultret(cc.v.k) != 0) {
-			luaK_setmultret(fs, cc.v);
+//			luaK_setmultret(fs, cc.v);
 			luaK_setlist(fs, cc.t.u.s.info, cc.na, LUA_MULTRET);
 			cc.na--;  /* do not count last expression (unknown number of elements) */
 		  }
@@ -606,7 +606,7 @@ namespace lua40mod
 				args.k = expkind.VVOID;
 			  else {
 				explist1(ls, args);
-				luaK_setmultret(fs, args);
+//				luaK_setmultret(fs, args);
 			  }
 			  check_match(ls, ')', '(', line);
 			  break;
@@ -764,7 +764,7 @@ namespace lua40mod
 		  switch (op) {
 			case (int)RESERVED.TK_NOT: return UnOpr.OPR_NOT;
 			case '-': return UnOpr.OPR_MINUS;
-			case '#': return UnOpr.OPR_LEN;
+//			case '#': return UnOpr.OPR_LEN;
 			default: return UnOpr.OPR_NOUNOPR;
 		  }
 		}
@@ -774,9 +774,9 @@ namespace lua40mod
 		  switch (op) {
 			case '+': return BinOpr.OPR_ADD;
 			case '-': return BinOpr.OPR_SUB;
-			case '*': return BinOpr.OPR_MUL;
+			case '*': return BinOpr.OPR_MULT;
 			case '/': return BinOpr.OPR_DIV;
-			case '%': return BinOpr.OPR_MOD;
+//			case '%': return BinOpr.OPR_MOD;
 			case '^': return BinOpr.OPR_POW;
 			case (int)RESERVED.TK_CONCAT: return BinOpr.OPR_CONCAT;
 			case (int)RESERVED.TK_NE: return BinOpr.OPR_NE;
@@ -1054,22 +1054,22 @@ namespace lua40mod
 
 		private static void forbody (LexState ls, int base_, int line, int nvars, int isnum) {
 		  /* forbody . DO block */
-		  BlockCnt bl = new BlockCnt();
-		  FuncState fs = ls.fs;
-		  int prep, endfor;
-		  adjustlocalvars(ls, 3);  /* control variables */
-		  checknext(ls, (int)RESERVED.TK_DO);
-		  prep = (isnum != 0) ? luaK_codeAsBx(fs, OpCode.OP_FORPREP, base_, NO_JUMP) : luaK_jump(fs);
-		  enterblock(fs, bl, 0);  /* scope for declared variables */
-		  adjustlocalvars(ls, nvars);
-		  luaK_reserveregs(fs, nvars);
-		  block(ls);
-		  leaveblock(fs);  /* end of scope for declared variables */
-		  luaK_patchtohere(fs, prep);
-		  endfor = (isnum!=0) ? luaK_codeAsBx(fs, OpCode.OP_FORLOOP, base_, NO_JUMP) :
-							 luaK_codeABC(fs, OpCode.OP_TFORLOOP, base_, 0, nvars);
-		  luaK_fixline(fs, line);  /* pretend that `OP_FOR' starts the loop */
-		  luaK_patchlist(fs, ((isnum!=0) ? endfor : luaK_jump(fs)), prep + 1);
+//		  BlockCnt bl = new BlockCnt();
+//		  FuncState fs = ls.fs;
+//		  int prep, endfor;
+//		  adjustlocalvars(ls, 3);  /* control variables */
+//		  checknext(ls, (int)RESERVED.TK_DO);
+//		  prep = (isnum != 0) ? luaK_codeAsBx(fs, OpCode.OP_FORPREP, base_, NO_JUMP) : luaK_jump(fs);
+//		  enterblock(fs, bl, 0);  /* scope for declared variables */
+//		  adjustlocalvars(ls, nvars);
+//		  luaK_reserveregs(fs, nvars);
+//		  block(ls);
+//		  leaveblock(fs);  /* end of scope for declared variables */
+//		  luaK_patchtohere(fs, prep);
+//		  endfor = (isnum!=0) ? luaK_codeAsBx(fs, OpCode.OP_FORLOOP, base_, NO_JUMP) :
+//							 luaK_codeABC(fs, OpCode.OP_TFORLOOP, base_, 0, nvars);
+//		  luaK_fixline(fs, line);  /* pretend that `OP_FOR' starts the loop */
+//		  luaK_patchlist(fs, ((isnum!=0) ? endfor : luaK_jump(fs)), prep + 1);
 		}
 
 
@@ -1235,48 +1235,48 @@ namespace lua40mod
 
 		private static void exprstat (LexState ls) {
 		  /* stat . func | assignment */
-		  FuncState fs = ls.fs;
-		  LHS_assign v = new LHS_assign();
-		  primaryexp(ls, v.v);
-		  if (v.v.k == expkind.VCALL)  /* stat . func */
-			SETARG_C(getcode(fs, v.v), 1);  /* call statement uses no results */
-		  else {  /* stat . assignment */
-			v.prev = null;
-			assignment(ls, v, 1);
-		  }
+//		  FuncState fs = ls.fs;
+//		  LHS_assign v = new LHS_assign();
+//		  primaryexp(ls, v.v);
+//		  if (v.v.k == expkind.VCALL)  /* stat . func */
+//			SETARG_C(getcode(fs, v.v), 1);  /* call statement uses no results */
+//		  else {  /* stat . assignment */
+//			v.prev = null;
+//			assignment(ls, v, 1);
+//		  }
 		}
 
 
 		private static void retstat (LexState ls) {
 		  /* stat . RETURN explist */
-		  FuncState fs = ls.fs;
-		  expdesc e = new expdesc();
-		  int first, nret;  /* registers with returned values */
-		  luaX_next(ls);  /* skip RETURN */
-		  if ((block_follow(ls.t.token)!=0) || ls.t.token == ';')
-			first = nret = 0;  /* return no values */
-		  else {
-			nret = explist1(ls, e);  /* optional return values */
-			if (hasmultret(e.k) != 0) {
-			  luaK_setmultret(fs, e);
-			  if (e.k == expkind.VCALL && nret == 1) {  /* tail call? */
-				SET_OPCODE(getcode(fs,e), OpCode.OP_TAILCALL);
-				lua_assert(GETARG_A(getcode(fs,e)) == fs.nactvar);
-			  }
-			  first = fs.nactvar;
-			  nret = LUA_MULTRET;  /* return all values */
-			}
-			else {
-			  if (nret == 1)  /* only one single value? */
-				first = luaK_exp2anyreg(fs, e);
-			  else {
-				luaK_exp2nextreg(fs, e);  /* values must go to the `stack' */
-				first = fs.nactvar;  /* return all `active' values */
-				lua_assert(nret == fs.freereg - first);
-			  }
-			}
-		  }
-		  luaK_ret(fs, first, nret);
+//		  FuncState fs = ls.fs;
+//		  expdesc e = new expdesc();
+//		  int first, nret;  /* registers with returned values */
+//		  luaX_next(ls);  /* skip RETURN */
+//		  if ((block_follow(ls.t.token)!=0) || ls.t.token == ';')
+//			first = nret = 0;  /* return no values */
+//		  else {
+//			nret = explist1(ls, e);  /* optional return values */
+//			if (hasmultret(e.k) != 0) {
+//			  luaK_setmultret(fs, e);
+//			  if (e.k == expkind.VCALL && nret == 1) {  /* tail call? */
+//				SET_OPCODE(getcode(fs,e), OpCode.OP_TAILCALL);
+//				lua_assert(GETARG_A(getcode(fs,e)) == fs.nactvar);
+//			  }
+//			  first = fs.nactvar;
+//			  nret = LUA_MULTRET;  /* return all values */
+//			}
+//			else {
+//			  if (nret == 1)  /* only one single value? */
+//				first = luaK_exp2anyreg(fs, e);
+//			  else {
+//				luaK_exp2nextreg(fs, e);  /* values must go to the `stack' */
+//				first = fs.nactvar;  /* return all `active' values */
+//				lua_assert(nret == fs.freereg - first);
+//			  }
+//			}
+//		  }
+//		  luaK_ret(fs, first, nret);
 		}
 
 
