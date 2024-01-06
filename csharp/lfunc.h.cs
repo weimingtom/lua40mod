@@ -1,15 +1,30 @@
+/*
+** $Id: lfunc.h,v 1.13 2000/09/29 12:42:13 roberto Exp $
+** Auxiliary functions to manipulate prototypes and closures
+** See Copyright Notice in lua.h
+*/
+
+//#ifndef lfunc_h
+//#define lfunc_h
+
+
+//#include "lobject.h"
+
 namespace lua40mod
 {
 	using TValue = Lua.lua_TValue;
 	
 	public partial class Lua
 	{
-		public static int sizeCclosure(int n) {
-			return GetUnmanagedSize(typeof(CClosure)) + GetUnmanagedSize(typeof(TValue)) * (n - 1);
-		}
+//Proto *luaF_newproto (lua_State *L);
+//void luaF_protook (lua_State *L, Proto *f, int pc);
+//Closure *luaF_newclosure (lua_State *L, int nelems);
+//void luaF_freeproto (lua_State *L, Proto *f);
+//void luaF_freeclosure (lua_State *L, Closure *c);
 
-		public static int sizeLclosure(int n) {
-			return GetUnmanagedSize(typeof(LClosure)) + GetUnmanagedSize(typeof(TValue)) * (n - 1);
-		}
+//const char *luaF_getlocalname (const Proto *func, int local_number, int pc);
+
+
+//#endif
 	}
 }

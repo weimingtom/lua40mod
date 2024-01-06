@@ -245,8 +245,8 @@ namespace lua40mod
 
 		public static void checkliveness(global_State g, TValue obj)
 		{
-			lua_assert(!iscollectable(obj) ||
-			((ttype(obj) == obj.value.gc.gch.tt) && !isdead(g, obj.value.gc)));
+//			lua_assert(!iscollectable(obj) ||
+//			((ttype(obj) == obj.value.gc.gch.tt) && !isdead(g, obj.value.gc)));
 		}
 
 

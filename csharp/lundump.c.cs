@@ -23,7 +23,7 @@ namespace lua40mod
 
 		public class LoadState{
 			public lua_State L;
-			public ZIO Z;
+			public zio Z;
 			public Mbuffer b;
 			public CharPtr name;
 		};
@@ -205,7 +205,7 @@ namespace lua40mod
 		/*
 		** load precompiled chunk
 		*/
-		public static Proto luaU_undump (lua_State L, ZIO Z, Mbuffer buff, CharPtr name)
+		public static Proto luaU_undump (lua_State L, zio Z, Mbuffer buff, CharPtr name)
 		{
 		 LoadState S = new LoadState();
 		 if (name[0] == '@' || name[0] == '=')

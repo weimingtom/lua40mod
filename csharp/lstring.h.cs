@@ -13,9 +13,9 @@ namespace lua40mod
 
 		public static void luaS_fix(TString s)
 		{
-			lu_byte marked = s.tsv.marked;	// can't pass properties in as ref
-			l_setbit(ref marked, FIXEDBIT);
-			s.tsv.marked = marked;
+//			lu_byte marked = s.tsv.marked;	// can't pass properties in as ref
+//			l_setbit(ref marked, FIXEDBIT);
+//			s.tsv.marked = marked;
 		}
 	}
 }

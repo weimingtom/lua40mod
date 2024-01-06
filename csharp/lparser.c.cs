@@ -119,15 +119,16 @@ namespace lua40mod
 
 
 		private static int registerlocalvar (LexState ls, TString varname) {
-		  FuncState fs = ls.fs;
-		  Proto f = fs.f;
-		  int oldsize = f.sizelocvars;
-		  luaM_growvector(ls.L, ref f.locvars, fs.nlocvars, ref f.sizelocvars,
-						  (int)SHRT_MAX, "too many local variables");
-		  while (oldsize < f.sizelocvars) f.locvars[oldsize++].varname = null;
-		  f.locvars[fs.nlocvars].varname = varname;
-		  luaC_objbarrier(ls.L, f, varname);
-		  return fs.nlocvars++;
+//		  FuncState fs = ls.fs;
+//		  Proto f = fs.f;
+//		  int oldsize = f.sizelocvars;
+//		  luaM_growvector(ls.L, ref f.locvars, fs.nlocvars, ref f.sizelocvars,
+//						  (int)SHRT_MAX, "too many local variables");
+//		  while (oldsize < f.sizelocvars) f.locvars[oldsize++].varname = null;
+//		  f.locvars[fs.nlocvars].varname = varname;
+//		  luaC_objbarrier(ls.L, f, varname);
+//		  return fs.nlocvars++;
+			return 0;
 		}
 
 
@@ -160,25 +161,26 @@ namespace lua40mod
 
 
 		private static int indexupvalue (FuncState fs, TString name, expdesc v) {
-		  int i;
-		  Proto f = fs.f;
-		  int oldsize = f.sizeupvalues;
-		  for (i=0; i<f.nups; i++) {
-			if ((int)fs.upvalues[i].k == (int)v.k && fs.upvalues[i].info == v.u.s.info) {
-			  lua_assert(f.upvalues[i] == name);
-			  return i;
-			}
-		  }
-		  /* new one */
-		  luaY_checklimit(fs, f.nups + 1, LUAI_MAXUPVALUES, "upvalues");
-		  luaM_growvector(fs.L, ref f.upvalues, f.nups, ref f.sizeupvalues, MAX_INT, "");
-		  while (oldsize < f.sizeupvalues) f.upvalues[oldsize++] = null;
-		  f.upvalues[f.nups] = name;
-		  luaC_objbarrier(fs.L, f, name);
-		  lua_assert(v.k == expkind.VLOCAL || v.k == expkind.VUPVAL);
-		  fs.upvalues[f.nups].k = cast_byte(v.k);
-		  fs.upvalues[f.nups].info = cast_byte(v.u.s.info);
-		  return f.nups++;
+//		  int i;
+//		  Proto f = fs.f;
+//		  int oldsize = f.sizeupvalues;
+//		  for (i=0; i<f.nups; i++) {
+//			if ((int)fs.upvalues[i].k == (int)v.k && fs.upvalues[i].info == v.u.s.info) {
+//			  lua_assert(f.upvalues[i] == name);
+//			  return i;
+//			}
+//		  }
+//		  /* new one */
+//		  luaY_checklimit(fs, f.nups + 1, LUAI_MAXUPVALUES, "upvalues");
+//		  luaM_growvector(fs.L, ref f.upvalues, f.nups, ref f.sizeupvalues, MAX_INT, "");
+//		  while (oldsize < f.sizeupvalues) f.upvalues[oldsize++] = null;
+//		  f.upvalues[f.nups] = name;
+//		  luaC_objbarrier(fs.L, f, name);
+//		  lua_assert(v.k == expkind.VLOCAL || v.k == expkind.VUPVAL);
+//		  fs.upvalues[f.nups].k = cast_byte(v.k);
+//		  fs.upvalues[f.nups].info = cast_byte(v.u.s.info);
+//		  return f.nups++;
+			return 0;
 		}
 
 
@@ -287,20 +289,20 @@ namespace lua40mod
 
 
 		private static void pushclosure (LexState ls, FuncState func, expdesc v) {
-		  FuncState fs = ls.fs;
-		  Proto f = fs.f;
-		  int oldsize = f.sizep;
-		  int i;
-		  luaM_growvector(ls.L, ref f.p, fs.np, ref f.sizep, 
-						  MAXARG_Bx, "constant table overflow");
-		  while (oldsize < f.sizep) f.p[oldsize++] = null;
-		  f.p[fs.np++] = func.f;
-		  luaC_objbarrier(ls.L, f, func.f);
-		  init_exp(v, expkind.VRELOCABLE, luaK_codeABx(fs, OpCode.OP_CLOSURE, 0, fs.np - 1));
-		  for (i=0; i<func.f.nups; i++) {
-			OpCode o = ((int)func.upvalues[i].k == (int)expkind.VLOCAL) ? OpCode.OP_MOVE : OpCode.OP_GETUPVAL;
-			luaK_codeABC(fs, o, 0, func.upvalues[i].info, 0);
-		  }
+//		  FuncState fs = ls.fs;
+//		  Proto f = fs.f;
+//		  int oldsize = f.sizep;
+//		  int i;
+//		  luaM_growvector(ls.L, ref f.p, fs.np, ref f.sizep, 
+//						  MAXARG_Bx, "constant table overflow");
+//		  while (oldsize < f.sizep) f.p[oldsize++] = null;
+//		  f.p[fs.np++] = func.f;
+//		  luaC_objbarrier(ls.L, f, func.f);
+//		  init_exp(v, expkind.VRELOCABLE, luaK_codeABx(fs, OpCode.OP_CLOSURE, 0, fs.np - 1));
+//		  for (i=0; i<func.f.nups; i++) {
+//			OpCode o = ((int)func.upvalues[i].k == (int)expkind.VLOCAL) ? OpCode.OP_MOVE : OpCode.OP_GETUPVAL;
+//			luaK_codeABC(fs, o, 0, func.upvalues[i].info, 0);
+//		  }
 		}
 
 
@@ -366,21 +368,22 @@ namespace lua40mod
 		}
 
 
-		public static Proto luaY_parser (lua_State L, ZIO z, Mbuffer buff, CharPtr name) {
-		  LexState lexstate = new LexState();
-		  FuncState funcstate = new FuncState();
-		  lexstate.buff = buff;
-		  luaX_setinput(L, lexstate, z, luaS_new(L, name));
-		  open_func(lexstate, funcstate);
-		  funcstate.f.is_vararg = VARARG_ISVARARG;  /* main func. is always vararg */
-		  luaX_next(lexstate);  /* read first token */
-		  chunk(lexstate);
-		  check(lexstate, (int)RESERVED.TK_EOS);
-		  close_func(lexstate);
-		  lua_assert(funcstate.prev == null);
-		  lua_assert(funcstate.f.nups == 0);
-		  lua_assert(lexstate.fs == null);
-		  return funcstate.f;
+		public static Proto luaY_parser (lua_State L, zio z, Mbuffer buff, CharPtr name) {
+//		  LexState lexstate = new LexState();
+//		  FuncState funcstate = new FuncState();
+//		  lexstate.buff = buff;
+//		  luaX_setinput(L, lexstate, z, luaS_new(L, name));
+//		  open_func(lexstate, funcstate);
+//		  funcstate.f.is_vararg = VARARG_ISVARARG;  /* main func. is always vararg */
+//		  luaX_next(lexstate);  /* read first token */
+//		  chunk(lexstate);
+//		  check(lexstate, (int)RESERVED.TK_EOS);
+//		  close_func(lexstate);
+//		  lua_assert(funcstate.prev == null);
+//		  lua_assert(funcstate.f.nups == 0);
+//		  lua_assert(lexstate.fs == null);
+//		  return funcstate.f;
+			return null;
 		}
 
 
@@ -726,14 +729,14 @@ namespace lua40mod
 			  init_exp(v, expkind.VNIL, 0);
 			  break;
 			}
-			case (int)RESERVED.TK_TRUE: {
-			  init_exp(v, expkind.VTRUE, 0);
-			  break;
-			}
-			case (int)RESERVED.TK_FALSE: {
-			  init_exp(v, expkind.VFALSE, 0);
-			  break;
-			}
+//			case (int)RESERVED.TK_TRUE: {
+//			  init_exp(v, expkind.VTRUE, 0);
+//			  break;
+//			}
+//			case (int)RESERVED.TK_FALSE: {
+//			  init_exp(v, expkind.VFALSE, 0);
+//			  break;
+//			}
 			case (int)RESERVED.TK_DOTS: {  /* vararg */
 			  FuncState fs = ls.fs;
 			  check_condition(ls, fs.f.is_vararg!=0,
@@ -1110,7 +1113,7 @@ namespace lua40mod
 		  new_localvar(ls, indexname, nvars++);
 		  while (testnext(ls, ',') != 0)
 			new_localvar(ls, str_checkname(ls), nvars++);
-		  checknext(ls, (int)RESERVED.TK_IN);
+//		  checknext(ls, (int)RESERVED.TK_IN);
 		  line = ls.linenumber;
 		  adjust_assign(ls, 3, explist1(ls, e), e);
 		  luaK_checkstack(fs, 3);  /* extra space to call generator */
@@ -1129,9 +1132,9 @@ namespace lua40mod
 		  switch (ls.t.token) {
 			case '=': fornum(ls, varname, line); break;
 			case ',':
-			case (int)RESERVED.TK_IN:
-				forlist(ls, varname);
-				break;
+//			case (int)RESERVED.TK_IN:
+//				forlist(ls, varname);
+//				break;
 			default: luaX_syntaxerror(ls, LUA_QL("=") + " or " + LUA_QL("in") + " expected"); break;
 		  }
 		  check_match(ls, (int)RESERVED.TK_END, (int)RESERVED.TK_FOR, line);

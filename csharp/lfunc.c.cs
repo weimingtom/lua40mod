@@ -16,32 +16,34 @@ namespace lua40mod
 
 		public static Closure luaF_newCclosure (lua_State L, int nelems, Table e) {
 		  //Closure c = (Closure)luaM_malloc(L, sizeCclosure(nelems));	
-		  Closure c = luaM_new<Closure>(L);
-		  AddTotalBytes(L, sizeCclosure(nelems));
-		  luaC_link(L, obj2gco(c), LUA_TFUNCTION);
-		  c.c.isC = 1;
-		  c.c.env = e;
-		  c.c.nupvalues = cast_byte(nelems);
-		  c.c.upvalue = new TValue[nelems];
-		  for (int i = 0; i < nelems; i++)
-			  c.c.upvalue[i] = new lua_TValue();
-		  return c;
+//		  Closure c = luaM_new<Closure>(L);
+//		  AddTotalBytes(L, sizeCclosure(nelems));
+//		  luaC_link(L, obj2gco(c), LUA_TFUNCTION);
+//		  c.c.isC = 1;
+//		  c.c.env = e;
+//		  c.c.nupvalues = cast_byte(nelems);
+//		  c.c.upvalue = new TValue[nelems];
+//		  for (int i = 0; i < nelems; i++)
+//			  c.c.upvalue[i] = new lua_TValue();
+//		  return c;
+		  return null;
 		}
 
 
 		public static Closure luaF_newLclosure (lua_State L, int nelems, Table e) {
 		  //Closure c = (Closure)luaM_malloc(L, sizeLclosure(nelems));
-		  Closure c = luaM_new<Closure>(L);
-		  AddTotalBytes(L, sizeLclosure(nelems));
-		  luaC_link(L, obj2gco(c), LUA_TFUNCTION);
-		  c.l.isC = 0;
-		  c.l.env = e;
-		  c.l.nupvalues = cast_byte(nelems);
-		  c.l.upvals = new UpVal[nelems];
-		  for (int i = 0; i < nelems; i++)
-			  c.l.upvals[i] = new UpVal();
-		  while (nelems-- > 0) c.l.upvals[nelems] = null;
-		  return c;
+//		  Closure c = luaM_new<Closure>(L);
+//		  AddTotalBytes(L, sizeLclosure(nelems));
+//		  luaC_link(L, obj2gco(c), LUA_TFUNCTION);
+//		  c.l.isC = 0;
+//		  c.l.env = e;
+//		  c.l.nupvalues = cast_byte(nelems);
+//		  c.l.upvals = new UpVal[nelems];
+//		  for (int i = 0; i < nelems; i++)
+//			  c.l.upvals[i] = new UpVal();
+//		  while (nelems-- > 0) c.l.upvals[nelems] = null;
+//		  return c;
+		  return null;
 		}
 
 
@@ -54,31 +56,32 @@ namespace lua40mod
 		}
 
 		public static UpVal luaF_findupval (lua_State L, StkId level) {
-		  global_State g = G(L);
-		  GCObjectRef pp = new OpenValRef(L);
-		  UpVal p;
-		  UpVal uv;
-		  while (pp.get() != null && (p = ngcotouv(pp.get())).v >= level) {
-			lua_assert(p.v != p.u.value);
-			if (p.v == level) {  /* found a corresponding upvalue? */
-			  if (isdead(g, obj2gco(p)))  /* is it dead? */
-				changewhite(obj2gco(p));  /* ressurect it */
-			  return p;
-			}
-			pp = new NextRef(p);
-		  }
-		  uv = luaM_new<UpVal>(L);  /* not found: create a new one */
-		  uv.tt = LUA_TUPVAL;
-		  uv.marked = luaC_white(g);
-		  uv.v = level;  /* current value lives in the stack */
-		  uv.next = pp.get();  /* chain it in the proper position */
-		  pp.set( obj2gco(uv) );
-		  uv.u.l.prev = g.uvhead;  /* double link it in `uvhead' list */
-		  uv.u.l.next = g.uvhead.u.l.next;
-		  uv.u.l.next.u.l.prev = uv;
-		  g.uvhead.u.l.next = uv;
-		  lua_assert(uv.u.l.next.u.l.prev == uv && uv.u.l.prev.u.l.next == uv);
-		  return uv;
+//		  global_State g = G(L);
+//		  GCObjectRef pp = new OpenValRef(L);
+//		  UpVal p;
+//		  UpVal uv;
+//		  while (pp.get() != null && (p = ngcotouv(pp.get())).v >= level) {
+//			lua_assert(p.v != p.u.value);
+//			if (p.v == level) {  /* found a corresponding upvalue? */
+//			  if (isdead(g, obj2gco(p)))  /* is it dead? */
+//				changewhite(obj2gco(p));  /* ressurect it */
+//			  return p;
+//			}
+//			pp = new NextRef(p);
+//		  }
+//		  uv = luaM_new<UpVal>(L);  /* not found: create a new one */
+//		  uv.tt = LUA_TUPVAL;
+//		  uv.marked = luaC_white(g);
+//		  uv.v = level;  /* current value lives in the stack */
+//		  uv.next = pp.get();  /* chain it in the proper position */
+//		  pp.set( obj2gco(uv) );
+//		  uv.u.l.prev = g.uvhead;  /* double link it in `uvhead' list */
+//		  uv.u.l.next = g.uvhead.u.l.next;
+//		  uv.u.l.next.u.l.prev = uv;
+//		  g.uvhead.u.l.next = uv;
+//		  lua_assert(uv.u.l.next.u.l.prev == uv && uv.u.l.prev.u.l.next == uv);
+//		  return uv;
+			return null;
 		}
 
 
@@ -97,21 +100,21 @@ namespace lua40mod
 
 
 		public static void luaF_close (lua_State L, StkId level) {
-		  UpVal uv;
-		  global_State g = G(L);
-		  while (L.openupval != null && (uv = ngcotouv(L.openupval)).v >= level) {
-			GCObject o = obj2gco(uv);
-			lua_assert(!isblack(o) && uv.v != uv.u.value);
-			L.openupval = uv.next;  /* remove from `open' list */
-			if (isdead(g, o))
-			  luaF_freeupval(L, uv);  /* free upvalue */
-			else {
-			  unlinkupval(uv);
-			  setobj(L, uv.u.value, uv.v);
-			  uv.v = uv.u.value;  /* now current value lives here */
-			  luaC_linkupval(L, uv);  /* link upvalue into `gcroot' list */
-			}
-		  }
+//		  UpVal uv;
+//		  global_State g = G(L);
+//		  while (L.openupval != null && (uv = ngcotouv(L.openupval)).v >= level) {
+//			GCObject o = obj2gco(uv);
+//			lua_assert(!isblack(o) && uv.v != uv.u.value);
+//			L.openupval = uv.next;  /* remove from `open' list */
+//			if (isdead(g, o))
+//			  luaF_freeupval(L, uv);  /* free upvalue */
+//			else {
+//			  unlinkupval(uv);
+//			  setobj(L, uv.u.value, uv.v);
+//			  uv.v = uv.u.value;  /* now current value lives here */
+//			  luaC_linkupval(L, uv);  /* link upvalue into `gcroot' list */
+//			}
+//		  }
 		}
 
 
@@ -152,10 +155,10 @@ namespace lua40mod
 
 		// we have a gc, so nothing to do
 		public static void luaF_freeclosure (lua_State L, Closure c) {
-		  int size = (c.c.isC != 0) ? sizeCclosure(c.c.nupvalues) :
-								  sizeLclosure(c.l.nupvalues);
-		  //luaM_freemem(L, c, size);
-		  SubtractTotalBytes(L, size);
+//		  int size = (c.c.isC != 0) ? sizeCclosure(c.c.nupvalues) :
+//								  sizeLclosure(c.l.nupvalues);
+//		  //luaM_freemem(L, c, size);
+//		  SubtractTotalBytes(L, size);
 		}
 
 

@@ -135,7 +135,7 @@ namespace lua40mod
 		public static lua_State lua_newthread (lua_State L) {
 		  lua_State L1;
 		  lua_lock(L);
-		  luaC_checkGC(L);
+//		  luaC_checkGC(L);
 		  L1 = luaE_newthread(L);
 		  setthvalue(L, L.top, L1);
 		  api_incr_top(L);
@@ -208,12 +208,12 @@ namespace lua40mod
 			Closure func = curr_func(L);
 			api_check(L, ttistable(L.top - 1)); 
 			func.c.env = hvalue(L.top - 1);
-			luaC_barrier(L, func, L.top - 1);
+//			luaC_barrier(L, func, L.top - 1);
 		  }
 		  else {
 			setobj(L, o, L.top - 1);
-			if (idx < LUA_GLOBALSINDEX)  /* function upvalue? */
-			  luaC_barrier(L, curr_func(L), L.top - 1);
+//			if (idx < LUA_GLOBALSINDEX)  /* function upvalue? */
+//			  luaC_barrier(L, curr_func(L), L.top - 1);
 		  }
 		  StkId.dec(ref L.top);
 		  lua_unlock(L);
@@ -343,7 +343,7 @@ namespace lua40mod
 			  lua_unlock(L);
 			  return null;
 			}
-			luaC_checkGC(L);
+//			luaC_checkGC(L);
 			o = index2adr(L, idx);  /* previous call may reallocate the stack */
 			lua_unlock(L);
 		  }
@@ -438,7 +438,7 @@ namespace lua40mod
 
 		public static void lua_pushlstring (lua_State L, CharPtr s, uint len) {
 		  lua_lock(L);
-		  luaC_checkGC(L);
+//		  luaC_checkGC(L);
 		  setsvalue2s(L, L.top, luaS_newlstr(L, s, len));
 		  api_incr_top(L);
 		  lua_unlock(L);
@@ -457,7 +457,7 @@ namespace lua40mod
 											  object[] argp) {
 		  CharPtr ret;
 		  lua_lock(L);
-		  luaC_checkGC(L);
+//		  luaC_checkGC(L);
 		  ret = luaO_pushvfstring(L, fmt, argp);
 		  lua_unlock(L);
 		  return ret;
@@ -467,7 +467,7 @@ namespace lua40mod
 		public static CharPtr lua_pushfstring (lua_State L, CharPtr fmt) {
 			CharPtr ret;
 			lua_lock(L);
-			luaC_checkGC(L);
+//			luaC_checkGC(L);
 			ret = luaO_pushvfstring(L, fmt, null);
 			lua_unlock(L);
 			return ret;
@@ -477,7 +477,7 @@ namespace lua40mod
 		{
 			  CharPtr ret;
 			  lua_lock(L);
-			  luaC_checkGC(L);
+//			  luaC_checkGC(L);
 			  ret = luaO_pushvfstring(L, fmt, p);
 			  lua_unlock(L);
 			  return ret;
@@ -486,7 +486,7 @@ namespace lua40mod
 		public static void lua_pushcclosure (lua_State L, lua_CFunction fn, int n) {
 		  Closure cl;
 		  lua_lock(L);
-		  luaC_checkGC(L);
+//		  luaC_checkGC(L);
 		  api_checknelems(L, n);
 		  cl = luaF_newCclosure(L, n, getcurrenv(L));
 		  cl.c.f = fn;
@@ -494,7 +494,7 @@ namespace lua40mod
 		  while (n-- != 0)
 			setobj2n(L, cl.c.upvalue[n], L.top+n);
 		  setclvalue(L, L.top, cl);
-		  lua_assert(iswhite(obj2gco(cl)));
+//		  lua_assert(iswhite(obj2gco(cl)));
 		  api_incr_top(L);
 		  lua_unlock(L);
 		}
@@ -576,7 +576,7 @@ namespace lua40mod
 
 		public static void lua_createtable (lua_State L, int narray, int nrec) {
 		  lua_lock(L);
-		  luaC_checkGC(L);
+//		  luaC_checkGC(L);
 		  sethvalue(L, L.top, luaH_new(L, narray, nrec));
 		  api_incr_top(L);
 		  lua_unlock(L);
@@ -674,7 +674,7 @@ namespace lua40mod
 		  t = index2adr(L, idx);
 		  api_check(L, ttistable(t));
 		  setobj2t(L, luaH_set(L, hvalue(t), L.top-2), L.top-1);
-		  luaC_barriert(L, hvalue(t), L.top-1);
+//		  luaC_barriert(L, hvalue(t), L.top-1);
 		  L.top -= 2;
 		  lua_unlock(L);
 		}
@@ -687,7 +687,7 @@ namespace lua40mod
 		  o = index2adr(L, idx);
 		  api_check(L, ttistable(o));
 		  setobj2t(L, luaH_setnum(L, hvalue(o), n), L.top-1);
-		  luaC_barriert(L, hvalue(o), L.top-1);
+//		  luaC_barriert(L, hvalue(o), L.top-1);
 		  StkId.dec(ref L.top);
 		  lua_unlock(L);
 		}
@@ -709,14 +709,14 @@ namespace lua40mod
 		  switch (ttype(obj)) {
 			case LUA_TTABLE: {
 			  hvalue(obj).metatable = mt;
-			  if (mt != null)
-				luaC_objbarriert(L, hvalue(obj), mt);
+//			  if (mt != null)
+//				luaC_objbarriert(L, hvalue(obj), mt);
 			  break;
 			}
 			case LUA_TUSERDATA: {
 			  uvalue(obj).metatable = mt;
-			  if (mt != null)
-				luaC_objbarrier(L, rawuvalue(obj), mt);
+//			  if (mt != null)
+//				luaC_objbarrier(L, rawuvalue(obj), mt);
 			  break;
 			}
 			default: {
@@ -752,7 +752,7 @@ namespace lua40mod
 			  res = 0;
 			  break;
 		  }
-		  if (res != 0) luaC_objbarrier(L, gcvalue(o), hvalue(L.top - 1));
+//		  if (res != 0) luaC_objbarrier(L, gcvalue(o), hvalue(L.top - 1));
 		  StkId.dec(ref L.top);
 		  lua_unlock(L);
 		  return res;
@@ -865,7 +865,7 @@ namespace lua40mod
 
 		public static int lua_load (lua_State L, lua_Reader reader, object data,
 							  CharPtr chunkname) {
-		  ZIO z = new ZIO();
+		  zio z = new zio();
 		  int status;
 		  lua_lock(L);
 		  if (chunkname == null) chunkname = "?";
@@ -902,62 +902,63 @@ namespace lua40mod
 
 		public static int lua_gc (lua_State L, int what, int data) {
 		  int res = 0;
-		  global_State g;
-		  lua_lock(L);
-		  g = G(L);
-		  switch (what) {
-			case LUA_GCSTOP: {
-			  g.GCthreshold = MAX_LUMEM;
-			  break;
-			}
-			case LUA_GCRESTART: {
-			  g.GCthreshold = g.totalbytes;
-			  break;
-			}
-			case LUA_GCCOLLECT: {
-			  luaC_fullgc(L);
-			  break;
-			}
-			case LUA_GCCOUNT: {
-			  /* GC values are expressed in Kbytes: #bytes/2^10 */
-			  res = cast_int(g.totalbytes >> 10);
-			  break;
-			}
-			case LUA_GCCOUNTB: {
-			  res = cast_int(g.totalbytes & 0x3ff);
-			  break;
-			}
-			case LUA_GCSTEP: {
-			  lu_mem a = ((lu_mem)data << 10);
-			  if (a <= g.totalbytes)
-				g.GCthreshold = (uint)(g.totalbytes - a);
-			  else
-				g.GCthreshold = 0;
-			  while (g.GCthreshold <= g.totalbytes) {
-				luaC_step(L);
-				if (g.gcstate == GCSpause) {  /* end of cycle? */
-				  res = 1;  /* signal it */
-				  break;
-				}
-			  }
-			  break;
-			}
-			case LUA_GCSETPAUSE: {
-			  res = g.gcpause;
-			  g.gcpause = data;
-			  break;
-			}
-			case LUA_GCSETSTEPMUL: {
-			  res = g.gcstepmul;
-			  g.gcstepmul = data;
-			  break;
-			}
-			default:
-				res = -1;  /* invalid option */
-				break;
-		  }
-		  lua_unlock(L);
-		  return res;
+//		  global_State g;
+//		  lua_lock(L);
+//		  g = G(L);
+//		  switch (what) {
+//			case LUA_GCSTOP: {
+//			  g.GCthreshold = MAX_LUMEM;
+//			  break;
+//			}
+//			case LUA_GCRESTART: {
+//			  g.GCthreshold = g.totalbytes;
+//			  break;
+//			}
+//			case LUA_GCCOLLECT: {
+//			  luaC_fullgc(L);
+//			  break;
+//			}
+//			case LUA_GCCOUNT: {
+//			  /* GC values are expressed in Kbytes: #bytes/2^10 */
+//			  res = cast_int(g.totalbytes >> 10);
+//			  break;
+//			}
+//			case LUA_GCCOUNTB: {
+//			  res = cast_int(g.totalbytes & 0x3ff);
+//			  break;
+//			}
+//			case LUA_GCSTEP: {
+//			  lu_mem a = ((lu_mem)data << 10);
+//			  if (a <= g.totalbytes)
+//				g.GCthreshold = (uint)(g.totalbytes - a);
+//			  else
+//				g.GCthreshold = 0;
+//			  while (g.GCthreshold <= g.totalbytes) {
+//				luaC_step(L);
+//				if (g.gcstate == GCSpause) {  /* end of cycle? */
+//				  res = 1;  /* signal it */
+//				  break;
+//				}
+//			  }
+//			  break;
+//			}
+//			case LUA_GCSETPAUSE: {
+//			  res = g.gcpause;
+//			  g.gcpause = data;
+//			  break;
+//			}
+//			case LUA_GCSETSTEPMUL: {
+//			  res = g.gcstepmul;
+//			  g.gcstepmul = data;
+//			  break;
+//			}
+//			default:
+//				res = -1;  /* invalid option */
+//				break;
+//		  }
+//		  lua_unlock(L);
+//		  return res;
+		  return 0;
 		}
 
 
@@ -994,19 +995,19 @@ namespace lua40mod
 
 
 		public static void lua_concat (lua_State L, int n) {
-		  lua_lock(L);
-		  api_checknelems(L, n);
-		  if (n >= 2) {
-			luaC_checkGC(L);
-			luaV_concat(L, n, cast_int(L.top - L.base_) - 1);
-			L.top -= (n-1);
-		  }
-		  else if (n == 0) {  /* push empty string */
-			setsvalue2s(L, L.top, luaS_newlstr(L, "", 0));
-			api_incr_top(L);
-		  }
-		  /* else n == 1; nothing to do */
-		  lua_unlock(L);
+//		  lua_lock(L);
+//		  api_checknelems(L, n);
+//		  if (n >= 2) {
+//			luaC_checkGC(L);
+//			luaV_concat(L, n, cast_int(L.top - L.base_) - 1);
+//			L.top -= (n-1);
+//		  }
+//		  else if (n == 0) {  /* push empty string */
+//			setsvalue2s(L, L.top, luaS_newlstr(L, "", 0));
+//			api_incr_top(L);
+//		  }
+//		  /* else n == 1; nothing to do */
+//		  lua_unlock(L);
 		}
 
 
@@ -1032,7 +1033,7 @@ namespace lua40mod
 		{
 			Udata u;
 			lua_lock(L);
-			luaC_checkGC(L);
+//			luaC_checkGC(L);
 			u = luaS_newudata(L, size, getcurrenv(L));
 			setuvalue(L, L.top, u);
 			api_incr_top(L);
@@ -1044,7 +1045,7 @@ namespace lua40mod
 		{
 			Udata u;
 			lua_lock(L);
-			luaC_checkGC(L);
+//			luaC_checkGC(L);
 			u = luaS_newudata(L, t, getcurrenv(L));
 			setuvalue(L, L.top, u);
 			api_incr_top(L);
@@ -1095,7 +1096,7 @@ namespace lua40mod
 		  if (name != null) {
 			StkId.dec(ref L.top);
 			setobj(L, val, L.top);
-			luaC_barrier(L, clvalue(fi), L.top);
+//			luaC_barrier(L, clvalue(fi), L.top);
 		  }
 		  lua_unlock(L);
 		  return name;

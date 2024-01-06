@@ -124,30 +124,30 @@ namespace lua40mod
 		}
 
 		public static void luaV_settable (lua_State L, TValue t, TValue key, StkId val) {
-		  int loop;
-
-		  for (loop = 0; loop < MAXTAGLOOP; loop++) {
-			TValue tm;
-			if (ttistable(t)) {  /* `t' is a table? */
-			  Table h = hvalue(t);
-			  TValue oldval = luaH_set(L, h, key); /* do a primitive set */
-			  if (!ttisnil(oldval) ||  /* result is no nil? */
-				  (tm = fasttm(L, h.metatable, TMS.TM_NEWINDEX)) == null) { /* or no TM? */
-				setobj2t(L, oldval, val);
-				luaC_barriert(L, h, val);
-				return;
-			  }
-			  /* else will try the tag method */
-			}
-			else if (ttisnil(tm = luaT_gettmbyobj(L, t, TMS.TM_NEWINDEX)))
-			  luaG_typeerror(L, t, "index");
-			if (ttisfunction(tm)) {
-			  callTM(L, tm, t, key, val);
-			  return;
-			}
-			t = tm;  /* else repeat with `tm' */ 
-		  }
-		  luaG_runerror(L, "loop in settable");
+//		  int loop;
+//
+//		  for (loop = 0; loop < MAXTAGLOOP; loop++) {
+//			TValue tm;
+//			if (ttistable(t)) {  /* `t' is a table? */
+//			  Table h = hvalue(t);
+//			  TValue oldval = luaH_set(L, h, key); /* do a primitive set */
+//			  if (!ttisnil(oldval) ||  /* result is no nil? */
+//				  (tm = fasttm(L, h.metatable, TMS.TM_NEWINDEX)) == null) { /* or no TM? */
+//				setobj2t(L, oldval, val);
+//				luaC_barriert(L, h, val);
+//				return;
+//			  }
+//			  /* else will try the tag method */
+//			}
+//			else if (ttisnil(tm = luaT_gettmbyobj(L, t, TMS.TM_NEWINDEX)))
+//			  luaG_typeerror(L, t, "index");
+//			if (ttisfunction(tm)) {
+//			  callTM(L, tm, t, key, val);
+//			  return;
+//			}
+//			t = tm;  /* else repeat with `tm' */ 
+//		  }
+//		  luaG_runerror(L, "loop in settable");
 		}
 
 
@@ -548,7 +548,7 @@ namespace lua40mod
 			  case OpCode.OP_SETUPVAL: {
 				UpVal uv = cl.upvals[GETARG_B(i)];
 				setobj(L, uv.v, ra);
-				luaC_barrier(L, uv, ra);
+//				luaC_barrier(L, uv, ra);
 				continue;
 			  }
 			  case OpCode.OP_SETTABLE: {
@@ -565,9 +565,9 @@ namespace lua40mod
 				int c = GETARG_C(i);
 				sethvalue(L, ra, luaH_new(L, luaO_fb2int(b), luaO_fb2int(c)));
 				//Protect(
-				  InstructionPtr.Assign(pc, ref L.savedpc);
-				  luaC_checkGC(L);
-				  base_ = L.base_;
+//				  InstructionPtr.Assign(pc, ref L.savedpc);
+//				  luaC_checkGC(L);
+//				  base_ = L.base_;
 				  //);
 				InstructionPtr.Assign(pc, ref L.savedpc);
 				continue;
@@ -655,9 +655,9 @@ namespace lua40mod
 				int b = GETARG_B(i);
 				int c = GETARG_C(i);
 				//Protect(
-				  InstructionPtr.Assign(pc, ref L.savedpc);
-				  luaV_concat(L, c-b+1, c); luaC_checkGC(L);
-				  base_ = L.base_;
+//				  InstructionPtr.Assign(pc, ref L.savedpc);
+//				  luaV_concat(L, c-b+1, c); luaC_checkGC(L);
+//				  base_ = L.base_;
 				  //);
 				setobjs2s(L, RA(L, base_, i), base_ + b);
 				continue;
@@ -850,7 +850,7 @@ namespace lua40mod
 				for (; n > 0; n--) {
 				  TValue val = ra+n;
 				  setobj2t(L, luaH_setnum(L, h, last--), val);
-				  luaC_barriert(L, h, val);
+//				  luaC_barriert(L, h, val);
 				}
 				continue;
 			  }
@@ -876,9 +876,9 @@ namespace lua40mod
 				}
 				setclvalue(L, ra, ncl);
 				//Protect(
-				  InstructionPtr.Assign(pc, ref L.savedpc);
-					luaC_checkGC(L);
-				  base_ = L.base_;
+//				  InstructionPtr.Assign(pc, ref L.savedpc);
+//					luaC_checkGC(L);
+//				  base_ = L.base_;
 				  //);
 				continue;
 			  }

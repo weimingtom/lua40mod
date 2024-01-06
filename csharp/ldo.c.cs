@@ -219,39 +219,40 @@ public static void luaD_checkstack (lua_State L, int n) {
 
 
 		private static StkId adjust_varargs (lua_State L, Proto p, int actual) {
-		  int i;
-		  int nfixargs = p.numparams;
-		  Table htab = null;
-		  StkId base_, fixed_;
-		  for (; actual < nfixargs; ++actual)
-			  setnilvalue(StkId.inc(ref L.top));
-		#if LUA_COMPAT_VARARG
-		  if ((p.is_vararg & VARARG_NEEDSARG) != 0) { /* compat. with old-style vararg? */
-			int nvar = actual - nfixargs;  /* number of extra arguments */
-			lua_assert(p.is_vararg & VARARG_HASARG);
-			luaC_checkGC(L);
-			htab = luaH_new(L, nvar, 1);  /* create `arg' table */
-			for (i=0; i<nvar; i++)  /* put extra arguments into `arg' table */
-			  setobj2n(L, luaH_setnum(L, htab, i+1), L.top - nvar + i);
-			/* store counter in field `n' */
-			setnvalue(luaH_setstr(L, htab, luaS_newliteral(L, "n")), cast_num(nvar));
-		  }
-		#endif
-		  /* move fixed parameters to final position */
-		  fixed_ = L.top - actual;  /* first fixed argument */
-		  base_ = L.top;  /* final position of first argument */
-		  for (i=0; i<nfixargs; i++) {
-			setobjs2s(L, StkId.inc(ref L.top), fixed_ + i);
-			setnilvalue(fixed_ + i);
-		  }
-		  /* add `arg' parameter */
-		  if (htab!=null) {
-			StkId top = L.top;
-			StkId.inc(ref L.top);
-			sethvalue(L, top, htab);
-			lua_assert(iswhite(obj2gco(htab)));
-		  }
-		  return base_;
+//		  int i;
+//		  int nfixargs = p.numparams;
+//		  Table htab = null;
+//		  StkId base_, fixed_;
+//		  for (; actual < nfixargs; ++actual)
+//			  setnilvalue(StkId.inc(ref L.top));
+//		#if LUA_COMPAT_VARARG
+////		  if ((p.is_vararg & VARARG_NEEDSARG) != 0) { /* compat. with old-style vararg? */
+////			int nvar = actual - nfixargs;  /* number of extra arguments */
+////			lua_assert(p.is_vararg & VARARG_HASARG);
+////			luaC_checkGC(L);
+////			htab = luaH_new(L, nvar, 1);  /* create `arg' table */
+////			for (i=0; i<nvar; i++)  /* put extra arguments into `arg' table */
+////			  setobj2n(L, luaH_setnum(L, htab, i+1), L.top - nvar + i);
+////			/* store counter in field `n' */
+////			setnvalue(luaH_setstr(L, htab, luaS_newliteral(L, "n")), cast_num(nvar));
+////		  }
+//		#endif
+//		  /* move fixed parameters to final position */
+//		  fixed_ = L.top - actual;  /* first fixed argument */
+//		  base_ = L.top;  /* final position of first argument */
+//		  for (i=0; i<nfixargs; i++) {
+//			setobjs2s(L, StkId.inc(ref L.top), fixed_ + i);
+//			setnilvalue(fixed_ + i);
+//		  }
+//		  /* add `arg' parameter */
+//		  if (htab!=null) {
+//			StkId top = L.top;
+//			StkId.inc(ref L.top);
+//			sethvalue(L, top, htab);
+//			lua_assert(iswhite(obj2gco(htab)));
+//		  }
+//		  return base_;
+			return null;
 		}
 
 
@@ -510,7 +511,7 @@ public static void luaD_checkstack (lua_State L, int n) {
 		** Execute a protected parser.
 		*/
 		public class SParser {  /* data to `f_parser' */
-		  public ZIO z;
+		  public zio z;
 		  public Mbuffer buff = new Mbuffer();  /* buffer to be used by the scanner */
 		  public CharPtr name;
 		};
@@ -521,7 +522,7 @@ public static void luaD_checkstack (lua_State L, int n) {
 		  Closure cl;
 		  SParser p = (SParser)ud;
 		  int c = luaZ_lookahead(p.z);
-		  luaC_checkGC(L);
+//		  luaC_checkGC(L);
 		  tf = (c == LUA_SIGNATURE[0]) ?
 			luaU_undump(L, p.z, p.buff, p.name) :
 			luaY_parser(L, p.z, p.buff, p.name);
@@ -534,7 +535,7 @@ public static void luaD_checkstack (lua_State L, int n) {
 		}
 
 
-		public static int luaD_protectedparser (lua_State L, ZIO z, CharPtr name) {
+		public static int luaD_protectedparser (lua_State L, zio z, CharPtr name) {
 //		  SParser p = new SParser();
 //		  int status;
 //		  p.z = z; p.name = new CharPtr(name);

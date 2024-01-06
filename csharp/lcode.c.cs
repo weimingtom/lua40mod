@@ -234,7 +234,7 @@ namespace lua40mod
 							MAXARG_Bx, "constant table overflow");
 			while (oldsize < f.sizek) setnilvalue(f.k[oldsize++]);
 			setobj(L, f.k[fs.nk], v);
-			luaC_barrier(L, f, v);
+//			luaC_barrier(L, f, v);
 			return fs.nk++;
 		  }
 		}

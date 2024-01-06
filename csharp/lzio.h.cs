@@ -4,11 +4,11 @@ namespace lua40mod
 	{
 		public const int EOZ = 0xffff; //-1;			/* end of stream */ //FIXME:changed here
 
-		public class ZIO : Zio { };
+		public class zio : Zio { };
 
 		public static int char2int(char c) { return (int)c; }
 
-		public static int zgetc(ZIO z)
+		public static int zgetc(zio z)
 		{
 			if (z.n > 0)
 			{

@@ -1,13 +1,27 @@
+/*
+** $Id: llex.h,v 1.31 2000/09/27 17:41:58 roberto Exp $
+** Lexical Analyzer
+** See Copyright Notice in lua.h
+*/
+
+//#ifndef llex_h
+//#define llex_h
+
+//#include "lobject.h"
+//#include "lzio.h"
+
+
+
 namespace lua40mod
 {
-	using lua_Number = System.Double;
+	using Number = System.Double;
 	
 	public partial class Lua
 	{
 		public const int FIRST_RESERVED	= 257;
 
-		/* maximum length of a reserved word */
-		public const int TOKEN_LEN	= 9; // "function"
+		/* maximum length of a reserved word (+1 for final 0) */
+		public const int TOKEN_LEN	= 15;
 
 
 		/*
@@ -17,12 +31,11 @@ namespace lua40mod
 		public enum RESERVED {
 		  /* terminal symbols denoted by reserved words */
 		  TK_AND = FIRST_RESERVED, TK_BREAK,
-		  TK_DO, TK_ELSE, TK_ELSEIF, TK_END, TK_FALSE, TK_FOR, TK_FUNCTION,
-		  TK_IF, TK_IN, TK_LOCAL, TK_NIL, TK_NOT, TK_OR, TK_REPEAT,
-		  TK_RETURN, TK_THEN, TK_TRUE, TK_UNTIL, TK_WHILE,
-		  /* other terminal symbols */
-		  TK_CONCAT, TK_DOTS, TK_EQ, TK_GE, TK_LE, TK_NE, TK_NUMBER,
-		  TK_NAME, TK_STRING, TK_EOS
+          TK_DO, TK_ELSE, TK_ELSEIF, TK_END, TK_FOR, TK_FUNCTION, TK_IF, TK_LOCAL,
+          TK_NIL, TK_NOT, TK_OR, TK_REPEAT, TK_RETURN, TK_THEN, TK_UNTIL, TK_WHILE,
+          /* other terminal symbols */
+          TK_NAME, TK_CONCAT, TK_DOTS, TK_EQ, TK_GE, TK_LE, TK_NE, TK_NUMBER,
+          TK_STRING, TK_EOS
 		};
 
 		/* number of reserved words */
@@ -35,7 +48,7 @@ namespace lua40mod
 				this.r = copy.r;
 				this.ts = copy.ts;
 			}
-			public lua_Number r;
+			public Number r;
 			public TString ts;
 		} ;  /* semantics information */
 
@@ -52,17 +65,26 @@ namespace lua40mod
 
 
 		public class LexState {
-			public int current;  /* current character (charint) */
-			public int linenumber;  /* input line counter */
-			public int lastline;  /* line of last token `consumed' */
+			public int current;  /* current character */
 			public Token t = new Token();  /* current token */
 			public Token lookahead = new Token();  /* look ahead token */
 			public FuncState fs;  /* `FuncState' is private to the parser */
 			public lua_State L;
-			public ZIO z;  /* input stream */
-			public Mbuffer buff;  /* buffer for tokens */
+			public zio z;  /* input stream */
+			public int linenumber;  /* input line counter */
+			public int lastline;  /* line of last token `consumed' */
 			public TString source;  /* current source name */
-			public char decpoint;  /* locale decimal point */
 		};
+		
+//void luaX_init (lua_State *L);
+//void luaX_setinput (lua_State *L, LexState *LS, ZIO *z, TString *source);
+//int luaX_lex (LexState *LS, SemInfo *seminfo);
+//void luaX_checklimit (LexState *ls, int val, int limit, const char *msg);
+//void luaX_syntaxerror (LexState *ls, const char *s, const char *token);
+//void luaX_error (LexState *ls, const char *s, int token);
+//void luaX_token2str (int token, char *s);		
+
+
+//#endif
 	}
 }

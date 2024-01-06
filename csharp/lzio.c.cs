@@ -10,7 +10,7 @@ namespace lua40mod
 	{
 
 
-		public static int luaZ_fill (ZIO z) {
+		public static int luaZ_fill (zio z) {
 		  uint size;
 		  lua_State L = z.L;
 		  CharPtr buff;
@@ -26,7 +26,7 @@ namespace lua40mod
 		}
 
 
-		public static int luaZ_lookahead (ZIO z) {
+		public static int luaZ_lookahead (zio z) {
 		  if (z.n == 0) {
 			if (luaZ_fill(z) == EOZ)
 			  return EOZ;
@@ -39,7 +39,7 @@ namespace lua40mod
 		}
 
 
-		public static void luaZ_init(lua_State L, ZIO z, lua_Reader reader, object data)
+		public static void luaZ_init(lua_State L, zio z, lua_Reader reader, object data)
 		{
 		  z.L = L;
 		  z.reader = reader;
@@ -50,7 +50,7 @@ namespace lua40mod
 
 
 		/* --------------------------------------------------------------- read --- */
-		public static uint luaZ_read (ZIO z, CharPtr b, uint n) {
+		public static uint luaZ_read (zio z, CharPtr b, uint n) {
 		  b = new CharPtr(b);
 		  while (n != 0) {
 			uint m;
