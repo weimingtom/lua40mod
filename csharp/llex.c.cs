@@ -46,13 +46,13 @@ namespace lua40mod
 
 		
 		public static void luaX_init (lua_State L) {
-		  int i;
-		  for (i=0; i<NUM_RESERVED; i++) {
-			TString ts = luaS_new(L, luaX_tokens[i]);
-			luaS_fix(ts);  /* reserved words are never collected */
-			lua_assert(luaX_tokens[i].Length+1 <= TOKEN_LEN);
-			ts.tsv.reserved = cast_byte(i+1);  /* reserved word */
-		  }
+//		  int i;
+//		  for (i=0; i<NUM_RESERVED; i++) {
+//			TString ts = luaS_new(L, luaX_tokens[i]);
+//			luaS_fix(ts);  /* reserved words are never collected */
+//			lua_assert(luaX_tokens[i].Length+1 <= TOKEN_LEN);
+//			ts.tsv.reserved = cast_byte(i+1);  /* reserved word */
+//		  }
 		}
 
 
@@ -60,13 +60,14 @@ namespace lua40mod
 
 
 		public static CharPtr luaX_token2str (LexState ls, int token) {
-		  if (token < FIRST_RESERVED) {
-			lua_assert(token == (byte)token);
-			return (iscntrl(token)) ? luaO_pushfstring(ls.L, "char(%d)", token) :
-									  luaO_pushfstring(ls.L, "%c", token);
-		  }
-		  else
-			return luaX_tokens[(int)token-FIRST_RESERVED];
+//		  if (token < FIRST_RESERVED) {
+//			lua_assert(token == (byte)token);
+//			return (iscntrl(token)) ? luaO_pushfstring(ls.L, "char(%d)", token) :
+//									  luaO_pushfstring(ls.L, "%c", token);
+//		  }
+//		  else
+//			return luaX_tokens[(int)token-FIRST_RESERVED];
+			return null;
 		}
 
 
@@ -108,13 +109,13 @@ namespace lua40mod
 
 
 		private static void inclinenumber (LexState ls) {
-		  int old = ls.current;
-		  lua_assert(currIsNewline(ls));
-		  next(ls);  /* skip `\n' or `\r' */
-		  if (currIsNewline(ls) && ls.current != old)
-			next(ls);  /* skip `\n\r' or `\r\n' */
-		  if (++ls.linenumber >= MAX_INT)
-			luaX_syntaxerror(ls, "chunk has too many lines");
+//		  int old = ls.current;
+//		  lua_assert(currIsNewline(ls));
+//		  next(ls);  /* skip `\n' or `\r' */
+//		  if (currIsNewline(ls) && ls.current != old)
+//			next(ls);  /* skip `\n\r' or `\r\n' */
+//		  if (++ls.linenumber >= MAX_INT)
+//			luaX_syntaxerror(ls, "chunk has too many lines");
 		}
 
 
@@ -192,15 +193,16 @@ namespace lua40mod
 
 
 		private static int skip_sep (LexState ls) {
-		  int count = 0;
-		  int s = ls.current;
-		  lua_assert(s == '[' || s == ']');
-		  save_and_next(ls);
-		  while (ls.current == '=') {
-			save_and_next(ls);
-			count++;
-		  }
-		  return (ls.current == s) ? count : (-count) - 1;
+//		  int count = 0;
+//		  int s = ls.current;
+//		  lua_assert(s == '[' || s == ']');
+//		  save_and_next(ls);
+//		  while (ls.current == '=') {
+//			save_and_next(ls);
+//			count++;
+//		  }
+//		  return (ls.current == s) ? count : (-count) - 1;
+			return 0;
 		}
 
 
@@ -447,8 +449,8 @@ namespace lua40mod
 
 
 		public static void luaX_lookahead (LexState ls) {
-			lua_assert(ls.lookahead.token == (int)RESERVED.TK_EOS);
-		  ls.lookahead.token = llex(ls, ls.lookahead.seminfo);
+//			lua_assert(ls.lookahead.token == (int)RESERVED.TK_EOS);
+//		  ls.lookahead.token = llex(ls, ls.lookahead.seminfo);
 		}
 
 	}

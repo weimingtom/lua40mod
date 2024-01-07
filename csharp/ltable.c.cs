@@ -86,18 +86,19 @@ namespace lua40mod
 		** of its hash value)
 		*/
 		private static Node mainposition (Table t, TValue key) {
-		  switch (ttype(key)) {
-			case LUA_TNUMBER:
-			  return hashnum(t, nvalue(key));
-			case LUA_TSTRING:
-			  return hashstr(t, rawtsvalue(key));
-			case LUA_TBOOLEAN:
-			  return hashboolean(t, bvalue(key));
-			case LUA_TLIGHTUSERDATA:
-			  return hashpointer(t, pvalue(key));
-			default:
-				return hashpointer(t, gcvalue(key));
-		  }
+//		  switch (ttype(key)) {
+//			case LUA_TNUMBER:
+//			  return hashnum(t, nvalue(key));
+//			case LUA_TSTRING:
+//			  return hashstr(t, rawtsvalue(key));
+//			case LUA_TBOOLEAN:
+//			  return hashboolean(t, bvalue(key));
+//			case LUA_TLIGHTUSERDATA:
+//			  return hashpointer(t, pvalue(key));
+//			default:
+//				return hashpointer(t, gcvalue(key));
+//		  }
+			return null;
 		}
 
 
@@ -106,13 +107,13 @@ namespace lua40mod
 		** the array part of the table, -1 otherwise.
 		*/
 		private static int arrayindex (TValue key) {
-		  if (ttisnumber(key)) {
-			lua_Number n = nvalue(key);
-			int k;
-			lua_number2int(out k, n);
-			if (luai_numeq(cast_num(k), n))
-			  return k;
-		  }
+//		  if (ttisnumber(key)) {
+//			lua_Number n = nvalue(key);
+//			int k;
+//			lua_number2int(out k, n);
+//			if (luai_numeq(cast_num(k), n))
+//			  return k;
+//		  }
 		  return -1;  /* `key' did not match some condition */
 		}
 
@@ -123,46 +124,47 @@ namespace lua40mod
 		** beginning of a traversal is signalled by -1.
 		*/
 		private static int findindex (lua_State L, Table t, StkId key) {
-		  int i;
-		  if (ttisnil(key)) return -1;  /* first iteration */
-		  i = arrayindex(key);
-		  if (0 < i && i <= t.sizearray)  /* is `key' inside array part? */
-			return i-1;  /* yes; that's the index (corrected to C) */
-		  else {
-			Node n = mainposition(t, key);
-			do {  /* check whether `key' is somewhere in the chain */
-			  /* key may be dead already, but it is ok to use it in `next' */
-			  if ((luaO_rawequalObj(key2tval(n), key) != 0) ||
-					(ttype(gkey(n)) == LUA_TDEADKEY && iscollectable(key) &&
-					 gcvalue(gkey(n)) == gcvalue(key))) {
-				i = cast_int(n - gnode(t, 0));  /* key index in hash table */
-				/* hash elements are numbered after array ones */
-				return i + t.sizearray;
-			  }
-			  else n = gnext(n);
-			} while (n != null);
-			luaG_runerror(L, "invalid key to " + LUA_QL("next"));  /* key not found */
-			return 0;  /* to avoid warnings */
-		  }
+//		  int i;
+//		  if (ttisnil(key)) return -1;  /* first iteration */
+//		  i = arrayindex(key);
+//		  if (0 < i && i <= t.sizearray)  /* is `key' inside array part? */
+//			return i-1;  /* yes; that's the index (corrected to C) */
+//		  else {
+//			Node n = mainposition(t, key);
+//			do {  /* check whether `key' is somewhere in the chain */
+//			  /* key may be dead already, but it is ok to use it in `next' */
+//			  if ((luaO_rawequalObj(key2tval(n), key) != 0) ||
+//					(ttype(gkey(n)) == LUA_TDEADKEY && iscollectable(key) &&
+//					 gcvalue(gkey(n)) == gcvalue(key))) {
+//				i = cast_int(n - gnode(t, 0));  /* key index in hash table */
+//				/* hash elements are numbered after array ones */
+//				return i + t.sizearray;
+//			  }
+//			  else n = gnext(n);
+//			} while (n != null);
+//			luaG_runerror(L, "invalid key to " + LUA_QL("next"));  /* key not found */
+//			return 0;  /* to avoid warnings */
+//		  }
+			return 0;
 		}
 
 
 		public static int luaH_next (lua_State L, Table t, StkId key) {
-		  int i = findindex(L, t, key);  /* find original element */
-		  for (i++; i < t.sizearray; i++) {  /* try first array part */
-			if (!ttisnil(t.array[i])) {  /* a non-nil value? */
-			  setnvalue(key, cast_num(i+1));
-			  setobj2s(L, key+1, t.array[i]);
-			  return 1;
-			}
-		  }
-		  for (i -= t.sizearray; i < sizenode(t); i++) {  /* then hash part */
-			if (!ttisnil(gval(gnode(t, i)))) {  /* a non-nil value? */
-			  setobj2s(L, key, key2tval(gnode(t, i)));
-			  setobj2s(L, key+1, gval(gnode(t, i)));
-			  return 1;
-			}
-		  }
+//		  int i = findindex(L, t, key);  /* find original element */
+//		  for (i++; i < t.sizearray; i++) {  /* try first array part */
+//			if (!ttisnil(t.array[i])) {  /* a non-nil value? */
+//			  setnvalue(key, cast_num(i+1));
+//			  setobj2s(L, key+1, t.array[i]);
+//			  return 1;
+//			}
+//		  }
+//		  for (i -= t.sizearray; i < sizenode(t); i++) {  /* then hash part */
+//			if (!ttisnil(gval(gnode(t, i)))) {  /* a non-nil value? */
+//			  setobj2s(L, key, key2tval(gnode(t, i)));
+//			  setobj2s(L, key+1, gval(gnode(t, i)));
+//			  return 1;
+//			}
+//		  }
 		  return 0;  /* no more elements */
 		}
 
@@ -175,24 +177,25 @@ namespace lua40mod
 
 
 		private static int computesizes (int[] nums, ref int narray) {
-		  int i;
-		  int twotoi;  /* 2^i */
-		  int a = 0;  /* number of elements smaller than 2^i */
-		  int na = 0;  /* number of elements to go to array part */
-		  int n = 0;  /* optimal size for array part */
-		  for (i = 0, twotoi = 1; twotoi/2 < narray; i++, twotoi *= 2) {
-			if (nums[i] > 0) {
-			  a += nums[i];
-			  if (a > twotoi/2) {  /* more than half elements present? */
-				n = twotoi;  /* optimal size (till now) */
-				na = a;  /* all elements smaller than n will go to array part */
-			  }
-			}
-			if (a == narray) break;  /* all elements already counted */
-		  }
-		  narray = n;
-		  lua_assert(narray/2 <= na && na <= narray);
-		  return na;
+//		  int i;
+//		  int twotoi;  /* 2^i */
+//		  int a = 0;  /* number of elements smaller than 2^i */
+//		  int na = 0;  /* number of elements to go to array part */
+//		  int n = 0;  /* optimal size for array part */
+//		  for (i = 0, twotoi = 1; twotoi/2 < narray; i++, twotoi *= 2) {
+//			if (nums[i] > 0) {
+//			  a += nums[i];
+//			  if (a > twotoi/2) {  /* more than half elements present? */
+//				n = twotoi;  /* optimal size (till now) */
+//				na = a;  /* all elements smaller than n will go to array part */
+//			  }
+//			}
+//			if (a == narray) break;  /* all elements already counted */
+//		  }
+//		  narray = n;
+//		  lua_assert(narray/2 <= na && na <= narray);
+//		  return na;
+			return 0;
 		}
 
 
@@ -258,28 +261,28 @@ namespace lua40mod
 
 
 		private static void setnodevector (lua_State L, Table t, int size) {
-		  int lsize;
-		  if (size == 0) {  /* no elements to hash part? */
-			  t.node = new Node[] { dummynode };  /* use common `dummynode' */
-			lsize = 0;
-		  }
-		  else {
-			int i;
-			lsize = ceillog2(size);
-			if (lsize > MAXBITS)
-			  luaG_runerror(L, "table overflow");
-			size = twoto(lsize);
-			Node[] nodes = luaM_newvector<Node>(L, size);
-			t.node = nodes;
-			for (i=0; i<size; i++) {
-			  Node n = gnode(t, i);
-			  gnext_set(n, null);
-			  setnilvalue(gkey(n));
-			  setnilvalue(gval(n));
-			}
-		  }
-		  t.lsizenode = cast_byte(lsize);
-		  t.lastfree = size;  /* all positions are free */
+//		  int lsize;
+//		  if (size == 0) {  /* no elements to hash part? */
+//			  t.node = new Node[] { dummynode };  /* use common `dummynode' */
+//			lsize = 0;
+//		  }
+//		  else {
+//			int i;
+//			lsize = ceillog2(size);
+//			if (lsize > MAXBITS)
+//			  luaG_runerror(L, "table overflow");
+//			size = twoto(lsize);
+//			Node[] nodes = luaM_newvector<Node>(L, size);
+//			t.node = nodes;
+//			for (i=0; i<size; i++) {
+//			  Node n = gnode(t, i);
+//			  gnext_set(n, null);
+//			  setnilvalue(gkey(n));
+//			  setnilvalue(gval(n));
+//			}
+//		  }
+//		  t.lsizenode = cast_byte(lsize);
+//		  t.lastfree = size;  /* all positions are free */
 		}
 
 
@@ -345,18 +348,19 @@ namespace lua40mod
 
 
 		public static Table luaH_new (lua_State L, int narray, int nhash) {
-		  Table t = luaM_new<Table>(L);
-		  luaC_link(L, obj2gco(t), LUA_TTABLE);
-		  t.metatable = null;
-		  t.flags = cast_byte(~0);
-		  /* temporary values (kept only if some malloc fails) */
-		  t.array = null;
-		  t.sizearray = 0;
-		  t.lsizenode = 0;
-		  t.node = new Node[] { dummynode };
-		  setarrayvector(L, t, narray);
-		  setnodevector(L, t, nhash);
-		  return t;
+//		  Table t = luaM_new<Table>(L);
+//		  luaC_link(L, obj2gco(t), LUA_TTABLE);
+//		  t.metatable = null;
+//		  t.flags = cast_byte(~0);
+//		  /* temporary values (kept only if some malloc fails) */
+//		  t.array = null;
+//		  t.sizearray = 0;
+//		  t.lsizenode = 0;
+//		  t.node = new Node[] { dummynode };
+//		  setarrayvector(L, t, narray);
+//		  setnodevector(L, t, nhash);
+//		  return t;
+			return null;
 		}
 
 
@@ -424,19 +428,20 @@ namespace lua40mod
 		*/
 		public static TValue luaH_getnum(Table t, int key)
 		{
-		  /* (1 <= key && key <= t.sizearray) */
-		  if ((uint)(key-1) < (uint)t.sizearray)
-			return t.array[key-1];
-		  else {
-			lua_Number nk = cast_num(key);
-			Node n = hashnum(t, nk);
-			do {  /* check whether `key' is somewhere in the chain */
-			  if (ttisnumber(gkey(n)) && luai_numeq(nvalue(gkey(n)), nk))
-				return gval(n);  /* that's it */
-			  else n = gnext(n);
-			} while (n != null);
-			return luaO_nilobject;
-		  }
+//		  /* (1 <= key && key <= t.sizearray) */
+//		  if ((uint)(key-1) < (uint)t.sizearray)
+//			return t.array[key-1];
+//		  else {
+//			lua_Number nk = cast_num(key);
+//			Node n = hashnum(t, nk);
+//			do {  /* check whether `key' is somewhere in the chain */
+//			  if (ttisnumber(gkey(n)) && luai_numeq(nvalue(gkey(n)), nk))
+//				return gval(n);  /* that's it */
+//			  else n = gnext(n);
+//			} while (n != null);
+//			return luaO_nilobject;
+//		  }
+			return null;
 		}
 
 
@@ -444,13 +449,14 @@ namespace lua40mod
 		** search function for strings
 		*/
 		public static TValue luaH_getstr (Table t, TString key) {
-		  Node n = hashstr(t, key);
-		  do {  /* check whether `key' is somewhere in the chain */
-			if (ttisstring(gkey(n)) && rawtsvalue(gkey(n)) == key)
-			  return gval(n);  /* that's it */
-			else n = gnext(n);
-		  } while (n != null);
-		  return luaO_nilobject;
+//		  Node n = hashstr(t, key);
+//		  do {  /* check whether `key' is somewhere in the chain */
+//			if (ttisstring(gkey(n)) && rawtsvalue(gkey(n)) == key)
+//			  return gval(n);  /* that's it */
+//			else n = gnext(n);
+//		  } while (n != null);
+//		  return luaO_nilobject;
+			return null;
 		}
 
 
@@ -458,61 +464,64 @@ namespace lua40mod
 		** main search function
 		*/
 		public static TValue luaH_get (Table t, TValue key) {
-		  switch (ttype(key)) {
-			case LUA_TNIL: return luaO_nilobject;
-			case LUA_TSTRING: return luaH_getstr(t, rawtsvalue(key));
-			case LUA_TNUMBER: {
-			  int k;
-			  lua_Number n = nvalue(key);
-			  lua_number2int(out k, n);
-			  if (luai_numeq(cast_num(k), nvalue(key))) /* index is int? */
-				return luaH_getnum(t, k);  /* use specialized version */
-			  /* else go through ... actually on second thoughts don't, because this is C#*/
-				Node node = mainposition(t, key);
-				do
-				{  /* check whether `key' is somewhere in the chain */
-					if (luaO_rawequalObj(key2tval(node), key) != 0)
-						return gval(node);  /* that's it */
-					else node = gnext(node);
-				} while (node != null);
-				return luaO_nilobject;
-			}
-			default: {
-				Node node = mainposition(t, key);
-			  do {  /* check whether `key' is somewhere in the chain */
-				if (luaO_rawequalObj(key2tval(node), key) != 0)
-				  return gval(node);  /* that's it */
-				else node = gnext(node);
-			  } while (node != null);
-			  return luaO_nilobject;
-			}
-		  }
+//		  switch (ttype(key)) {
+//			case LUA_TNIL: return luaO_nilobject;
+//			case LUA_TSTRING: return luaH_getstr(t, rawtsvalue(key));
+//			case LUA_TNUMBER: {
+//			  int k;
+//			  lua_Number n = nvalue(key);
+//			  lua_number2int(out k, n);
+//			  if (luai_numeq(cast_num(k), nvalue(key))) /* index is int? */
+//				return luaH_getnum(t, k);  /* use specialized version */
+//			  /* else go through ... actually on second thoughts don't, because this is C#*/
+//				Node node = mainposition(t, key);
+//				do
+//				{  /* check whether `key' is somewhere in the chain */
+//					if (luaO_rawequalObj(key2tval(node), key) != 0)
+//						return gval(node);  /* that's it */
+//					else node = gnext(node);
+//				} while (node != null);
+//				return luaO_nilobject;
+//			}
+//			default: {
+//				Node node = mainposition(t, key);
+//			  do {  /* check whether `key' is somewhere in the chain */
+//				if (luaO_rawequalObj(key2tval(node), key) != 0)
+//				  return gval(node);  /* that's it */
+//				else node = gnext(node);
+//			  } while (node != null);
+//			  return luaO_nilobject;
+//			}
+//		  }
+			return null;
 		}
 
 
 		public static TValue luaH_set (lua_State L, Table t, TValue key) {
-		  TValue p = luaH_get(t, key);
-		  t.flags = 0;
-		  if (p != luaO_nilobject)
-			return (TValue)p;
-		  else {
-			if (ttisnil(key)) luaG_runerror(L, "table index is nil");
-			else if (ttisnumber(key) && luai_numisnan(nvalue(key)))
-			  luaG_runerror(L, "table index is NaN");
-			return newkey(L, t, key);
-		  }
+//		  TValue p = luaH_get(t, key);
+//		  t.flags = 0;
+//		  if (p != luaO_nilobject)
+//			return (TValue)p;
+//		  else {
+//			if (ttisnil(key)) luaG_runerror(L, "table index is nil");
+//			else if (ttisnumber(key) && luai_numisnan(nvalue(key)))
+//			  luaG_runerror(L, "table index is NaN");
+//			return newkey(L, t, key);
+//		  }
+			return null;
 		}
 
 
 		public static TValue luaH_setnum (lua_State L, Table t, int key) {
-		  TValue p = luaH_getnum(t, key);
-		  if (p != luaO_nilobject)
-			return (TValue)p;
-		  else {
-			TValue k = new TValue();
-			setnvalue(k, cast_num(key));
-			return newkey(L, t, k);
-		  }
+//		  TValue p = luaH_getnum(t, key);
+//		  if (p != luaO_nilobject)
+//			return (TValue)p;
+//		  else {
+//			TValue k = new TValue();
+//			setnvalue(k, cast_num(key));
+//			return newkey(L, t, k);
+//		  }
+			return null;
 		}
 
 		public static TValue luaH_setstr (lua_State L, Table t, TString key) {

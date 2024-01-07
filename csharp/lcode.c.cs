@@ -73,7 +73,7 @@ namespace lua40mod
 		private static void fixjump (FuncState fs, int pc, int dest) {
 		  InstructionPtr jmp = new InstructionPtr(fs.f.code, pc);
 		  int offset = dest-(pc+1);
-		  lua_assert(dest != NO_JUMP);
+//		  lua_assert(dest != NO_JUMP);
 		  if (abs(offset) > MAXARG_sBx)
 			luaX_syntaxerror(fs.ls, "control structure too long");
 		  SETARG_sBx(jmp, offset);
@@ -159,12 +159,12 @@ namespace lua40mod
 
 
 		public static void luaK_patchlist (FuncState fs, int list, int target) {
-		  if (target == fs.pc)
-			luaK_patchtohere(fs, list);
-		  else {
-			lua_assert(target < fs.pc);
-			patchlistaux(fs, list, target, NO_REG, target);
-		  }
+//		  if (target == fs.pc)
+//			luaK_patchtohere(fs, list);
+//		  else {
+//			lua_assert(target < fs.pc);
+//			patchlistaux(fs, list, target, NO_REG, target);
+//		  }
 		}
 
 
@@ -190,12 +190,12 @@ namespace lua40mod
 
 
 		public static void luaK_checkstack (FuncState fs, int n) {
-		  int newstack = fs.freereg + n;
-		  if (newstack > fs.f.maxstacksize) {
-			if (newstack >= MAXSTACK)
-			  luaX_syntaxerror(fs.ls, "function or expression too complex");
-			fs.f.maxstacksize = cast_byte(newstack);
-		  }
+//		  int newstack = fs.freereg + n;
+//		  if (newstack > fs.f.maxstacksize) {
+//			if (newstack >= MAXSTACK)
+//			  luaX_syntaxerror(fs.ls, "function or expression too complex");
+//			fs.f.maxstacksize = cast_byte(newstack);
+//		  }
 		}
 
 
@@ -206,10 +206,10 @@ namespace lua40mod
 
 
 		private static void freereg (FuncState fs, int reg) {
-		  if ((ISK(reg)==0) && reg >= fs.nactvar) {
-			fs.freereg--;
-			lua_assert(reg == fs.freereg);
-		  }
+//		  if ((ISK(reg)==0) && reg >= fs.nactvar) {
+//			fs.freereg--;
+//			lua_assert(reg == fs.freereg);
+//		  }
 		}
 
 
@@ -220,23 +220,24 @@ namespace lua40mod
 
 
 		private static int addk (FuncState fs, TValue k, TValue v) {
-		  lua_State L = fs.L;
-		  TValue idx = luaH_set(L, fs.h, k);
-		  Proto f = fs.f;
-		  int oldsize = f.sizek;
-		  if (ttisnumber(idx)) {
-			lua_assert(luaO_rawequalObj(fs.f.k[cast_int(nvalue(idx))], v));
-			return cast_int(nvalue(idx));
-		  }
-		  else {  /* constant not found; create a new entry */
-			setnvalue(idx, cast_num(fs.nk));
-			luaM_growvector(L, ref f.k, fs.nk, ref f.sizek,
-							MAXARG_Bx, "constant table overflow");
-			while (oldsize < f.sizek) setnilvalue(f.k[oldsize++]);
-			setobj(L, f.k[fs.nk], v);
-//			luaC_barrier(L, f, v);
-			return fs.nk++;
-		  }
+//		  lua_State L = fs.L;
+//		  TValue idx = luaH_set(L, fs.h, k);
+//		  Proto f = fs.f;
+//		  int oldsize = f.sizek;
+//		  if (ttisnumber(idx)) {
+//			lua_assert(luaO_rawequalObj(fs.f.k[cast_int(nvalue(idx))], v));
+//			return cast_int(nvalue(idx));
+//		  }
+//		  else {  /* constant not found; create a new entry */
+//			setnvalue(idx, cast_num(fs.nk));
+//			luaM_growvector(L, ref f.k, fs.nk, ref f.sizek,
+//							MAXARG_Bx, "constant table overflow");
+//			while (oldsize < f.sizek) setnilvalue(f.k[oldsize++]);
+//			setobj(L, f.k[fs.nk], v);
+////			luaC_barrier(L, f, v);
+//			return fs.nk++;
+//		  }
+return 0;
 		}
 
 
@@ -334,41 +335,41 @@ namespace lua40mod
 
 
 		private static void discharge2reg (FuncState fs, expdesc e, int reg) {
-		  luaK_dischargevars(fs, e);
-		  switch (e.k) {
-			case expkind.VNIL: {
-			  luaK_nil(fs, reg, 1);
-			  break;
-			}
-			case expkind.VFALSE:  case expkind.VTRUE: {
-				luaK_codeABC(fs, OpCode.OP_LOADBOOL, reg, (e.k == expkind.VTRUE) ? 1 : 0, 0);
-			  break;
-			}
-			case expkind.VK: {
-			  luaK_codeABx(fs, OpCode.OP_LOADK, reg, e.u.s.info);
-			  break;
-			}
-			case expkind.VKNUM: {
-			  luaK_codeABx(fs, OpCode.OP_LOADK, reg, luaK_numberK(fs, e.u.nval));
-			  break;
-			}
-			case expkind.VRELOCABLE: {
-//			  InstructionPtr pc = getcode(fs, e);
-//			  SETARG_A(pc, reg);
-			  break;
-			}
-			case expkind.VNONRELOC: {
-			  if (reg != e.u.s.info)
-				luaK_codeABC(fs, OpCode.OP_MOVE, reg, e.u.s.info, 0);
-			  break;
-			}
-			default: {
-			  lua_assert(e.k == expkind.VVOID || e.k == expkind.VJMP);
-			  return;  /* nothing to do... */
-			}
-		  }
-		  e.u.s.info = reg;
-		  e.k = expkind.VNONRELOC;
+//		  luaK_dischargevars(fs, e);
+//		  switch (e.k) {
+//			case expkind.VNIL: {
+//			  luaK_nil(fs, reg, 1);
+//			  break;
+//			}
+//			case expkind.VFALSE:  case expkind.VTRUE: {
+//				luaK_codeABC(fs, OpCode.OP_LOADBOOL, reg, (e.k == expkind.VTRUE) ? 1 : 0, 0);
+//			  break;
+//			}
+//			case expkind.VK: {
+//			  luaK_codeABx(fs, OpCode.OP_LOADK, reg, e.u.s.info);
+//			  break;
+//			}
+//			case expkind.VKNUM: {
+//			  luaK_codeABx(fs, OpCode.OP_LOADK, reg, luaK_numberK(fs, e.u.nval));
+//			  break;
+//			}
+//			case expkind.VRELOCABLE: {
+////			  InstructionPtr pc = getcode(fs, e);
+////			  SETARG_A(pc, reg);
+//			  break;
+//			}
+//			case expkind.VNONRELOC: {
+//			  if (reg != e.u.s.info)
+//				luaK_codeABC(fs, OpCode.OP_MOVE, reg, e.u.s.info, 0);
+//			  break;
+//			}
+//			default: {
+//			  lua_assert(e.k == expkind.VVOID || e.k == expkind.VJMP);
+//			  return;  /* nothing to do... */
+//			}
+//		  }
+//		  e.u.s.info = reg;
+//		  e.k = expkind.VNONRELOC;
 		}
 
 
@@ -463,33 +464,33 @@ namespace lua40mod
 
 
 		public static void luaK_storevar (FuncState fs, expdesc var, expdesc ex) {
-		  switch (var.k) {
-			case expkind.VLOCAL: {
-			  freeexp(fs, ex);
-			  exp2reg(fs, ex, var.u.s.info);
-			  return;
-			}
-			case expkind.VUPVAL: {
-			  int e = luaK_exp2anyreg(fs, ex);
-			  luaK_codeABC(fs, OpCode.OP_SETUPVAL, e, var.u.s.info, 0);
-			  break;
-			}
-			case expkind.VGLOBAL: {
-			  int e = luaK_exp2anyreg(fs, ex);
-			  luaK_codeABx(fs, OpCode.OP_SETGLOBAL, e, var.u.s.info);
-			  break;
-			}
-			case expkind.VINDEXED: {
-			  int e = luaK_exp2RK(fs, ex);
-			  luaK_codeABC(fs, OpCode.OP_SETTABLE, var.u.s.info, var.u.s.aux, e);
-			  break;
-			}
-			default: {
-			  lua_assert(0);  /* invalid var kind to store */
-			  break;
-			}
-		  }
-		  freeexp(fs, ex);
+//		  switch (var.k) {
+//			case expkind.VLOCAL: {
+//			  freeexp(fs, ex);
+//			  exp2reg(fs, ex, var.u.s.info);
+//			  return;
+//			}
+//			case expkind.VUPVAL: {
+//			  int e = luaK_exp2anyreg(fs, ex);
+//			  luaK_codeABC(fs, OpCode.OP_SETUPVAL, e, var.u.s.info, 0);
+//			  break;
+//			}
+//			case expkind.VGLOBAL: {
+//			  int e = luaK_exp2anyreg(fs, ex);
+//			  luaK_codeABx(fs, OpCode.OP_SETGLOBAL, e, var.u.s.info);
+//			  break;
+//			}
+//			case expkind.VINDEXED: {
+//			  int e = luaK_exp2RK(fs, ex);
+//			  luaK_codeABC(fs, OpCode.OP_SETTABLE, var.u.s.info, var.u.s.aux, e);
+//			  break;
+//			}
+//			default: {
+//			  lua_assert(0);  /* invalid var kind to store */
+//			  break;
+//			}
+//		  }
+//		  freeexp(fs, ex);
 		}
 
 
@@ -507,10 +508,10 @@ namespace lua40mod
 
 
 		private static void invertjump (FuncState fs, expdesc e) {
-		  InstructionPtr pc = getjumpcontrol(fs, e.u.s.info);
-		  lua_assert(testTMode(GET_OPCODE(pc[0])) != 0 && GET_OPCODE(pc[0]) != OpCode.OP_TESTSET &&
-												   GET_OPCODE(pc[0]) != OpCode.OP_TEST);
-		  SETARG_A(pc, (GETARG_A(pc[0]) == 0) ? 1 : 0);
+//		  InstructionPtr pc = getjumpcontrol(fs, e.u.s.info);
+//		  lua_assert(testTMode(GET_OPCODE(pc[0])) != 0 && GET_OPCODE(pc[0]) != OpCode.OP_TESTSET &&
+//												   GET_OPCODE(pc[0]) != OpCode.OP_TEST);
+//		  SETARG_A(pc, (GETARG_A(pc[0]) == 0) ? 1 : 0);
 		}
 
 
@@ -585,37 +586,37 @@ namespace lua40mod
 
 
 		private static void codenot (FuncState fs, expdesc e) {
-		  luaK_dischargevars(fs, e);
-		  switch (e.k) {
-			case expkind.VNIL: case expkind.VFALSE: {
-				e.k = expkind.VTRUE;
-			  break;
-			}
-			case expkind.VK: case expkind.VKNUM: case expkind.VTRUE: {
-			  e.k = expkind.VFALSE;
-			  break;
-			}
-			case expkind.VJMP: {
-			  invertjump(fs, e);
-			  break;
-			}
-			case expkind.VRELOCABLE:
-			case expkind.VNONRELOC: {
-			  discharge2anyreg(fs, e);
-			  freeexp(fs, e);
-			  e.u.s.info = luaK_codeABC(fs, OpCode.OP_NOT, 0, e.u.s.info, 0);
-			  e.k = expkind.VRELOCABLE;
-			  break;
-			}
-			default: {
-			  lua_assert(0);  /* cannot happen */
-			  break;
-			}
-		  }
-		  /* interchange true and false lists */
-		  { int temp = e.f; e.f = e.t; e.t = temp; }
-		  removevalues(fs, e.f);
-		  removevalues(fs, e.t);
+//		  luaK_dischargevars(fs, e);
+//		  switch (e.k) {
+//			case expkind.VNIL: case expkind.VFALSE: {
+//				e.k = expkind.VTRUE;
+//			  break;
+//			}
+//			case expkind.VK: case expkind.VKNUM: case expkind.VTRUE: {
+//			  e.k = expkind.VFALSE;
+//			  break;
+//			}
+//			case expkind.VJMP: {
+//			  invertjump(fs, e);
+//			  break;
+//			}
+//			case expkind.VRELOCABLE:
+//			case expkind.VNONRELOC: {
+//			  discharge2anyreg(fs, e);
+//			  freeexp(fs, e);
+//			  e.u.s.info = luaK_codeABC(fs, OpCode.OP_NOT, 0, e.u.s.info, 0);
+//			  e.k = expkind.VRELOCABLE;
+//			  break;
+//			}
+//			default: {
+//			  lua_assert(0);  /* cannot happen */
+//			  break;
+//			}
+//		  }
+//		  /* interchange true and false lists */
+//		  { int temp = e.f; e.f = e.t; e.t = temp; }
+//		  removevalues(fs, e.f);
+//		  removevalues(fs, e.t);
 		}
 
 
@@ -626,27 +627,27 @@ namespace lua40mod
 
 
 		private static int constfolding (OpCode op, expdesc e1, expdesc e2) {
-		  lua_Number v1, v2, r;
-		  if ((isnumeral(e1)==0) || (isnumeral(e2)==0)) return 0;
-		  v1 = e1.u.nval;
-		  v2 = e2.u.nval;
-		  switch (op) {
-			case OpCode.OP_ADD: r = luai_numadd(v1, v2); break;
-			case OpCode.OP_SUB: r = luai_numsub(v1, v2); break;
-			case OpCode.OP_MUL: r = luai_nummul(v1, v2); break;
-			case OpCode.OP_DIV:
-			  if (v2 == 0) return 0;  /* do not attempt to divide by 0 */
-			  r = luai_numdiv(v1, v2); break;
-			case OpCode.OP_MOD:
-			  if (v2 == 0) return 0;  /* do not attempt to divide by 0 */
-			  r = luai_nummod(v1, v2); break;
-			case OpCode.OP_POW: r = luai_numpow(v1, v2); break;
-			case OpCode.OP_UNM: r = luai_numunm(v1); break;
-			case OpCode.OP_LEN: return 0;  /* no constant folding for 'len' */
-			default: lua_assert(0); r = 0; break;
-		  }
-		  if (luai_numisnan(r)) return 0;  /* do not attempt to produce NaN */
-		  e1.u.nval = r;
+//		  lua_Number v1, v2, r;
+//		  if ((isnumeral(e1)==0) || (isnumeral(e2)==0)) return 0;
+//		  v1 = e1.u.nval;
+//		  v2 = e2.u.nval;
+//		  switch (op) {
+//			case OpCode.OP_ADD: r = luai_numadd(v1, v2); break;
+//			case OpCode.OP_SUB: r = luai_numsub(v1, v2); break;
+//			case OpCode.OP_MUL: r = luai_nummul(v1, v2); break;
+//			case OpCode.OP_DIV:
+//			  if (v2 == 0) return 0;  /* do not attempt to divide by 0 */
+//			  r = luai_numdiv(v1, v2); break;
+//			case OpCode.OP_MOD:
+//			  if (v2 == 0) return 0;  /* do not attempt to divide by 0 */
+//			  r = luai_nummod(v1, v2); break;
+//			case OpCode.OP_POW: r = luai_numpow(v1, v2); break;
+//			case OpCode.OP_UNM: r = luai_numunm(v1); break;
+//			case OpCode.OP_LEN: return 0;  /* no constant folding for 'len' */
+//			default: lua_assert(0); r = 0; break;
+//		  }
+//		  if (luai_numisnan(r)) return 0;  /* do not attempt to produce NaN */
+//		  e1.u.nval = r;
 		  return 1;
 		}
 
@@ -688,23 +689,23 @@ namespace lua40mod
 
 
 		public static void luaK_prefix (FuncState fs, UnOpr op, expdesc e) {
-		  expdesc e2 = new expdesc();
-		  e2.t = e2.f = NO_JUMP; e2.k = expkind.VKNUM; e2.u.nval = 0;
-		  switch (op) {
-			case UnOpr.OPR_MINUS: {
-			  if (isnumeral(e)==0)
-				luaK_exp2anyreg(fs, e);  /* cannot operate on non-numeric constants */
-			  codearith(fs, OpCode.OP_UNM, e, e2);
-			  break;
-			}
-			case UnOpr.OPR_NOT: codenot(fs, e); break;
-//			case UnOpr.OPR_LEN: {
-//			  luaK_exp2anyreg(fs, e);  /* cannot operate on constants */
-//			  codearith(fs, OpCode.OP_LEN, e, e2);
+//		  expdesc e2 = new expdesc();
+//		  e2.t = e2.f = NO_JUMP; e2.k = expkind.VKNUM; e2.u.nval = 0;
+//		  switch (op) {
+//			case UnOpr.OPR_MINUS: {
+//			  if (isnumeral(e)==0)
+//				luaK_exp2anyreg(fs, e);  /* cannot operate on non-numeric constants */
+//			  codearith(fs, OpCode.OP_UNM, e, e2);
 //			  break;
 //			}
-			default: lua_assert(0); break;
-		  }
+//			case UnOpr.OPR_NOT: codenot(fs, e); break;
+////			case UnOpr.OPR_LEN: {
+////			  luaK_exp2anyreg(fs, e);  /* cannot operate on constants */
+////			  codearith(fs, OpCode.OP_LEN, e, e2);
+////			  break;
+////			}
+//			default: lua_assert(0); break;
+//		  }
 		}
 
 
@@ -736,49 +737,49 @@ namespace lua40mod
 
 
 		public static void luaK_posfix (FuncState fs, BinOpr op, expdesc e1, expdesc e2) {
-		  switch (op) {
-			case BinOpr.OPR_AND: {
-			  lua_assert(e1.t == NO_JUMP);  /* list must be closed */
-			  luaK_dischargevars(fs, e2);
-			  luaK_concat(fs, ref e2.f, e1.f);
-			  e1.Copy(e2);
-			  break;
-			}
-			case BinOpr.OPR_OR: {
-			  lua_assert(e1.f == NO_JUMP);  /* list must be closed */
-			  luaK_dischargevars(fs, e2);
-			  luaK_concat(fs, ref e2.t, e1.t);
-			  e1.Copy(e2);
-			  break;
-			}
-			case BinOpr.OPR_CONCAT: {
-//			  luaK_exp2val(fs, e2);
-//			  if (e2.k == expkind.VRELOCABLE && GET_OPCODE(getcode(fs, e2)) == OpCode.OP_CONCAT) {
-//				lua_assert(e1.u.s.info == GETARG_B(getcode(fs, e2))-1);
-//				freeexp(fs, e1);
-//				SETARG_B(getcode(fs, e2), e1.u.s.info);
-//				e1.k = expkind.VRELOCABLE; e1.u.s.info = e2.u.s.info;
-//			  }
-//			  else {
-//				luaK_exp2nextreg(fs, e2);  /* operand must be on the 'stack' */
-//				codearith(fs, OpCode.OP_CONCAT, e1, e2);
-//			  }
-			  break;
-			}
-			case BinOpr.OPR_ADD: codearith(fs, OpCode.OP_ADD, e1, e2); break;
-			case BinOpr.OPR_SUB: codearith(fs, OpCode.OP_SUB, e1, e2); break;
-//			case BinOpr.OPR_MUL: codearith(fs, OpCode.OP_MUL, e1, e2); break;
-			case BinOpr.OPR_DIV: codearith(fs, OpCode.OP_DIV, e1, e2); break;
-//			case BinOpr.OPR_MOD: codearith(fs, OpCode.OP_MOD, e1, e2); break;
-			case BinOpr.OPR_POW: codearith(fs, OpCode.OP_POW, e1, e2); break;
-			case BinOpr.OPR_EQ: codecomp(fs, OpCode.OP_EQ, 1, e1, e2); break;
-			case BinOpr.OPR_NE: codecomp(fs, OpCode.OP_EQ, 0, e1, e2); break;
-			case BinOpr.OPR_LT: codecomp(fs, OpCode.OP_LT, 1, e1, e2); break;
-			case BinOpr.OPR_LE: codecomp(fs, OpCode.OP_LE, 1, e1, e2); break;
-			case BinOpr.OPR_GT: codecomp(fs, OpCode.OP_LT, 0, e1, e2); break;
-			case BinOpr.OPR_GE: codecomp(fs, OpCode.OP_LE, 0, e1, e2); break;
-			default: lua_assert(0); break;
-		  }
+//		  switch (op) {
+//			case BinOpr.OPR_AND: {
+//			  lua_assert(e1.t == NO_JUMP);  /* list must be closed */
+//			  luaK_dischargevars(fs, e2);
+//			  luaK_concat(fs, ref e2.f, e1.f);
+//			  e1.Copy(e2);
+//			  break;
+//			}
+//			case BinOpr.OPR_OR: {
+//			  lua_assert(e1.f == NO_JUMP);  /* list must be closed */
+//			  luaK_dischargevars(fs, e2);
+//			  luaK_concat(fs, ref e2.t, e1.t);
+//			  e1.Copy(e2);
+//			  break;
+//			}
+//			case BinOpr.OPR_CONCAT: {
+////			  luaK_exp2val(fs, e2);
+////			  if (e2.k == expkind.VRELOCABLE && GET_OPCODE(getcode(fs, e2)) == OpCode.OP_CONCAT) {
+////				lua_assert(e1.u.s.info == GETARG_B(getcode(fs, e2))-1);
+////				freeexp(fs, e1);
+////				SETARG_B(getcode(fs, e2), e1.u.s.info);
+////				e1.k = expkind.VRELOCABLE; e1.u.s.info = e2.u.s.info;
+////			  }
+////			  else {
+////				luaK_exp2nextreg(fs, e2);  /* operand must be on the 'stack' */
+////				codearith(fs, OpCode.OP_CONCAT, e1, e2);
+////			  }
+//			  break;
+//			}
+//			case BinOpr.OPR_ADD: codearith(fs, OpCode.OP_ADD, e1, e2); break;
+//			case BinOpr.OPR_SUB: codearith(fs, OpCode.OP_SUB, e1, e2); break;
+////			case BinOpr.OPR_MUL: codearith(fs, OpCode.OP_MUL, e1, e2); break;
+//			case BinOpr.OPR_DIV: codearith(fs, OpCode.OP_DIV, e1, e2); break;
+////			case BinOpr.OPR_MOD: codearith(fs, OpCode.OP_MOD, e1, e2); break;
+//			case BinOpr.OPR_POW: codearith(fs, OpCode.OP_POW, e1, e2); break;
+//			case BinOpr.OPR_EQ: codecomp(fs, OpCode.OP_EQ, 1, e1, e2); break;
+//			case BinOpr.OPR_NE: codecomp(fs, OpCode.OP_EQ, 0, e1, e2); break;
+//			case BinOpr.OPR_LT: codecomp(fs, OpCode.OP_LT, 1, e1, e2); break;
+//			case BinOpr.OPR_LE: codecomp(fs, OpCode.OP_LE, 1, e1, e2); break;
+//			case BinOpr.OPR_GT: codecomp(fs, OpCode.OP_LT, 0, e1, e2); break;
+//			case BinOpr.OPR_GE: codecomp(fs, OpCode.OP_LE, 0, e1, e2); break;
+//			default: lua_assert(0); break;
+//		  }
 		}
 
 
@@ -803,30 +804,32 @@ namespace lua40mod
 
 
 		public static int luaK_codeABC (FuncState fs, OpCode o, int a, int b, int c) {
-		  lua_assert(getOpMode(o) == OpMode.iABC);
-		  lua_assert(getBMode(o) != OpArgMask.OpArgN || b == 0);
-		  lua_assert(getCMode(o) != OpArgMask.OpArgN || c == 0);
-		  return luaK_code(fs, CREATE_ABC(o, a, b, c), fs.ls.lastline);
+//		  lua_assert(getOpMode(o) == OpMode.iABC);
+//		  lua_assert(getBMode(o) != OpArgMask.OpArgN || b == 0);
+//		  lua_assert(getCMode(o) != OpArgMask.OpArgN || c == 0);
+//		  return luaK_code(fs, CREATE_ABC(o, a, b, c), fs.ls.lastline);
+			return 0;
 		}
 
 
 		public static int luaK_codeABx (FuncState fs, OpCode o, int a, int bc) {			
-		  lua_assert(getOpMode(o) == OpMode.iABx || getOpMode(o) == OpMode.iAsBx);
-		  lua_assert(getCMode(o) == OpArgMask.OpArgN);
-		  return luaK_code(fs, CREATE_ABx(o, a, bc), fs.ls.lastline);
+//		  lua_assert(getOpMode(o) == OpMode.iABx || getOpMode(o) == OpMode.iAsBx);
+//		  lua_assert(getCMode(o) == OpArgMask.OpArgN);
+//		  return luaK_code(fs, CREATE_ABx(o, a, bc), fs.ls.lastline);
+			return 0;
 		}
 
 		public static void luaK_setlist (FuncState fs, int base_, int nelems, int tostore) {
-		  int c =  (nelems - 1)/LFIELDS_PER_FLUSH + 1;
-		  int b = (tostore == LUA_MULTRET) ? 0 : tostore;
-		  lua_assert(tostore != 0);
-		  if (c <= MAXARG_C)
-			luaK_codeABC(fs, OpCode.OP_SETLIST, base_, b, c);
-		  else {
-			  luaK_codeABC(fs, OpCode.OP_SETLIST, base_, b, 0);
-			luaK_code(fs, c, fs.ls.lastline);
-		  }
-		  fs.freereg = base_ + 1;  /* free registers with list values */
+//		  int c =  (nelems - 1)/LFIELDS_PER_FLUSH + 1;
+//		  int b = (tostore == LUA_MULTRET) ? 0 : tostore;
+//		  lua_assert(tostore != 0);
+//		  if (c <= MAXARG_C)
+//			luaK_codeABC(fs, OpCode.OP_SETLIST, base_, b, c);
+//		  else {
+//			  luaK_codeABC(fs, OpCode.OP_SETLIST, base_, b, 0);
+//			luaK_code(fs, c, fs.ls.lastline);
+//		  }
+//		  fs.freereg = base_ + 1;  /* free registers with list values */
 		}
 
 	}

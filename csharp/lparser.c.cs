@@ -145,11 +145,11 @@ namespace lua40mod
 
 
 		private static void adjustlocalvars (LexState ls, int nvars) {
-		  FuncState fs = ls.fs;
-		  fs.nactvar = cast_byte(fs.nactvar + nvars);
-		  for (; nvars!=0; nvars--) {
-			getlocvar(fs, fs.nactvar - nvars).startpc = fs.pc;
-		  }
+//		  FuncState fs = ls.fs;
+//		  fs.nactvar = cast_byte(fs.nactvar + nvars);
+//		  for (; nvars!=0; nvars--) {
+//			getlocvar(fs, fs.nactvar - nvars).startpc = fs.pc;
+//		  }
 		}
 
 
@@ -264,27 +264,27 @@ namespace lua40mod
 
 
 		private static void enterblock (FuncState fs, BlockCnt bl, lu_byte isbreakable) {
-		  bl.breaklist = NO_JUMP;
-		  bl.isbreakable = isbreakable;
-		  bl.nactvar = fs.nactvar;
-		  bl.upval = 0;
-		  bl.previous = fs.bl;
-		  fs.bl = bl;
-		  lua_assert(fs.freereg == fs.nactvar);
+//		  bl.breaklist = NO_JUMP;
+//		  bl.isbreakable = isbreakable;
+//		  bl.nactvar = fs.nactvar;
+//		  bl.upval = 0;
+//		  bl.previous = fs.bl;
+//		  fs.bl = bl;
+//		  lua_assert(fs.freereg == fs.nactvar);
 		}
 
 
 		private static void leaveblock (FuncState fs) {
-		  BlockCnt bl = fs.bl;
-		  fs.bl = bl.previous;
-		  removevars(fs.ls, bl.nactvar);
-		  if (bl.upval != 0)
-			luaK_codeABC(fs, OpCode.OP_CLOSE, bl.nactvar, 0, 0);
-		  /* a block either controls scope or breaks (never both) */
-		  lua_assert((bl.isbreakable==0) || (bl.upval==0));
-		  lua_assert(bl.nactvar == fs.nactvar);
-		  fs.freereg = fs.nactvar;  /* free registers */
-		  luaK_patchtohere(fs, bl.breaklist);
+//		  BlockCnt bl = fs.bl;
+//		  fs.bl = bl.previous;
+//		  removevars(fs.ls, bl.nactvar);
+//		  if (bl.upval != 0)
+//			luaK_codeABC(fs, OpCode.OP_CLOSE, bl.nactvar, 0, 0);
+//		  /* a block either controls scope or breaks (never both) */
+//		  lua_assert((bl.isbreakable==0) || (bl.upval==0));
+//		  lua_assert(bl.nactvar == fs.nactvar);
+//		  fs.freereg = fs.nactvar;  /* free registers */
+//		  luaK_patchtohere(fs, bl.breaklist);
 		}
 
 
@@ -336,35 +336,35 @@ namespace lua40mod
 		static Proto lastfunc;
 
 		private static void close_func (LexState ls) {
-		  lua_State L = ls.L;
-		  FuncState fs = ls.fs;
-		  Proto f = fs.f;
-		  lastfunc = f;
-		  removevars(ls, 0);
-		  luaK_ret(fs, 0, 0);  /* final return */
-		  luaM_reallocvector(L, ref f.code, f.sizecode, fs.pc/*, typeof(Instruction)*/);
-		  f.sizecode = fs.pc;
-		  luaM_reallocvector(L, ref f.lineinfo, f.sizelineinfo, fs.pc/*, typeof(int)*/);
-		  f.sizelineinfo = fs.pc;
-		  luaM_reallocvector(L, ref f.k, f.sizek, fs.nk/*, TValue*/);
-		  f.sizek = fs.nk;
-		  luaM_reallocvector(L, ref f.p, f.sizep, fs.np/*, Proto*/);		  
-		  f.sizep = fs.np;
-		  for (int i = 0; i < f.p.Length; i++)
-		  {
-			  f.p[i].protos = f.p;
-			  f.p[i].index = i;
-		  }
-		  luaM_reallocvector(L, ref f.locvars, f.sizelocvars, fs.nlocvars/*, LocVar*/);
-		  f.sizelocvars = fs.nlocvars;
-		  luaM_reallocvector(L, ref f.upvalues, f.sizeupvalues, f.nups/*, TString*/);
-		  f.sizeupvalues = f.nups;
-		  lua_assert(luaG_checkcode(f));
-		  lua_assert(fs.bl == null);
-		  ls.fs = fs.prev;
-		  L.top -= 2;  /* remove table and prototype from the stack */
-		  /* last token read was anchored in defunct function; must reanchor it */
-		  if (fs!=null) anchor_token(ls);
+//		  lua_State L = ls.L;
+//		  FuncState fs = ls.fs;
+//		  Proto f = fs.f;
+//		  lastfunc = f;
+//		  removevars(ls, 0);
+//		  luaK_ret(fs, 0, 0);  /* final return */
+//		  luaM_reallocvector(L, ref f.code, f.sizecode, fs.pc/*, typeof(Instruction)*/);
+//		  f.sizecode = fs.pc;
+//		  luaM_reallocvector(L, ref f.lineinfo, f.sizelineinfo, fs.pc/*, typeof(int)*/);
+//		  f.sizelineinfo = fs.pc;
+//		  luaM_reallocvector(L, ref f.k, f.sizek, fs.nk/*, TValue*/);
+//		  f.sizek = fs.nk;
+//		  luaM_reallocvector(L, ref f.p, f.sizep, fs.np/*, Proto*/);		  
+//		  f.sizep = fs.np;
+//		  for (int i = 0; i < f.p.Length; i++)
+//		  {
+//			  f.p[i].protos = f.p;
+//			  f.p[i].index = i;
+//		  }
+//		  luaM_reallocvector(L, ref f.locvars, f.sizelocvars, fs.nlocvars/*, LocVar*/);
+//		  f.sizelocvars = fs.nlocvars;
+//		  luaM_reallocvector(L, ref f.upvalues, f.sizeupvalues, f.nups/*, TString*/);
+//		  f.sizeupvalues = f.nups;
+//		  lua_assert(luaG_checkcode(f));
+//		  lua_assert(fs.bl == null);
+//		  ls.fs = fs.prev;
+//		  L.top -= 2;  /* remove table and prototype from the stack */
+//		  /* last token read was anchored in defunct function; must reanchor it */
+//		  if (fs!=null) anchor_token(ls);
 		}
 
 
@@ -485,44 +485,44 @@ namespace lua40mod
 
 
 		private static void constructor (LexState ls, expdesc t) {
-		  /* constructor . ?? */
-		  FuncState fs = ls.fs;
-		  int line = ls.linenumber;
-		  int pc = luaK_codeABC(fs, OpCode.OP_NEWTABLE, 0, 0, 0);
-		  ConsControl cc = new ConsControl();
-		  cc.na = cc.nh = cc.tostore = 0;
-		  cc.t = t;
-		  init_exp(t, expkind.VRELOCABLE, pc);
-		  init_exp(cc.v, expkind.VVOID, 0);  /* no value (yet) */
-		  luaK_exp2nextreg(ls.fs, t);  /* fix it at stack top (for gc) */
-		  checknext(ls, '{');
-		  do {
-			lua_assert(cc.v.k == expkind.VVOID || cc.tostore > 0);
-			if (ls.t.token == '}') break;
-			closelistfield(fs, cc);
-			switch(ls.t.token) {
-			  case (int)RESERVED.TK_NAME: {  /* may be listfields or recfields */
-				luaX_lookahead(ls);
-				if (ls.lookahead.token != '=')  /* expression? */
-				  listfield(ls, cc);
-				else
-				  recfield(ls, cc);
-				break;
-			  }
-			  case '[': {  /* constructor_item . recfield */
-				recfield(ls, cc);
-				break;
-			  }
-			  default: {  /* constructor_part . listfield */
-				listfield(ls, cc);
-				break;
-			  }
-			}
-		  } while ((testnext(ls, ',')!=0) || (testnext(ls, ';')!=0));
-		  check_match(ls, '}', '{', line);
-		  lastlistfield(fs, cc);
-		  SETARG_B(new InstructionPtr(fs.f.code, pc), luaO_int2fb((uint)cc.na)); /* set initial array size */
-		  SETARG_C(new InstructionPtr(fs.f.code, pc), luaO_int2fb((uint)cc.nh));  /* set initial table size */
+//		  /* constructor . ?? */
+//		  FuncState fs = ls.fs;
+//		  int line = ls.linenumber;
+//		  int pc = luaK_codeABC(fs, OpCode.OP_NEWTABLE, 0, 0, 0);
+//		  ConsControl cc = new ConsControl();
+//		  cc.na = cc.nh = cc.tostore = 0;
+//		  cc.t = t;
+//		  init_exp(t, expkind.VRELOCABLE, pc);
+//		  init_exp(cc.v, expkind.VVOID, 0);  /* no value (yet) */
+//		  luaK_exp2nextreg(ls.fs, t);  /* fix it at stack top (for gc) */
+//		  checknext(ls, '{');
+//		  do {
+//			lua_assert(cc.v.k == expkind.VVOID || cc.tostore > 0);
+//			if (ls.t.token == '}') break;
+//			closelistfield(fs, cc);
+//			switch(ls.t.token) {
+//			  case (int)RESERVED.TK_NAME: {  /* may be listfields or recfields */
+//				luaX_lookahead(ls);
+//				if (ls.lookahead.token != '=')  /* expression? */
+//				  listfield(ls, cc);
+//				else
+//				  recfield(ls, cc);
+//				break;
+//			  }
+//			  case '[': {  /* constructor_item . recfield */
+//				recfield(ls, cc);
+//				break;
+//			  }
+//			  default: {  /* constructor_part . listfield */
+//				listfield(ls, cc);
+//				break;
+//			  }
+//			}
+//		  } while ((testnext(ls, ',')!=0) || (testnext(ls, ';')!=0));
+//		  check_match(ls, '}', '{', line);
+//		  lastlistfield(fs, cc);
+//		  SETARG_B(new InstructionPtr(fs.f.code, pc), luaO_int2fb((uint)cc.na)); /* set initial array size */
+//		  SETARG_C(new InstructionPtr(fs.f.code, pc), luaO_int2fb((uint)cc.nh));  /* set initial table size */
 		}
 
 		/* }====================================================================== */
@@ -530,35 +530,35 @@ namespace lua40mod
 
 
 		private static void parlist (LexState ls) {
-		  /* parlist . [ param { `,' param } ] */
-		  FuncState fs = ls.fs;
-		  Proto f = fs.f;
-		  int nparams = 0;
-		  f.is_vararg = 0;
-		  if (ls.t.token != ')') {  /* is `parlist' not empty? */
-			do {
-			  switch (ls.t.token) {
-				case (int)RESERVED.TK_NAME: {  /* param . NAME */
-				  new_localvar(ls, str_checkname(ls), nparams++);
-				  break;
-				}
-				case (int)RESERVED.TK_DOTS: {  /* param . `...' */
-				  luaX_next(ls);
-		#if LUA_COMPAT_VARARG
-		          /* use `arg' as default name */
-		          new_localvarliteral(ls, "arg", nparams++);
-		          f.is_vararg = VARARG_HASARG | VARARG_NEEDSARG;
-		#endif
-				  f.is_vararg |= VARARG_ISVARARG;
-				  break;
-				}
-				default: luaX_syntaxerror(ls, "<name> or " + LUA_QL("...") + " expected"); break;
-			  }
-			} while ((f.is_vararg==0) && (testnext(ls, ',')!=0));
-		  }
-		  adjustlocalvars(ls, nparams);
-		  f.numparams = cast_byte(fs.nactvar - (f.is_vararg & VARARG_HASARG));
-		  luaK_reserveregs(fs, fs.nactvar);  /* reserve register for parameters */
+//		  /* parlist . [ param { `,' param } ] */
+//		  FuncState fs = ls.fs;
+//		  Proto f = fs.f;
+//		  int nparams = 0;
+//		  f.is_vararg = 0;
+//		  if (ls.t.token != ')') {  /* is `parlist' not empty? */
+//			do {
+//			  switch (ls.t.token) {
+//				case (int)RESERVED.TK_NAME: {  /* param . NAME */
+//				  new_localvar(ls, str_checkname(ls), nparams++);
+//				  break;
+//				}
+//				case (int)RESERVED.TK_DOTS: {  /* param . `...' */
+//				  luaX_next(ls);
+//		#if LUA_COMPAT_VARARG
+//		          /* use `arg' as default name */
+//		          new_localvarliteral(ls, "arg", nparams++);
+//		          f.is_vararg = VARARG_HASARG | VARARG_NEEDSARG;
+//		#endif
+//				  f.is_vararg |= VARARG_ISVARARG;
+//				  break;
+//				}
+//				default: luaX_syntaxerror(ls, "<name> or " + LUA_QL("...") + " expected"); break;
+//			  }
+//			} while ((f.is_vararg==0) && (testnext(ls, ',')!=0));
+//		  }
+//		  adjustlocalvars(ls, nparams);
+//		  f.numparams = cast_byte(fs.nactvar - (f.is_vararg & VARARG_HASARG));
+//		  luaK_reserveregs(fs, fs.nactvar);  /* reserve register for parameters */
 		}
 
 
@@ -596,51 +596,51 @@ namespace lua40mod
 
 
 		private static void funcargs (LexState ls, expdesc f) {
-		  FuncState fs = ls.fs;
-		  expdesc args = new expdesc();
-		  int base_, nparams;
-		  int line = ls.linenumber;
-		  switch (ls.t.token) {
-			case '(': {  /* funcargs . `(' [ explist1 ] `)' */
-			  if (line != ls.lastline)
-				luaX_syntaxerror(ls,"ambiguous syntax (function call x new statement)");
-			  luaX_next(ls);
-			  if (ls.t.token == ')')  /* arg list is empty? */
-				args.k = expkind.VVOID;
-			  else {
-				explist1(ls, args);
-//				luaK_setmultret(fs, args);
-			  }
-			  check_match(ls, ')', '(', line);
-			  break;
-			}
-			case '{': {  /* funcargs . constructor */
-			  constructor(ls, args);
-			  break;
-			}
-			case (int)RESERVED.TK_STRING: {  /* funcargs . STRING */
-			  codestring(ls, args, ls.t.seminfo.ts);
-			  luaX_next(ls);  /* must use `seminfo' before `next' */
-			  break;
-			}
-			default: {
-			  luaX_syntaxerror(ls, "function arguments expected");
-			  return;
-			}
-		  }
-		  lua_assert(f.k == expkind.VNONRELOC);
-		  base_ = f.u.s.info;  /* base_ register for call */
-		  if (hasmultret(args.k) != 0)
-			nparams = LUA_MULTRET;  /* open call */
-		  else {
-			if (args.k != expkind.VVOID)
-			  luaK_exp2nextreg(fs, args);  /* close last argument */
-			nparams = fs.freereg - (base_+1);
-		  }
-		  init_exp(f, expkind.VCALL, luaK_codeABC(fs, OpCode.OP_CALL, base_, nparams + 1, 2));
-		  luaK_fixline(fs, line);
-		  fs.freereg = base_+1;  /* call remove function and arguments and leaves
-									(unless changed) one result */
+//		  FuncState fs = ls.fs;
+//		  expdesc args = new expdesc();
+//		  int base_, nparams;
+//		  int line = ls.linenumber;
+//		  switch (ls.t.token) {
+//			case '(': {  /* funcargs . `(' [ explist1 ] `)' */
+//			  if (line != ls.lastline)
+//				luaX_syntaxerror(ls,"ambiguous syntax (function call x new statement)");
+//			  luaX_next(ls);
+//			  if (ls.t.token == ')')  /* arg list is empty? */
+//				args.k = expkind.VVOID;
+//			  else {
+//				explist1(ls, args);
+////				luaK_setmultret(fs, args);
+//			  }
+//			  check_match(ls, ')', '(', line);
+//			  break;
+//			}
+//			case '{': {  /* funcargs . constructor */
+//			  constructor(ls, args);
+//			  break;
+//			}
+//			case (int)RESERVED.TK_STRING: {  /* funcargs . STRING */
+//			  codestring(ls, args, ls.t.seminfo.ts);
+//			  luaX_next(ls);  /* must use `seminfo' before `next' */
+//			  break;
+//			}
+//			default: {
+//			  luaX_syntaxerror(ls, "function arguments expected");
+//			  return;
+//			}
+//		  }
+//		  lua_assert(f.k == expkind.VNONRELOC);
+//		  base_ = f.u.s.info;  /* base_ register for call */
+//		  if (hasmultret(args.k) != 0)
+//			nparams = LUA_MULTRET;  /* open call */
+//		  else {
+//			if (args.k != expkind.VVOID)
+//			  luaK_exp2nextreg(fs, args);  /* close last argument */
+//			nparams = fs.freereg - (base_+1);
+//		  }
+//		  init_exp(f, expkind.VCALL, luaK_codeABC(fs, OpCode.OP_CALL, base_, nparams + 1, 2));
+//		  luaK_fixline(fs, line);
+//		  fs.freereg = base_+1;  /* call remove function and arguments and leaves
+//									(unless changed) one result */
 		}
 
 
@@ -892,12 +892,12 @@ namespace lua40mod
 
 		private static void block (LexState ls) {
 		  /* block . chunk */
-		  FuncState fs = ls.fs;
-		  BlockCnt bl = new BlockCnt();
-		  enterblock(fs, bl, 0);
-		  chunk(ls);
-		  lua_assert(bl.breaklist == NO_JUMP);
-		  leaveblock(fs);
+//		  FuncState fs = ls.fs;
+//		  BlockCnt bl = new BlockCnt();
+//		  enterblock(fs, bl, 0);
+//		  chunk(ls);
+//		  lua_assert(bl.breaklist == NO_JUMP);
+//		  leaveblock(fs);
 		}
 
 
@@ -1338,17 +1338,17 @@ namespace lua40mod
 
 
 		private static void chunk (LexState ls) {
-		  /* chunk . { stat [`;'] } */
-		  int islast = 0;
-		  enterlevel(ls);
-		  while ((islast==0) && (block_follow(ls.t.token)==0)) {
-			islast = statement(ls);
-			testnext(ls, ';');
-			lua_assert(ls.fs.f.maxstacksize >= ls.fs.freereg &&
-					   ls.fs.freereg >= ls.fs.nactvar);
-			ls.fs.freereg = ls.fs.nactvar;  /* free registers */
-		  }
-		  leavelevel(ls);
+//		  /* chunk . { stat [`;'] } */
+//		  int islast = 0;
+//		  enterlevel(ls);
+//		  while ((islast==0) && (block_follow(ls.t.token)==0)) {
+//			islast = statement(ls);
+//			testnext(ls, ';');
+//			lua_assert(ls.fs.f.maxstacksize >= ls.fs.freereg &&
+//					   ls.fs.freereg >= ls.fs.nactvar);
+//			ls.fs.freereg = ls.fs.nactvar;  /* free registers */
+//		  }
+//		  leavelevel(ls);
 		}
 
 		/* }====================================================================== */

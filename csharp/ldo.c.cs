@@ -66,12 +66,12 @@ public static void luaD_checkstack (lua_State L, int n) {
 
 
 		private static void restore_stack_limit (lua_State L) {
-			lua_assert(L.stack_last == L.stacksize - EXTRA_STACK - 1);
-		  if (L.size_ci > LUAI_MAXCALLS) {  /* there was an overflow? */
-			int inuse = L.ci - L.base_ci;
-			if (inuse + 1 < LUAI_MAXCALLS)  /* can `undo' overflow? */
-			  luaD_reallocCI(L, LUAI_MAXCALLS);
-		  }
+//			lua_assert(L.stack_last == L.stacksize - EXTRA_STACK - 1);
+//		  if (L.size_ci > LUAI_MAXCALLS) {  /* there was an overflow? */
+//			int inuse = L.ci - L.base_ci;
+//			if (inuse + 1 < LUAI_MAXCALLS)  /* can `undo' overflow? */
+//			  luaD_reallocCI(L, LUAI_MAXCALLS);
+//		  }
 		}
 
 
@@ -89,19 +89,19 @@ public static void luaD_checkstack (lua_State L, int n) {
 
 
 		public static void luaD_throw (lua_State L, int errcode) {
-		  if (L.errorJmp != null) {
-			L.errorJmp.status = errcode;
-			LUAI_THROW(L, L.errorJmp);
-		  }
-		  else {
-			L.status = cast_byte(errcode);
-			if (G(L).panic != null) {
-			  resetstack(L, errcode);
-			  lua_unlock(L);
-			  G(L).panic(L);
-			}
-			exit(EXIT_FAILURE);
-		  }
+//		  if (L.errorJmp != null) {
+//			L.errorJmp.status = errcode;
+//			LUAI_THROW(L, L.errorJmp);
+//		  }
+//		  else {
+//			L.status = cast_byte(errcode);
+//			if (G(L).panic != null) {
+//			  resetstack(L, errcode);
+//			  lua_unlock(L);
+//			  G(L).panic(L);
+//			}
+//			exit(EXIT_FAILURE);
+//		  }
 		}
 
 
@@ -154,13 +154,13 @@ public static void luaD_checkstack (lua_State L, int n) {
 		}
 
 		public static void luaD_reallocstack (lua_State L, int newsize) {
-		  TValue[] oldstack = L.stack;
-		  int realsize = newsize + 1 + EXTRA_STACK;
-		  lua_assert(L.stack_last == L.stacksize - EXTRA_STACK - 1);
-		  luaM_reallocvector(L, ref L.stack, L.stacksize, realsize/*, TValue*/);
-		  L.stacksize = realsize;
-		  L.stack_last = L.stack[newsize];
-		  correctstack(L, oldstack);
+//		  TValue[] oldstack = L.stack;
+//		  int realsize = newsize + 1 + EXTRA_STACK;
+//		  lua_assert(L.stack_last == L.stacksize - EXTRA_STACK - 1);
+//		  luaM_reallocvector(L, ref L.stack, L.stacksize, realsize/*, TValue*/);
+//		  L.stacksize = realsize;
+//		  L.stack_last = L.stack[newsize];
+//		  correctstack(L, oldstack);
 		}
 
 		public static void luaD_reallocCI (lua_State L, int newsize) {
@@ -433,11 +433,12 @@ public static void luaD_checkstack (lua_State L, int n) {
 
 
 		private static int resume_error (lua_State L, CharPtr msg) {
-		  L.top = L.ci.base_;
-		  setsvalue2s(L, L.top, luaS_new(L, msg));
-		  incr_top(L);
-		  lua_unlock(L);
-		  return LUA_ERRRUN;
+//		  L.top = L.ci.base_;
+//		  setsvalue2s(L, L.top, luaS_new(L, msg));
+//		  incr_top(L);
+//		  lua_unlock(L);
+//		  return LUA_ERRRUN;
+			return 0;
 		}
 
 
@@ -469,13 +470,13 @@ public static void luaD_checkstack (lua_State L, int n) {
 
 
 		public static int lua_yield (lua_State L, int nresults) {
-		  luai_userstateyield(L, nresults);
-		  lua_lock(L);
-		  if (L.nCcalls > L.baseCcalls)
-			luaG_runerror(L, "attempt to yield across metamethod/C-call boundary");
-		  L.base_ = L.top - nresults;  /* protect stack slots below */
-		  L.status = LUA_YIELD;
-		  lua_unlock(L);
+//		  luai_userstateyield(L, nresults);
+//		  lua_lock(L);
+//		  if (L.nCcalls > L.baseCcalls)
+//			luaG_runerror(L, "attempt to yield across metamethod/C-call boundary");
+//		  L.base_ = L.top - nresults;  /* protect stack slots below */
+//		  L.status = LUA_YIELD;
+//		  lua_unlock(L);
 		  return -1;
 		}
 
@@ -517,21 +518,21 @@ public static void luaD_checkstack (lua_State L, int n) {
 		};
 
 		private static void f_parser (lua_State L, object ud) {
-		  int i;
-		  Proto tf;
-		  Closure cl;
-		  SParser p = (SParser)ud;
-		  int c = luaZ_lookahead(p.z);
-//		  luaC_checkGC(L);
-		  tf = (c == LUA_SIGNATURE[0]) ?
-			luaU_undump(L, p.z, p.buff, p.name) :
-			luaY_parser(L, p.z, p.buff, p.name);
-		  cl = luaF_newLclosure(L, tf.nups, hvalue(gt(L)));
-		  cl.l.p = tf;
-		  for (i = 0; i < tf.nups; i++)  /* initialize eventual upvalues */
-			cl.l.upvals[i] = luaF_newupval(L);
-		  setclvalue(L, L.top, cl);
-		  incr_top(L);
+//		  int i;
+//		  Proto tf;
+//		  Closure cl;
+//		  SParser p = (SParser)ud;
+//		  int c = luaZ_lookahead(p.z);
+////		  luaC_checkGC(L);
+//		  tf = (c == LUA_SIGNATURE[0]) ?
+//			luaU_undump(L, p.z, p.buff, p.name) :
+//			luaY_parser(L, p.z, p.buff, p.name);
+//		  cl = luaF_newLclosure(L, tf.nups, hvalue(gt(L)));
+//		  cl.l.p = tf;
+//		  for (i = 0; i < tf.nups; i++)  /* initialize eventual upvalues */
+//			cl.l.upvals[i] = luaF_newupval(L);
+//		  setclvalue(L, L.top, cl);
+//		  incr_top(L);
 		}
 
 

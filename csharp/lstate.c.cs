@@ -71,16 +71,16 @@ namespace lua40mod
 		** open parts that may cause memory-allocation errors
 		*/
 		private static void f_luaopen (lua_State L, object ud) {
-		  global_State g = G(L);
-		  //UNUSED(ud);
-		  stack_init(L, L);  /* init stack */
-		  sethvalue(L, gt(L), luaH_new(L, 0, 2));  /* table of globals */
-		  sethvalue(L, registry(L), luaH_new(L, 0, 2));  /* registry */
-		  luaS_resize(L, MINSTRTABSIZE);  /* initial size of string table */
-		  luaT_init(L);
-		  luaX_init(L);
-		  luaS_fix(luaS_newliteral(L, MEMERRMSG));
-		  g.GCthreshold = 4*g.totalbytes;
+//		  global_State g = G(L);
+//		  //UNUSED(ud);
+//		  stack_init(L, L);  /* init stack */
+//		  sethvalue(L, gt(L), luaH_new(L, 0, 2));  /* table of globals */
+//		  sethvalue(L, registry(L), luaH_new(L, 0, 2));  /* registry */
+//		  luaS_resize(L, MINSTRTABSIZE);  /* initial size of string table */
+//		  luaT_init(L);
+//		  luaX_init(L);
+//		  luaS_fix(luaS_newliteral(L, MEMERRMSG));
+//		  g.GCthreshold = 4*g.totalbytes;
 		}
 
 
@@ -107,16 +107,16 @@ namespace lua40mod
 
 
 		private static void close_state (lua_State L) {
-		  global_State g = G(L);
-		  luaF_close(L, L.stack[0]);  /* close all upvalues for this thread */
-		  luaC_freeall(L);  /* collect all objects */
-		  lua_assert(g.rootgc == obj2gco(L));
-		  lua_assert(g.strt.nuse == 0);
-		  luaM_freearray(L, G(L).strt.hash);
-		  luaZ_freebuffer(L, g.buff);
-		  freestack(L, L);
-		  lua_assert(g.totalbytes == GetUnmanagedSize(typeof(LG)));
-		  //g.frealloc(g.ud, fromstate(L), (uint)state_size(typeof(LG)), 0);
+//		  global_State g = G(L);
+//		  luaF_close(L, L.stack[0]);  /* close all upvalues for this thread */
+//		  luaC_freeall(L);  /* collect all objects */
+//		  lua_assert(g.rootgc == obj2gco(L));
+//		  lua_assert(g.strt.nuse == 0);
+//		  luaM_freearray(L, G(L).strt.hash);
+//		  luaZ_freebuffer(L, g.buff);
+//		  freestack(L, L);
+//		  lua_assert(g.totalbytes == GetUnmanagedSize(typeof(LG)));
+//		  //g.frealloc(g.ud, fromstate(L), (uint)state_size(typeof(LG)), 0);
 		}
 
 
@@ -138,11 +138,11 @@ return null;
 
 
 		private static void luaE_freethread (lua_State L, lua_State L1) {
-		  luaF_close(L1, L1.stack[0]);  /* close all upvalues for this thread */
-		  lua_assert(L1.openupval == null);
-		  luai_userstatefree(L1);
-		  freestack(L, L1);
-		  //luaM_freemem(L, fromstate(L1));
+//		  luaF_close(L1, L1.stack[0]);  /* close all upvalues for this thread */
+//		  lua_assert(L1.openupval == null);
+//		  luai_userstatefree(L1);
+//		  freestack(L, L1);
+//		  //luaM_freemem(L, fromstate(L1));
 		}
 
 

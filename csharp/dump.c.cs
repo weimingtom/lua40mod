@@ -110,18 +110,18 @@ namespace lua40mod
 
 		private static void DumpHeader(StreamProxy D)
 		{
-			DumpByte(ID_CHUNK,D);
-			fputs(SIGNATURE,D);
-			DumpByte(VERSION,D);
-			DumpByte(luaU_endianess(),D);
-			DumpByte((byte)Lua.get_type_size(typeof(int)),D);
-			DumpByte((byte)Lua.get_type_size(typeof(size_t)),D);
-			DumpByte((byte)Lua.get_type_size(typeof(Instruction)),D);
-			DumpByte(SIZE_INSTRUCTION,D);
-			DumpByte(SIZE_OP,D);
-			DumpByte(SIZE_B,D);
-			DumpByte((byte)Lua.get_type_size(typeof(Number)),D);
-			DumpNumber(TEST_NUMBER,D);
+//			DumpByte(ID_CHUNK,D);
+//			fputs(SIGNATURE,D);
+//			DumpByte(VERSION,D);
+//			DumpByte(luaU_endianess(),D);
+//			DumpByte((byte)Lua.get_type_size(typeof(int)),D);
+//			DumpByte((byte)Lua.get_type_size(typeof(size_t)),D);
+//			DumpByte((byte)Lua.get_type_size(typeof(Instruction)),D);
+//			DumpByte(SIZE_INSTRUCTION,D);
+//			DumpByte(SIZE_OP,D);
+//			DumpByte(SIZE_B,D);
+//			DumpByte((byte)Lua.get_type_size(typeof(Number)),D);
+//			DumpNumber(TEST_NUMBER,D);
 		}
 
 		public static void luaU_dumpchunk(Proto Main, StreamProxy D)

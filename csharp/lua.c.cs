@@ -338,34 +338,34 @@ namespace lua40mod
 
 		static int runargs(Lua.lua_State L, string[] argv, int n)
 		{
-			int i;
-			for (i = 1; i < n; i++)
-			{
-				if (argv[i] == null) continue;
-				Lua.lua_assert(argv[i][0] == '-');
-				switch (argv[i][1])
-				{  /* option */
-					case 'e':
-						{
-							string chunk = argv[i].Substring(2);
-							if (chunk == "") chunk = argv[++i];
-							Lua.lua_assert(chunk != null);
-							if (dostring(L, chunk, "=(command line)") != 0)
-								return 1;
-							break;
-						}
-					case 'l':
-						{
-							string filename = argv[i].Substring(2);
-							if (filename == "") filename = argv[++i];
-							Lua.lua_assert(filename != null);
-							if (dolibrary(L, filename) != 0)
-								return 1;  /* stop if file fails */
-							break;
-						}
-					default: break;
-				}
-			}
+//			int i;
+//			for (i = 1; i < n; i++)
+//			{
+//				if (argv[i] == null) continue;
+//				Lua.lua_assert(argv[i][0] == '-');
+//				switch (argv[i][1])
+//				{  /* option */
+//					case 'e':
+//						{
+//							string chunk = argv[i].Substring(2);
+//							if (chunk == "") chunk = argv[++i];
+//							Lua.lua_assert(chunk != null);
+//							if (dostring(L, chunk, "=(command line)") != 0)
+//								return 1;
+//							break;
+//						}
+//					case 'l':
+//						{
+//							string filename = argv[i].Substring(2);
+//							if (filename == "") filename = argv[++i];
+//							Lua.lua_assert(filename != null);
+//							if (dolibrary(L, filename) != 0)
+//								return 1;  /* stop if file fails */
+//							break;
+//						}
+//					default: break;
+//				}
+//			}
 			return 0;
 		}
 

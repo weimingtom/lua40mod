@@ -38,30 +38,32 @@ namespace lua40mod
 		** tag methods
 		*/
 		public static TValue luaT_gettm (Table events, TMS event_, TString ename) {
-		  /*const*/ TValue tm = luaH_getstr(events, ename);
-		  lua_assert(event_ <= TMS.TM_EQ);
-		  if (ttisnil(tm)) {  /* no tag method? */
-			events.flags |= (byte)(1<<(int)event_);  /* cache this fact */
+//		  /*const*/ TValue tm = luaH_getstr(events, ename);
+//		  lua_assert(event_ <= TMS.TM_EQ);
+//		  if (ttisnil(tm)) {  /* no tag method? */
+//			events.flags |= (byte)(1<<(int)event_);  /* cache this fact */
+//			return null;
+//		  }
+//		  else return tm;
 			return null;
-		  }
-		  else return tm;
 		}
 
 
 		public static TValue luaT_gettmbyobj (lua_State L, TValue o, TMS event_) {
-		  Table mt;
-		  switch (ttype(o)) {
-			case LUA_TTABLE:
-			  mt = hvalue(o).metatable;
-			  break;
-			case LUA_TUSERDATA:
-			  mt = uvalue(o).metatable;
-			  break;
-			default:
-			  mt = G(L).mt[ttype(o)];
-			  break;
-		  }
-		  return ((mt!=null) ? luaH_getstr(mt, G(L).tmname[(int)event_]) : luaO_nilobject);
+//		  Table mt;
+//		  switch (ttype(o)) {
+//			case LUA_TTABLE:
+//			  mt = hvalue(o).metatable;
+//			  break;
+//			case LUA_TUSERDATA:
+//			  mt = uvalue(o).metatable;
+//			  break;
+//			default:
+//			  mt = G(L).mt[ttype(o)];
+//			  break;
+//		  }
+//		  return ((mt!=null) ? luaH_getstr(mt, G(L).tmname[(int)event_]) : luaO_nilobject);
+			return null;
 		}
 
 	}

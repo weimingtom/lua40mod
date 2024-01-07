@@ -221,26 +221,26 @@ namespace lua40mod
 		/* Macros to access values */
 		public static int    ttype(TValue o) { return o.tt; }
 		public static int    ttype(CommonHeader o) { return o.tt; }
-		public static GCObject gcvalue(TValue o) { return (GCObject)check_exp(iscollectable(o), o.value.gc); }
-		public static object pvalue(TValue o) { return (object)check_exp(ttislightuserdata(o), o.value.p); }
-		public static lua_Number nvalue(TValue o) { return (lua_Number)check_exp(ttisnumber(o), o.value.n); }
-		public static TString rawtsvalue(TValue o) { return (TString)check_exp(ttisstring(o), o.value.gc.ts); }
-		public static TString_tsv tsvalue(TValue o) { return rawtsvalue(o).tsv; }
-		public static Udata rawuvalue(TValue o) { return (Udata)check_exp(ttisuserdata(o), o.value.gc.u); }
-		public static Udata_uv uvalue(TValue o) { return rawuvalue(o).uv; }
-		public static Closure clvalue(TValue o)	{return (Closure)check_exp(ttisfunction(o), o.value.gc.cl);}
-		public static Table hvalue(TValue o)	{return (Table)check_exp(ttistable(o), o.value.gc.h);}
-		public static int bvalue(TValue o)	{return (int)check_exp(ttisboolean(o), o.value.b);}
-		public static lua_State thvalue(TValue o)	{return (lua_State)check_exp(ttisthread(o), o.value.gc.th);}
+//		public static GCObject gcvalue(TValue o) { return (GCObject)check_exp(iscollectable(o), o.value.gc); }
+//		public static object pvalue(TValue o) { return (object)check_exp(ttislightuserdata(o), o.value.p); }
+//		public static lua_Number nvalue(TValue o) { return (lua_Number)check_exp(ttisnumber(o), o.value.n); }
+//		public static TString rawtsvalue(TValue o) { return (TString)check_exp(ttisstring(o), o.value.gc.ts); }
+//		public static TString_tsv tsvalue(TValue o) { return rawtsvalue(o).tsv; }
+//		public static Udata rawuvalue(TValue o) { return (Udata)check_exp(ttisuserdata(o), o.value.gc.u); }
+//		public static Udata_uv uvalue(TValue o) { return rawuvalue(o).uv; }
+//		public static Closure clvalue(TValue o)	{return (Closure)check_exp(ttisfunction(o), o.value.gc.cl);}
+//		public static Table hvalue(TValue o)	{return (Table)check_exp(ttistable(o), o.value.gc.h);}
+//		public static int bvalue(TValue o)	{return (int)check_exp(ttisboolean(o), o.value.b);}
+//		public static lua_State thvalue(TValue o)	{return (lua_State)check_exp(ttisthread(o), o.value.gc.th);}
 
-		public static int l_isfalse(TValue o) { return ((ttisnil(o) || (ttisboolean(o) && bvalue(o) == 0))) ? 1 : 0; }
+//		public static int l_isfalse(TValue o) { return ((ttisnil(o) || (ttisboolean(o) && bvalue(o) == 0))) ? 1 : 0; }
 
 		/*
 		** for internal debug only
 		*/
 		public static void checkconsistency(TValue obj)
 		{
-			lua_assert(!iscollectable(obj) || (ttype(obj) == (obj).value.gc.gch.tt));
+//			lua_assert(!iscollectable(obj) || (ttype(obj) == (obj).value.gc.gch.tt));
 		}
 
 		public static void checkliveness(global_State g, TValue obj)
@@ -382,7 +382,7 @@ namespace lua40mod
 		};
 
 		public static CharPtr getstr(TString ts) { return ts.str; }
-		public static CharPtr svalue(StkId o) { return getstr(rawtsvalue(o)); }
+//		public static CharPtr svalue(StkId o) { return getstr(rawtsvalue(o)); }
 
 		public class Udata_uv : GCObject
 		{
@@ -534,8 +534,8 @@ public int lineDefined;
 		};
 
 
-		public static bool iscfunction(TValue o) { return ((ttype(o) == LUA_TFUNCTION) && (clvalue(o).c.isC != 0)); }
-		public static bool isLfunction(TValue o) { return ((ttype(o) == LUA_TFUNCTION) && (clvalue(o).c.isC==0)); }
+//		public static bool iscfunction(TValue o) { return ((ttype(o) == LUA_TFUNCTION) && (clvalue(o).c.isC != 0)); }
+//		public static bool isLfunction(TValue o) { return ((ttype(o) == LUA_TFUNCTION) && (clvalue(o).c.isC==0)); }
 
 
 		/*

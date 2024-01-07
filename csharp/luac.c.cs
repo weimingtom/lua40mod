@@ -121,34 +121,35 @@ namespace lua40mod
 		 return i;
 		}
 
-		static Lua.Proto toproto(Lua.lua_State L, int i) {return Lua.clvalue(L.top+(i)).l.p;}
+//		static Lua.Proto toproto(Lua.lua_State L, int i) {return Lua.clvalue(L.top+(i)).l.p;}
 
 		static Lua.Proto combine(Lua.lua_State L, int n)
 		{
-		 if (n==1)
-		  return toproto(L,-1);
-		 else
-		 {
-		  int i,pc;
-		  Lua.Proto f=Lua.luaF_newproto(L);
-		  Lua.setptvalue2s(L,L.top,f); Lua.incr_top(L);
-		  f.source=Lua.luaS_newliteral(L,"=(" + PROGNAME + ")");
-		  f.maxstacksize=1;
-		  pc=2*n+1;
-		  f.code = (Instruction[])Lua.luaM_newvector<Instruction>(L, pc);
-		  f.sizecode=pc;
-		  f.p = Lua.luaM_newvector<Lua.Proto>(L, n);
-		  f.sizep=n;
-		  pc=0;
-		  for (i=0; i<n; i++)
-		  {
-		   f.p[i]=toproto(L,i-n-1);
-		   f.code[pc++]=(uint)Lua.CREATE_ABx(Lua.OpCode.OP_CLOSURE,0,i);
-		   f.code[pc++]=(uint)Lua.CREATE_ABC(Lua.OpCode.OP_CALL,0,1,1);
-		  }
-		  f.code[pc++]=(uint)Lua.CREATE_ABC(Lua.OpCode.OP_RETURN,0,1,0);
-		  return f;
-		 }
+//		 if (n==1)
+//		  return toproto(L,-1);
+//		 else
+//		 {
+//		  int i,pc;
+//		  Lua.Proto f=Lua.luaF_newproto(L);
+//		  Lua.setptvalue2s(L,L.top,f); Lua.incr_top(L);
+//		  f.source=Lua.luaS_newliteral(L,"=(" + PROGNAME + ")");
+//		  f.maxstacksize=1;
+//		  pc=2*n+1;
+//		  f.code = (Instruction[])Lua.luaM_newvector<Instruction>(L, pc);
+//		  f.sizecode=pc;
+//		  f.p = Lua.luaM_newvector<Lua.Proto>(L, n);
+//		  f.sizep=n;
+//		  pc=0;
+//		  for (i=0; i<n; i++)
+//		  {
+//		   f.p[i]=toproto(L,i-n-1);
+//		   f.code[pc++]=(uint)Lua.CREATE_ABx(Lua.OpCode.OP_CLOSURE,0,i);
+//		   f.code[pc++]=(uint)Lua.CREATE_ABC(Lua.OpCode.OP_CALL,0,1,1);
+//		  }
+//		  f.code[pc++]=(uint)Lua.CREATE_ABC(Lua.OpCode.OP_RETURN,0,1,0);
+//		  return f;
+//		 }
+			return null;
 		}
 
 		static int writer(Lua.lua_State L, Lua.CharPtr p, uint size, object u)
@@ -164,29 +165,29 @@ namespace lua40mod
 
 		static int pmain(Lua.lua_State L)
 		{
-		 Smain s = (Smain)Lua.lua_touserdata(L, 1);
-		 int argc=s.argc;
-		 string[] argv=s.argv;
-		 Lua.Proto f;
-		 int i;
-		 if (Lua.lua_checkstack(L,argc)==0) fatal("too many input files");
-		 for (i=0; i<argc; i++)
-		 {
-		  Lua.CharPtr filename=(Lua.strcmp(argv[i], "-")==0) ? null : argv[i];
-		  if (Lua.luaL_loadfile(L,filename)!=0) fatal(Lua.lua_tostring(L,-1));
-		 }
-		 f=combine(L,argc);
-		 if (listing!=0) Lua.luaU_print(f,(listing>1)?1:0);
-		 if (dumping!=0)
-		 {
-		  Lua.StreamProxy D= (output==null) ? Lua.stdout : Lua.fopen(output,"wb");
-		  if (D==null) cannot("open");
-		  Lua.lua_lock(L);
-		  //Lua.luaU_dump(L,f,writer,D,stripping);
-		  Lua.lua_unlock(L);
-		  if (Lua.ferror(D)!=0) cannot("write");
-		  if (Lua.fclose(D)!=0) cannot("close");
-		 }
+//		 Smain s = (Smain)Lua.lua_touserdata(L, 1);
+//		 int argc=s.argc;
+//		 string[] argv=s.argv;
+//		 Lua.Proto f;
+//		 int i;
+//		 if (Lua.lua_checkstack(L,argc)==0) fatal("too many input files");
+//		 for (i=0; i<argc; i++)
+//		 {
+//		  Lua.CharPtr filename=(Lua.strcmp(argv[i], "-")==0) ? null : argv[i];
+//		  if (Lua.luaL_loadfile(L,filename)!=0) fatal(Lua.lua_tostring(L,-1));
+//		 }
+//		 f=combine(L,argc);
+//		 if (listing!=0) Lua.luaU_print(f,(listing>1)?1:0);
+//		 if (dumping!=0)
+//		 {
+//		  Lua.StreamProxy D= (output==null) ? Lua.stdout : Lua.fopen(output,"wb");
+//		  if (D==null) cannot("open");
+//		  Lua.lua_lock(L);
+//		  //Lua.luaU_dump(L,f,writer,D,stripping);
+//		  Lua.lua_unlock(L);
+//		  if (Lua.ferror(D)!=0) cannot("write");
+//		  if (Lua.fclose(D)!=0) cannot("close");
+//		 }
 		 return 0;
 		}
 

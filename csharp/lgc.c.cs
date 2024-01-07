@@ -66,9 +66,9 @@ namespace lua40mod
 		}
 
 		private static void removeentry (Node n) {
-		  lua_assert(ttisnil(gval(n)));
-		  if (iscollectable(gkey(n)))
-			setttype(gkey(n), LUA_TDEADKEY);  /* dead key; remove it */
+//		  lua_assert(ttisnil(gval(n)));
+//		  if (iscollectable(gkey(n)))
+//			setttype(gkey(n), LUA_TDEADKEY);  /* dead key; remove it */
 		}
 
 
@@ -230,51 +230,51 @@ namespace lua40mod
 
 
 		private static void traverseclosure (global_State g, Closure cl) {
-		  markobject(g, cl.c.env);
-		  if (cl.c.isC != 0) {
-			int i;
-			for (i=0; i<cl.c.nupvalues; i++)  /* mark its upvalues */
-			  markvalue(g, cl.c.upvalue[i]);
-		  }
-		  else {
-			int i;
-			lua_assert(cl.l.nupvalues == cl.l.p.nups);
-			markobject(g, cl.l.p);
-			for (i=0; i<cl.l.nupvalues; i++)  /* mark its upvalues */
-			  markobject(g, cl.l.upvals[i]);
-		  }
+//		  markobject(g, cl.c.env);
+//		  if (cl.c.isC != 0) {
+//			int i;
+//			for (i=0; i<cl.c.nupvalues; i++)  /* mark its upvalues */
+//			  markvalue(g, cl.c.upvalue[i]);
+//		  }
+//		  else {
+//			int i;
+//			lua_assert(cl.l.nupvalues == cl.l.p.nups);
+//			markobject(g, cl.l.p);
+//			for (i=0; i<cl.l.nupvalues; i++)  /* mark its upvalues */
+//			  markobject(g, cl.l.upvals[i]);
+//		  }
 		}
 
 
 		private static void checkstacksizes (lua_State L, StkId max) {
-		  int ci_used = cast_int(L.ci - L.base_ci[0]);  /* number of `ci' in use */
-		  int s_used = cast_int(max - L.stack);  /* part of stack in use */
-		  if (L.size_ci > LUAI_MAXCALLS)  /* handling overflow? */
-			return;  /* do not touch the stacks */
-		  if (4*ci_used < L.size_ci && 2*BASIC_CI_SIZE < L.size_ci)
-			luaD_reallocCI(L, L.size_ci/2);  /* still big enough... */
-		  //condhardstacktests(luaD_reallocCI(L, ci_used + 1));
-		  if (4*s_used < L.stacksize &&
-			  2*(BASIC_STACK_SIZE+EXTRA_STACK) < L.stacksize)
-			luaD_reallocstack(L, L.stacksize/2);  /* still big enough... */
-		  //condhardstacktests(luaD_reallocstack(L, s_used));
+//		  int ci_used = cast_int(L.ci - L.base_ci[0]);  /* number of `ci' in use */
+//		  int s_used = cast_int(max - L.stack);  /* part of stack in use */
+//		  if (L.size_ci > LUAI_MAXCALLS)  /* handling overflow? */
+//			return;  /* do not touch the stacks */
+//		  if (4*ci_used < L.size_ci && 2*BASIC_CI_SIZE < L.size_ci)
+//			luaD_reallocCI(L, L.size_ci/2);  /* still big enough... */
+//		  //condhardstacktests(luaD_reallocCI(L, ci_used + 1));
+//		  if (4*s_used < L.stacksize &&
+//			  2*(BASIC_STACK_SIZE+EXTRA_STACK) < L.stacksize)
+//			luaD_reallocstack(L, L.stacksize/2);  /* still big enough... */
+//		  //condhardstacktests(luaD_reallocstack(L, s_used));
 		}
 
 
 		private static void traversestack (global_State g, lua_State l) {
-		  StkId o, lim;
-		  CallInfo ci;
-		  markvalue(g, gt(l));
-		  lim = l.top;
-		  for (ci = l.base_ci[0]; ci <= l.ci; CallInfo.inc(ref ci)) {
-			lua_assert(ci.top <= l.stack_last);
-			if (lim < ci.top) lim = ci.top;
-		  }
-		  for (o = l.stack[0]; o < l.top; StkId.inc(ref o))
-			markvalue(g, o);
-		  for (; o <= lim; StkId.inc(ref o))
-			setnilvalue(o);
-		  checkstacksizes(l, lim);
+//		  StkId o, lim;
+//		  CallInfo ci;
+//		  markvalue(g, gt(l));
+//		  lim = l.top;
+//		  for (ci = l.base_ci[0]; ci <= l.ci; CallInfo.inc(ref ci)) {
+//			lua_assert(ci.top <= l.stack_last);
+//			if (lim < ci.top) lim = ci.top;
+//		  }
+//		  for (o = l.stack[0]; o < l.top; StkId.inc(ref o))
+//			markvalue(g, o);
+//		  for (; o <= lim; StkId.inc(ref o))
+//			setnilvalue(o);
+//		  checkstacksizes(l, lim);
 		}
 
 
@@ -390,34 +390,34 @@ return 0;
 
 
 		private static void freeobj (lua_State L, GCObject o) {
-		  switch (o.gch.tt) {
-			case LUA_TPROTO: luaF_freeproto(L, gco2p(o)); break;
-			case LUA_TFUNCTION: luaF_freeclosure(L, gco2cl(o)); break;
-			case LUA_TUPVAL: luaF_freeupval(L, gco2uv(o)); break;
-			case LUA_TTABLE: luaH_free(L, gco2h(o)); break;
-			case LUA_TTHREAD: {
-			  lua_assert(gco2th(o) != L && gco2th(o) != G(L).mainthread);
-			  luaE_freethread(L, gco2th(o));
-			  break;
-			}
-			case LUA_TSTRING: {
-			  G(L).strt.nuse--;
-			  SubtractTotalBytes(L, sizestring(gco2ts(o)));
-			  luaM_freemem(L, gco2ts(o));
-			  break;
-			}
-			case LUA_TUSERDATA: {
-			  SubtractTotalBytes(L, sizeudata(gco2u(o)));
-			  luaM_freemem(L, gco2u(o));
-			  break;
-			}
-			default: lua_assert(0); break;
-		  }
+//		  switch (o.gch.tt) {
+//			case LUA_TPROTO: luaF_freeproto(L, gco2p(o)); break;
+//			case LUA_TFUNCTION: luaF_freeclosure(L, gco2cl(o)); break;
+//			case LUA_TUPVAL: luaF_freeupval(L, gco2uv(o)); break;
+//			case LUA_TTABLE: luaH_free(L, gco2h(o)); break;
+//			case LUA_TTHREAD: {
+//			  lua_assert(gco2th(o) != L && gco2th(o) != G(L).mainthread);
+//			  luaE_freethread(L, gco2th(o));
+//			  break;
+//			}
+//			case LUA_TSTRING: {
+//			  G(L).strt.nuse--;
+//			  SubtractTotalBytes(L, sizestring(gco2ts(o)));
+//			  luaM_freemem(L, gco2ts(o));
+//			  break;
+//			}
+//			case LUA_TUSERDATA: {
+//			  SubtractTotalBytes(L, sizeudata(gco2u(o)));
+//			  luaM_freemem(L, gco2u(o));
+//			  break;
+//			}
+//			default: lua_assert(0); break;
+//		  }
 		}
 
 
 
-		public static void sweepwholelist(lua_State L, GCObjectRef p) { sweeplist(L, p, MAX_LUMEM); }
+//		public static void sweepwholelist(lua_State L, GCObjectRef p) { sweeplist(L, p, MAX_LUMEM); }
 
 
 		private static GCObjectRef sweeplist (lua_State L, GCObjectRef p, lu_mem count) {
@@ -446,45 +446,45 @@ return 0;
 
 
 		private static void checkSizes (lua_State L) {
-		  global_State g = G(L);
-		  /* check size of string hash */
-		  if (g.strt.nuse < (lu_int32)(g.strt.size/4) &&
-			  g.strt.size > MINSTRTABSIZE*2)
-			luaS_resize(L, g.strt.size/2);  /* table is too big */
-		  /* check size of buffer */
-		  if (luaZ_sizebuffer(g.buff) > LUA_MINBUFFER*2) {  /* buffer too big? */
-			uint newsize = luaZ_sizebuffer(g.buff) / 2;
-			luaZ_resizebuffer(L, g.buff, (int)newsize);
-		  }
+//		  global_State g = G(L);
+//		  /* check size of string hash */
+//		  if (g.strt.nuse < (lu_int32)(g.strt.size/4) &&
+//			  g.strt.size > MINSTRTABSIZE*2)
+//			luaS_resize(L, g.strt.size/2);  /* table is too big */
+//		  /* check size of buffer */
+//		  if (luaZ_sizebuffer(g.buff) > LUA_MINBUFFER*2) {  /* buffer too big? */
+//			uint newsize = luaZ_sizebuffer(g.buff) / 2;
+//			luaZ_resizebuffer(L, g.buff, (int)newsize);
+//		  }
 		}
 
 
 		private static void GCTM (lua_State L) {
-		  global_State g = G(L);
-		  GCObject o = g.tmudata.gch.next;  /* get first element */
-		  Udata udata = rawgco2u(o);
-		  TValue tm;
-		  /* remove udata from `tmudata' */
-		  if (o == g.tmudata)  /* last element? */
-			g.tmudata = null;
-		  else
-			g.tmudata.gch.next = udata.uv.next;
-		  udata.uv.next = g.mainthread.next;  /* return it to `root' list */
-		  g.mainthread.next = o;
-		  makewhite(g, o);
-		  tm = fasttm(L, udata.uv.metatable, TMS.TM_GC);
-		  if (tm != null) {
-			lu_byte oldah = L.allowhook;
-			lu_mem oldt = (lu_mem)g.GCthreshold;
-			L.allowhook = 0;  /* stop debug hooks during GC tag method */
-			g.GCthreshold = 2*g.totalbytes;  /* avoid GC steps */
-			setobj2s(L, L.top, tm);
-			setuvalue(L, L.top+1, udata);
-			L.top += 2;
-			luaD_call(L, L.top - 2, 0);
-			L.allowhook = oldah;  /* restore hooks */
-			g.GCthreshold = (uint)oldt;  /* restore threshold */
-		  }
+//		  global_State g = G(L);
+//		  GCObject o = g.tmudata.gch.next;  /* get first element */
+//		  Udata udata = rawgco2u(o);
+//		  TValue tm;
+//		  /* remove udata from `tmudata' */
+//		  if (o == g.tmudata)  /* last element? */
+//			g.tmudata = null;
+//		  else
+//			g.tmudata.gch.next = udata.uv.next;
+//		  udata.uv.next = g.mainthread.next;  /* return it to `root' list */
+//		  g.mainthread.next = o;
+//		  makewhite(g, o);
+//		  tm = fasttm(L, udata.uv.metatable, TMS.TM_GC);
+//		  if (tm != null) {
+//			lu_byte oldah = L.allowhook;
+//			lu_mem oldt = (lu_mem)g.GCthreshold;
+//			L.allowhook = 0;  /* stop debug hooks during GC tag method */
+//			g.GCthreshold = 2*g.totalbytes;  /* avoid GC steps */
+//			setobj2s(L, L.top, tm);
+//			setuvalue(L, L.top+1, udata);
+//			L.top += 2;
+//			luaD_call(L, L.top - 2, 0);
+//			L.allowhook = oldah;  /* restore hooks */
+//			g.GCthreshold = (uint)oldt;  /* restore threshold */
+//		  }
 		}
 
 

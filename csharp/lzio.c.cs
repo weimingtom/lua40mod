@@ -11,18 +11,19 @@ namespace lua40mod
 
 
 		public static int luaZ_fill (zio z) {
-		  uint size;
-		  lua_State L = z.L;
-		  CharPtr buff;
-		  lua_unlock(L);
-		  buff = z.reader(L, z.data, out size);
-		  lua_lock(L);
-		  if (buff == null || size == 0) return EOZ;
-		  z.n = size - 1;
-		  z.p = new CharPtr(buff);
-		  int result = char2int(z.p[0]);
-		  z.p.inc();
-		  return result;
+//		  uint size;
+//		  lua_State L = z.L;
+//		  CharPtr buff;
+//		  lua_unlock(L);
+//		  buff = z.reader(L, z.data, out size);
+//		  lua_lock(L);
+//		  if (buff == null || size == 0) return EOZ;
+//		  z.n = size - 1;
+//		  z.p = new CharPtr(buff);
+//		  int result = char2int(z.p[0]);
+//		  z.p.inc();
+//		  return result;
+			return 0;
 		}
 
 
@@ -68,11 +69,12 @@ namespace lua40mod
 
 		/* ------------------------------------------------------------------------ */
 		public static CharPtr luaZ_openspace (lua_State L, Mbuffer buff, uint n) {
-		  if (n > buff.buffsize) {
-			if (n < LUA_MINBUFFER) n = LUA_MINBUFFER;
-			luaZ_resizebuffer(L, buff, (int)n);
-		  }
-		  return buff.buffer;
+//		  if (n > buff.buffsize) {
+//			if (n < LUA_MINBUFFER) n = LUA_MINBUFFER;
+//			luaZ_resizebuffer(L, buff, (int)n);
+//		  }
+//		  return buff.buffer;
+			return null;
 		}
 
 

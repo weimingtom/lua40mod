@@ -125,10 +125,10 @@ namespace lua40mod
 
 
 
-		public static Closure curr_func(lua_State L) { return (clvalue(L.ci.func)); }
-		public static Closure ci_func(CallInfo ci) { return (clvalue(ci.func)); }
-		public static bool f_isLua(CallInfo ci)	{return ci_func(ci).c.isC==0;}
-		public static bool isLua(CallInfo ci)	{return (ttisfunction((ci).func) && f_isLua(ci));}
+//		public static Closure curr_func(lua_State L) { return (clvalue(L.ci.func)); }
+//		public static Closure ci_func(CallInfo ci) { return (clvalue(ci.func)); }
+//		public static bool f_isLua(CallInfo ci)	{return ci_func(ci).c.isC==0;}
+//		public static bool isLua(CallInfo ci)	{return (ttisfunction((ci).func) && f_isLua(ci));}
 
 
 		/*
@@ -320,16 +320,16 @@ namespace lua40mod
 
 		
 		/* macros to convert a GCObject into a specific value */
-		public static TString rawgco2ts(GCObject o) { return (TString)check_exp(o.gch.tt == LUA_TSTRING, o.ts); }
-		public static TString gco2ts(GCObject o) { return (TString)(rawgco2ts(o).tsv); }
-		public static Udata rawgco2u(GCObject o) { return (Udata)check_exp(o.gch.tt == LUA_TUSERDATA, o.u); }
-		public static Udata gco2u(GCObject o) { return (Udata)(rawgco2u(o).uv); }
-		public static Closure gco2cl(GCObject o) { return (Closure)check_exp(o.gch.tt == LUA_TFUNCTION, o.cl); }
-		public static Table gco2h(GCObject o) { return (Table)check_exp(o.gch.tt == LUA_TTABLE, o.h); }
-		public static Proto gco2p(GCObject o) { return (Proto)check_exp(o.gch.tt == LUA_TPROTO, o.p); }
-		public static UpVal gco2uv(GCObject o) { return (UpVal)check_exp(o.gch.tt == LUA_TUPVAL, o.uv); }
-		public static UpVal ngcotouv(GCObject o) {return (UpVal)check_exp((o == null) || (o.gch.tt == LUA_TUPVAL), o.uv); }
-		public static lua_State gco2th(GCObject o) { return (lua_State)check_exp(o.gch.tt == LUA_TTHREAD, o.th); }
+//		public static TString rawgco2ts(GCObject o) { return (TString)check_exp(o.gch.tt == LUA_TSTRING, o.ts); }
+//		public static TString gco2ts(GCObject o) { return (TString)(rawgco2ts(o).tsv); }
+//		public static Udata rawgco2u(GCObject o) { return (Udata)check_exp(o.gch.tt == LUA_TUSERDATA, o.u); }
+//		public static Udata gco2u(GCObject o) { return (Udata)(rawgco2u(o).uv); }
+//		public static Closure gco2cl(GCObject o) { return (Closure)check_exp(o.gch.tt == LUA_TFUNCTION, o.cl); }
+//		public static Table gco2h(GCObject o) { return (Table)check_exp(o.gch.tt == LUA_TTABLE, o.h); }
+//		public static Proto gco2p(GCObject o) { return (Proto)check_exp(o.gch.tt == LUA_TPROTO, o.p); }
+//		public static UpVal gco2uv(GCObject o) { return (UpVal)check_exp(o.gch.tt == LUA_TUPVAL, o.uv); }
+//		public static UpVal ngcotouv(GCObject o) {return (UpVal)check_exp((o == null) || (o.gch.tt == LUA_TUPVAL), o.uv); }
+//		public static lua_State gco2th(GCObject o) { return (lua_State)check_exp(o.gch.tt == LUA_TTHREAD, o.th); }
 
 		/* macro to convert any Lua object into a GCObject */
 		public static GCObject obj2gco(object v)	{return (GCObject)v;}
