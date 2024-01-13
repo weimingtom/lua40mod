@@ -789,17 +789,18 @@ return 0;
 
 
 		private static int luaK_code (FuncState fs, int i, int line) {			
-		  Proto f = fs.f;
-		  dischargejpc(fs);  /* `pc' will change */
-		  /* put new instruction in code array */
-		  luaM_growvector(fs.L, ref f.code, fs.pc, ref f.sizecode,
-						  MAX_INT, "code size overflow");
-		  f.code[fs.pc] = (uint)i;
-		  /* save corresponding line information */
-		  luaM_growvector(fs.L, ref f.lineinfo, fs.pc, ref f.sizelineinfo,
-						  MAX_INT, "code size overflow");
-		  f.lineinfo[fs.pc] = line;		  
-		  return fs.pc++;
+//		  Proto f = fs.f;
+//		  dischargejpc(fs);  /* `pc' will change */
+//		  /* put new instruction in code array */
+//		  luaM_growvector(fs.L, ref f.code, fs.pc, ref f.sizecode,
+//						  MAX_INT, "code size overflow");
+//		  f.code[fs.pc] = (uint)i;
+//		  /* save corresponding line information */
+//		  luaM_growvector(fs.L, ref f.lineinfo, fs.pc, ref f.sizelineinfo,
+//						  MAX_INT, "code size overflow");
+//		  f.lineinfo[fs.pc] = line;		  
+//		  return fs.pc++;
+			return 0;
 		}
 
 

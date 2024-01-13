@@ -38,23 +38,24 @@ namespace lua40mod
 		public static T[] luaM_growaux_<T>(lua_State L, ref T[] block, ref int size,
 							 int limit, CharPtr errormsg)
 		{
-			T[] newblock;
-			int newsize;
-			if (size >= limit / 2)
-			{  /* cannot double it? */
-				if (size >= limit)  /* cannot grow even a little? */
-					luaG_runerror(L, errormsg);
-				newsize = limit;  /* still have at least one free place */
-			}
-			else
-			{
-				newsize = size * 2;
-				if (newsize < MINSIZEARRAY)
-					newsize = MINSIZEARRAY;  /* minimum size */
-			}
-			newblock = luaM_reallocv<T>(L, block, newsize);
-			size = newsize;  /* update only when everything else is OK */
-			return newblock;
+//			T[] newblock;
+//			int newsize;
+//			if (size >= limit / 2)
+//			{  /* cannot double it? */
+//				if (size >= limit)  /* cannot grow even a little? */
+//					luaG_runerror(L, errormsg);
+//				newsize = limit;  /* still have at least one free place */
+//			}
+//			else
+//			{
+//				newsize = size * 2;
+//				if (newsize < MINSIZEARRAY)
+//					newsize = MINSIZEARRAY;  /* minimum size */
+//			}
+//			newblock = luaM_reallocv<T>(L, block, newsize);
+//			size = newsize;  /* update only when everything else is OK */
+//			return newblock;
+			return null;
 		}
 
 
@@ -143,5 +144,27 @@ namespace lua40mod
 
 		static void AddTotalBytes(lua_State L, uint num_bytes) {G(L).totalbytes += num_bytes;}
 		static void SubtractTotalBytes(lua_State L, uint num_bytes) {G(L).totalbytes -= num_bytes;}
+		
+		
+		public static object luaM_realloc<T>(lua_State L)
+		{
+			return null;
+		}
+		
+		public static object luaM_realloc<T>(lua_State L, Type t)
+		{
+			return null;
+		}
+		
+		public static object luaM_realloc<T>(lua_State L, T[] old_block, int new_size)
+		{
+			return null;
+		}
+		
+		public static T[] luaM_growaux<T>(lua_State L, ref T[] block, ref int size,
+							 CharPtr errormsg, int limit)
+		{
+			return null;
+		}
 	}
 }

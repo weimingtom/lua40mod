@@ -42,10 +42,10 @@ namespace lua40mod
 
 		public static void luaZ_resizebuffer(lua_State L, Mbuffer buff, int size)
 		{
-			if (buff.buffer == null)
-				buff.buffer = new CharPtr();
-			luaM_reallocvector(L, ref buff.buffer.chars, (int)buff.buffsize, size);
-			buff.buffsize = (uint)buff.buffer.chars.Length;
+//			if (buff.buffer == null)
+//				buff.buffer = new CharPtr();
+//			luaM_reallocvector(L, ref buff.buffer.chars, (int)buff.buffsize, size);
+//			buff.buffsize = (uint)buff.buffer.chars.Length;
 		}
 
 		public static void luaZ_freebuffer(lua_State L, Mbuffer buff) {luaZ_resizebuffer(L, buff, 0);}

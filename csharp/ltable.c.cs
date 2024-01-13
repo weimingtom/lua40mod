@@ -252,11 +252,11 @@ namespace lua40mod
 
 
 		private static void setarrayvector (lua_State L, Table t, int size) {
-		  int i;
-		  luaM_reallocvector<TValue>(L, ref t.array, t.sizearray, size/*, TValue*/);
-		  for (i=t.sizearray; i<size; i++)
-			 setnilvalue(t.array[i]);
-		  t.sizearray = size;
+//		  int i;
+//		  luaM_reallocvector<TValue>(L, ref t.array, t.sizearray, size/*, TValue*/);
+//		  for (i=t.sizearray; i<size; i++)
+//			 setnilvalue(t.array[i]);
+//		  t.sizearray = size;
 		}
 
 
@@ -287,32 +287,32 @@ namespace lua40mod
 
 
 		private static void resize (lua_State L, Table t, int nasize, int nhsize) {
-		  int i;
-		  int oldasize = t.sizearray;
-		  int oldhsize = t.lsizenode;
-		  Node[] nold = t.node;  /* save old hash ... */
-		  if (nasize > oldasize)  /* array part must grow? */
-			setarrayvector(L, t, nasize);
-		  /* create new hash part with appropriate size */
-		  setnodevector(L, t, nhsize);  
-		  if (nasize < oldasize) {  /* array part must shrink? */
-			t.sizearray = nasize;
-			/* re-insert elements from vanishing slice */
-			for (i=nasize; i<oldasize; i++) {
-			  if (!ttisnil(t.array[i]))
-				setobjt2t(L, luaH_setnum(L, t, i+1), t.array[i]);
-			}
-			/* shrink array */
-			luaM_reallocvector<TValue>(L, ref t.array, oldasize, nasize/*, TValue*/);
-		  }
-		  /* re-insert elements from hash part */
-		  for (i = twoto(oldhsize) - 1; i >= 0; i--) {
-			Node old = nold[i];
-			if (!ttisnil(gval(old)))
-			  setobjt2t(L, luaH_set(L, t, key2tval(old)), gval(old));
-		  }
-		  if (nold[0] != dummynode)
-			luaM_freearray(L, nold);  /* free old array */
+//		  int i;
+//		  int oldasize = t.sizearray;
+//		  int oldhsize = t.lsizenode;
+//		  Node[] nold = t.node;  /* save old hash ... */
+//		  if (nasize > oldasize)  /* array part must grow? */
+//			setarrayvector(L, t, nasize);
+//		  /* create new hash part with appropriate size */
+//		  setnodevector(L, t, nhsize);  
+//		  if (nasize < oldasize) {  /* array part must shrink? */
+//			t.sizearray = nasize;
+//			/* re-insert elements from vanishing slice */
+//			for (i=nasize; i<oldasize; i++) {
+//			  if (!ttisnil(t.array[i]))
+//				setobjt2t(L, luaH_setnum(L, t, i+1), t.array[i]);
+//			}
+//			/* shrink array */
+//			luaM_reallocvector<TValue>(L, ref t.array, oldasize, nasize/*, TValue*/);
+//		  }
+//		  /* re-insert elements from hash part */
+//		  for (i = twoto(oldhsize) - 1; i >= 0; i--) {
+//			Node old = nold[i];
+//			if (!ttisnil(gval(old)))
+//			  setobjt2t(L, luaH_set(L, t, key2tval(old)), gval(old));
+//		  }
+//		  if (nold[0] != dummynode)
+//			luaM_freearray(L, nold);  /* free old array */
 		}
 
 
@@ -365,10 +365,10 @@ namespace lua40mod
 
 
 		public static void luaH_free (lua_State L, Table t) {
-		  if (t.node[0] != dummynode)
-			luaM_freearray(L, t.node);
-		  luaM_freearray(L, t.array);
-		  luaM_free(L, t);
+//		  if (t.node[0] != dummynode)
+//			luaM_freearray(L, t.node);
+//		  luaM_freearray(L, t.array);
+//		  luaM_free(L, t);
 		}
 
 

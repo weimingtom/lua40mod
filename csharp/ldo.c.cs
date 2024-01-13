@@ -46,22 +46,22 @@ public static void luaD_checkstack (lua_State L, int n) {
 
 
 		public static void luaD_seterrorobj (lua_State L, int errcode, StkId oldtop) {
-		  switch (errcode) {
-			case LUA_ERRMEM: {
-			  setsvalue2s(L, oldtop, luaS_newliteral(L, MEMERRMSG));
-			  break;
-			}
-			case LUA_ERRERR: {
-			  setsvalue2s(L, oldtop, luaS_newliteral(L, "error in error handling"));
-			  break;
-			}
-			case LUA_ERRSYNTAX:
-			case LUA_ERRRUN: {
-			  setobjs2s(L, oldtop, L.top-1);  /* error message on current top */
-			  break;
-			}
-		  }
-		  L.top = oldtop + 1;
+//		  switch (errcode) {
+//			case LUA_ERRMEM: {
+//			  setsvalue2s(L, oldtop, luaS_newliteral(L, MEMERRMSG));
+//			  break;
+//			}
+//			case LUA_ERRERR: {
+//			  setsvalue2s(L, oldtop, luaS_newliteral(L, "error in error handling"));
+//			  break;
+//			}
+//			case LUA_ERRSYNTAX:
+//			case LUA_ERRRUN: {
+//			  setobjs2s(L, oldtop, L.top-1);  /* error message on current top */
+//			  break;
+//			}
+//		  }
+//		  L.top = oldtop + 1;
 		}
 
 
@@ -164,11 +164,11 @@ public static void luaD_checkstack (lua_State L, int n) {
 		}
 
 		public static void luaD_reallocCI (lua_State L, int newsize) {
-		  CallInfo oldci = L.base_ci[0];
-		  luaM_reallocvector(L, ref L.base_ci, L.size_ci, newsize/*, CallInfo*/);
-		  L.size_ci = newsize;
-		  L.ci = L.base_ci[L.ci - oldci];
-		  L.end_ci = L.base_ci[L.size_ci - 1];
+//		  CallInfo oldci = L.base_ci[0];
+//		  luaM_reallocvector(L, ref L.base_ci, L.size_ci, newsize/*, CallInfo*/);
+//		  L.size_ci = newsize;
+//		  L.ci = L.base_ci[L.ci - oldci];
+//		  L.end_ci = L.base_ci[L.size_ci - 1];
 		}
 
 		public static void luaD_growstack (lua_State L, int n) {

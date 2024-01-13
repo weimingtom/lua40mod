@@ -62,8 +62,8 @@ namespace lua40mod
 
 
 		private static void freestack (lua_State L, lua_State L1) {
-		  luaM_freearray(L, L1.base_ci);
-		  luaM_freearray(L, L1.stack);
+//		  luaM_freearray(L, L1.base_ci);
+//		  luaM_freearray(L, L1.stack);
 		}
 
 

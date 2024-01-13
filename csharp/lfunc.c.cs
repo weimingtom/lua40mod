@@ -144,13 +144,13 @@ namespace lua40mod
 		}
 
 		public static void luaF_freeproto (lua_State L, Proto f) {
-		  luaM_freearray<Instruction>(L, f.code);
-		  luaM_freearray<Proto>(L, f.p);
-		  luaM_freearray<TValue>(L, f.k);
-		  luaM_freearray<int>(L, f.lineinfo);
-		  luaM_freearray<LocVar>(L, f.locvars);
-		  luaM_freearray<TString>(L, f.upvalues);
-		  luaM_free(L, f);
+//		  luaM_freearray<Instruction>(L, f.code);
+//		  luaM_freearray<Proto>(L, f.p);
+//		  luaM_freearray<TValue>(L, f.k);
+//		  luaM_freearray<int>(L, f.lineinfo);
+//		  luaM_freearray<LocVar>(L, f.locvars);
+//		  luaM_freearray<TString>(L, f.upvalues);
+//		  luaM_free(L, f);
 		}
 
 		// we have a gc, so nothing to do
