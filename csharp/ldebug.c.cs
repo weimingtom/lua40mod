@@ -6,8 +6,8 @@
 
 namespace lua40mod
 {
-	using TValue = Lua.lua_TValue;
-	using StkId = Lua.lua_TValue;
+	using TValue = Lua.Value;
+	using StkId = Lua.Value;
 	using Instruction = System.UInt32;
 
 	public partial class Lua
@@ -96,17 +96,18 @@ namespace lua40mod
 
 
 		private static CharPtr findlocal (lua_State L, CallInfo ci, int n) {
-		  CharPtr name;
-		  Proto fp = getluaproto(ci);
-		  if ((fp!=null) && (name = luaF_getlocalname(fp, n, currentpc(L, ci))) != null)
-			return name;  /* is a local variable in a Lua function */
-		  else {
-			StkId limit = (ci == L.ci) ? L.top : (ci+1).func;
-			if (limit - ci.base_ >= n && n > 0)  /* is 'n' inside 'ci' stack? */
-			  return "(*temporary)";
-			else
-			  return null;
-		  }
+//		  CharPtr name;
+//		  Proto fp = getluaproto(ci);
+//		  if ((fp!=null) && (name = luaF_getlocalname(fp, n, currentpc(L, ci))) != null)
+//			return name;  /* is a local variable in a Lua function */
+//		  else {
+//			StkId limit = (ci == L.ci) ? L.top : (ci+1).func;
+//			if (limit - ci.base_ >= n && n > 0)  /* is 'n' inside 'ci' stack? */
+//			  return "(*temporary)";
+//			else
+//			  return null;
+//		  }
+			return null;
 		}
 
 
@@ -136,19 +137,19 @@ namespace lua40mod
 
 
 		private static void funcinfo (lua_Debug ar, Closure cl) {
-		  if (cl.c.isC != 0) {
-			ar.source = "=[C]";
-			ar.linedefined = -1;
-			ar.lastlinedefined = -1;
-			ar.what = "C";
-		  }
-		  else {
-			ar.source = getstr(cl.l.p.source);
-			ar.linedefined = cl.l.p.linedefined;
-			ar.lastlinedefined = cl.l.p.lastlinedefined;
-			ar.what = (ar.linedefined == 0) ? "main" : "Lua";
-		  }
-		  luaO_chunkid(ar.short_src, ar.source, LUA_IDSIZE);
+//		  if (cl.c.isC != 0) {
+//			ar.source = "=[C]";
+//			ar.linedefined = -1;
+//			ar.lastlinedefined = -1;
+//			ar.what = "C";
+//		  }
+//		  else {
+//			ar.source = getstr(cl.l.p.source);
+//			ar.linedefined = cl.l.p.linedefined;
+//			ar.lastlinedefined = cl.l.p.lastlinedefined;
+//			ar.what = (ar.linedefined == 0) ? "main" : "Lua";
+//		  }
+//		  luaO_chunkid(ar.short_src, ar.source, LUA_IDSIZE);
 		}
 
 
@@ -163,57 +164,58 @@ namespace lua40mod
 
 
 		private static void collectvalidlines (lua_State L, Closure f) {
-		  if (f == null || (f.c.isC!=0)) {
-			setnilvalue(L.top);
-		  }
-		  else {
-			Table t = luaH_new(L, 0, 0);
-			int[] lineinfo = f.l.p.lineinfo;
-			int i;
-			for (i=0; i<f.l.p.sizelineinfo; i++)
-			  setbvalue(luaH_setnum(L, t, lineinfo[i]), 1);
-			sethvalue(L, L.top, t); 
-		  }
-		  incr_top(L);
+//		  if (f == null || (f.c.isC!=0)) {
+//			setnilvalue(L.top);
+//		  }
+//		  else {
+//			Table t = luaH_new(L, 0, 0);
+//			int[] lineinfo = f.l.p.lineinfo;
+//			int i;
+//			for (i=0; i<f.l.p.sizelineinfo; i++)
+//			  setbvalue(luaH_setnum(L, t, lineinfo[i]), 1);
+//			sethvalue(L, L.top, t); 
+//		  }
+//		  incr_top(L);
 		}
 
 
 		private static int auxgetinfo (lua_State L, CharPtr what, lua_Debug ar,
 							Closure f, CallInfo ci) {
-		  int status = 1;
-		  if (f == null) {
-			info_tailcall(ar);
-			return status;
-		  }
-		  for (; what[0] != 0; what = what.next()) {
-			switch (what[0]) {
-			  case 'S': {
-				funcinfo(ar, f);
-				break;
-			  }
-			  case 'l': {
-				ar.currentline = (ci != null) ? currentline(L, ci) : -1;
-				break;
-			  }
-			  case 'u': {
-				ar.nups = f.c.nupvalues;
-				break;
-			  }
-			  case 'n': {
-				ar.namewhat = (ci!=null) ? getfuncname(L, ci, ref ar.name) : null;
-				if (ar.namewhat == null) {
-				  ar.namewhat = "";  /* not found */
-				  ar.name = null;
-				}
-				break;
-			  }
-			  case 'L':
-			  case 'f':  /* handled by lua_getinfo */
-				break;
-			  default: status = 0;  break;/* invalid option */
-			}
-		  }
-		  return status;
+//		  int status = 1;
+//		  if (f == null) {
+//			info_tailcall(ar);
+//			return status;
+//		  }
+//		  for (; what[0] != 0; what = what.next()) {
+//			switch (what[0]) {
+//			  case 'S': {
+//				funcinfo(ar, f);
+//				break;
+//			  }
+//			  case 'l': {
+//				ar.currentline = (ci != null) ? currentline(L, ci) : -1;
+//				break;
+//			  }
+//			  case 'u': {
+//				ar.nups = f.c.nupvalues;
+//				break;
+//			  }
+//			  case 'n': {
+//				ar.namewhat = (ci!=null) ? getfuncname(L, ci, ref ar.name) : null;
+//				if (ar.namewhat == null) {
+//				  ar.namewhat = "";  /* not found */
+//				  ar.name = null;
+//				}
+//				break;
+//			  }
+//			  case 'L':
+//			  case 'f':  /* handled by lua_getinfo */
+//				break;
+//			  default: status = 0;  break;/* invalid option */
+//			}
+//		  }
+//		  return status;
+			return 0;
 		}
 
 
@@ -254,7 +256,10 @@ namespace lua40mod
 		** =======================================================
 		*/
 
-		private static int checkjump(Proto pt, int pc) { if (!(0 <= pc && pc < pt.sizecode)) return 0; return 1; }
+		private static int checkjump(Proto pt, int pc) { 
+//			if (!(0 <= pc && pc < pt.sizecode)) return 0; return 1; 
+			return 0;
+		}
 
 		private static int checkreg(Proto pt, int reg) { if (!((reg) < (pt).maxstacksize)) return 0; return 1; }
 
@@ -272,7 +277,10 @@ namespace lua40mod
 		}
 
 
-		public static int checkopenop(Proto pt, int pc) { return luaG_checkopenop(pt.code[pc + 1]); }
+		public static int checkopenop(Proto pt, int pc) { 
+//			return luaG_checkopenop(pt.code[pc + 1]);
+			return 0;
+		}
 
 		public static int luaG_checkopenop (Instruction i) {
 		  switch (GET_OPCODE(i)) {
@@ -289,184 +297,185 @@ namespace lua40mod
 
 
 		private static int checkArgMode (Proto pt, int r, OpArgMask mode) {
-		  switch (mode) {
-			case OpArgMask.OpArgN: if (r!=0) return 0; break;
-			case OpArgMask.OpArgU: break;
-			case OpArgMask.OpArgR: checkreg(pt, r); break;
-			case OpArgMask.OpArgK:
-			  if (!( (ISK(r) != 0) ? INDEXK(r) < pt.sizek : r < pt.maxstacksize)) return 0;
-			  break;
-		  }
+//		  switch (mode) {
+//			case OpArgMask.OpArgN: if (r!=0) return 0; break;
+//			case OpArgMask.OpArgU: break;
+//			case OpArgMask.OpArgR: checkreg(pt, r); break;
+//			case OpArgMask.OpArgK:
+//			  if (!( (ISK(r) != 0) ? INDEXK(r) < pt.sizek : r < pt.maxstacksize)) return 0;
+//			  break;
+//		  }
 		  return 1;
 		}
 
 
 		private static Instruction symbexec (Proto pt, int lastpc, int reg) {
-		  int pc;
-		  int last;  /* stores position of last instruction that changed `reg' */
-		  int dest;
-		  last = pt.sizecode-1;  /* points to final return (a `neutral' instruction) */
-		  if (precheck(pt)==0) return 0;
-		  for (pc = 0; pc < lastpc; pc++) {
-			Instruction i = pt.code[pc];
-			OpCode op = GET_OPCODE(i);
-			int a = GETARG_A(i);
-			int b = 0;
-			int c = 0;
-			if (!((int)op < NUM_OPCODES)) return 0;
-			checkreg(pt, a);
-			switch (getOpMode(op)) {
-			  case OpMode.iABC: {
-				b = GETARG_B(i);
-				c = GETARG_C(i);
-				if (checkArgMode(pt, b, getBMode(op))==0) return 0;
-				if (checkArgMode(pt, c, getCMode(op))==0) return 0;
-				break;
-			  }
-			  case OpMode.iABx: {
-				b = GETARG_Bx(i);
-				if (getBMode(op) == OpArgMask.OpArgK) if (!(b < pt.sizek)) return 0;
-				break;
-			  }
-			  case OpMode.iAsBx: {
-				b = GETARG_sBx(i);
-				if (getBMode(op) == OpArgMask.OpArgR) {
-				  dest = pc+1+b;
-				  if (!((0 <= dest && dest < pt.sizecode))) return 0;
-				  if (dest > 0) {
-					int j;
-					/* check that it does not jump to a setlist count; this
-					   is tricky, because the count from a previous setlist may
-					   have the same value of an invalid setlist; so, we must
-					   go all the way back to the first of them (if any) */
-					for (j = 0; j < dest; j++) {
-					  Instruction d = pt.code[dest-1-j];
-					  if (!(GET_OPCODE(d) == OpCode.OP_SETLIST && GETARG_C(d) == 0)) break;
-					}
-					/* if 'j' is even, previous value is not a setlist (even if
-					   it looks like one) */
-					  if ((j&1)!=0) return 0;
-				  }
-				}
-				break;
-			  }
-			}
-			if (testAMode(op) != 0) {
-			  if (a == reg) last = pc;  /* change register `a' */
-			}
-			if (testTMode(op) != 0) {
-			  if (!(pc+2 < pt.sizecode)) return 0;  /* check skip */
-			  if (!(GET_OPCODE(pt.code[pc + 1]) == OpCode.OP_JMP)) return 0;
-			}
-			switch (op) {
-			  case OpCode.OP_LOADBOOL: {
-				if (c == 1) {  /* does it jump? */
-				  if (!(pc+2 < pt.sizecode)) return 0;  /* check its jump */
-				  if (!(GET_OPCODE(pt.code[pc + 1]) != OpCode.OP_SETLIST ||
-						GETARG_C(pt.code[pc + 1]) != 0)) return 0;
-				}
-				break;
-			  }
-			  case OpCode.OP_LOADNIL: {
-				if (a <= reg && reg <= b)
-				  last = pc;  /* set registers from `a' to `b' */
-				break;
-			  }
-			  case OpCode.OP_GETUPVAL:
-			  case OpCode.OP_SETUPVAL: {
-				if (!(b < pt.nups)) return 0;
-				break;
-			  }
-			  case OpCode.OP_GETGLOBAL:
-			  case OpCode.OP_SETGLOBAL: {
-				if (!(ttisstring(pt.k[b]))) return 0;
-				break;
-			  }
-			  case OpCode.OP_SELF: {
-				checkreg(pt, a+1);
-				if (reg == a+1) last = pc;
-				break;
-			  }
-			  case OpCode.OP_CONCAT: {
-				if (!(b < c)) return 0;  /* at least two operands */
-				break;
-			  }
-			  case OpCode.OP_TFORLOOP: {
-				if (!(c >= 1)) return 0;  /* at least one result (control variable) */
-				checkreg(pt, a+2+c);  /* space for results */
-				if (reg >= a+2) last = pc;  /* affect all regs above its base */
-				break;
-			  }
-			  case OpCode.OP_FORLOOP:
-			  case OpCode.OP_FORPREP:
-				checkreg(pt, a+3);
-				/* go through ...no, on second thoughts don't, because this is C# */
-				dest = pc + 1 + b;
-				/* not full check and jump is forward and do not skip `lastpc'? */
-				if (reg != NO_REG && pc < dest && dest <= lastpc)
-					pc += b;  /* do the jump */
-				break;
-
-			  case OpCode.OP_JMP: {
-				dest = pc+1+b;
-				/* not full check and jump is forward and do not skip `lastpc'? */
-				if (reg != NO_REG && pc < dest && dest <= lastpc)
-				  pc += b;  /* do the jump */
-				break;
-			  }
-			  case OpCode.OP_CALL:
-			  case OpCode.OP_TAILCALL: {
-				if (b != 0) {
-				  checkreg(pt, a+b-1);
-				}
-				c--;  /* c = num. returns */
-				if (c == LUA_MULTRET) {
-				  if (checkopenop(pt, pc)==0) return 0;
-				}
-				else if (c != 0)
-				  checkreg(pt, a+c-1);
-				if (reg >= a) last = pc;  /* affect all registers above base */
-				break;
-			  }
-			  case OpCode.OP_RETURN: {
-				b--;  /* b = num. returns */
-				if (b > 0) checkreg(pt, a+b-1);
-				break;
-			  }
-			  case OpCode.OP_SETLIST: {
-				if (b > 0) checkreg(pt, a + b);
-				if (c == 0) {
-				  pc++;
-				  if (!(pc < pt.sizecode - 1)) return 0;
-				}
-				break;
-			  }
-			  case OpCode.OP_CLOSURE: {
-				int nup, j;
-				if (!(b < pt.sizep)) return 0;
-				nup = pt.p[b].nups;
-				if (!(pc + nup < pt.sizecode)) return 0;
-				for (j = 1; j <= nup; j++) {
-				  OpCode op1 = GET_OPCODE(pt.code[pc + j]);
-				  if (!(op1 == OpCode.OP_GETUPVAL || op1 == OpCode.OP_MOVE)) return 0;
-				}
-				if (reg != NO_REG)  /* tracing? */
-				  pc += nup;  /* do not 'execute' these pseudo-instructions */
-				break;
-			  }
-			  case OpCode.OP_VARARG: {
-				if (!(	(pt.is_vararg & VARARG_ISVARARG)!=0 &&
-						(pt.is_vararg & VARARG_NEEDSARG)==0		)) return 0;
-				b--;
-				if (b == LUA_MULTRET) if (checkopenop(pt, pc)==0) return 0;
-				checkreg(pt, a+b-1);
-				break;
-			  }
-			  default:
-				  break;
-			}
-		  }
-		  return pt.code[last];
+//		  int pc;
+//		  int last;  /* stores position of last instruction that changed `reg' */
+//		  int dest;
+//		  last = pt.sizecode-1;  /* points to final return (a `neutral' instruction) */
+//		  if (precheck(pt)==0) return 0;
+//		  for (pc = 0; pc < lastpc; pc++) {
+//			Instruction i = pt.code[pc];
+//			OpCode op = GET_OPCODE(i);
+//			int a = GETARG_A(i);
+//			int b = 0;
+//			int c = 0;
+//			if (!((int)op < NUM_OPCODES)) return 0;
+//			checkreg(pt, a);
+//			switch (getOpMode(op)) {
+//			  case OpMode.iABC: {
+//				b = GETARG_B(i);
+//				c = GETARG_C(i);
+//				if (checkArgMode(pt, b, getBMode(op))==0) return 0;
+//				if (checkArgMode(pt, c, getCMode(op))==0) return 0;
+//				break;
+//			  }
+//			  case OpMode.iABx: {
+//				b = GETARG_Bx(i);
+//				if (getBMode(op) == OpArgMask.OpArgK) if (!(b < pt.sizek)) return 0;
+//				break;
+//			  }
+//			  case OpMode.iAsBx: {
+//				b = GETARG_sBx(i);
+//				if (getBMode(op) == OpArgMask.OpArgR) {
+//				  dest = pc+1+b;
+//				  if (!((0 <= dest && dest < pt.sizecode))) return 0;
+//				  if (dest > 0) {
+//					int j;
+//					/* check that it does not jump to a setlist count; this
+//					   is tricky, because the count from a previous setlist may
+//					   have the same value of an invalid setlist; so, we must
+//					   go all the way back to the first of them (if any) */
+//					for (j = 0; j < dest; j++) {
+//					  Instruction d = pt.code[dest-1-j];
+//					  if (!(GET_OPCODE(d) == OpCode.OP_SETLIST && GETARG_C(d) == 0)) break;
+//					}
+//					/* if 'j' is even, previous value is not a setlist (even if
+//					   it looks like one) */
+//					  if ((j&1)!=0) return 0;
+//				  }
+//				}
+//				break;
+//			  }
+//			}
+//			if (testAMode(op) != 0) {
+//			  if (a == reg) last = pc;  /* change register `a' */
+//			}
+//			if (testTMode(op) != 0) {
+//			  if (!(pc+2 < pt.sizecode)) return 0;  /* check skip */
+//			  if (!(GET_OPCODE(pt.code[pc + 1]) == OpCode.OP_JMP)) return 0;
+//			}
+//			switch (op) {
+//			  case OpCode.OP_LOADBOOL: {
+//				if (c == 1) {  /* does it jump? */
+//				  if (!(pc+2 < pt.sizecode)) return 0;  /* check its jump */
+//				  if (!(GET_OPCODE(pt.code[pc + 1]) != OpCode.OP_SETLIST ||
+//						GETARG_C(pt.code[pc + 1]) != 0)) return 0;
+//				}
+//				break;
+//			  }
+//			  case OpCode.OP_LOADNIL: {
+//				if (a <= reg && reg <= b)
+//				  last = pc;  /* set registers from `a' to `b' */
+//				break;
+//			  }
+//			  case OpCode.OP_GETUPVAL:
+//			  case OpCode.OP_SETUPVAL: {
+//				if (!(b < pt.nups)) return 0;
+//				break;
+//			  }
+//			  case OpCode.OP_GETGLOBAL:
+//			  case OpCode.OP_SETGLOBAL: {
+//				if (!(ttisstring(pt.k[b]))) return 0;
+//				break;
+//			  }
+//			  case OpCode.OP_SELF: {
+//				checkreg(pt, a+1);
+//				if (reg == a+1) last = pc;
+//				break;
+//			  }
+//			  case OpCode.OP_CONCAT: {
+//				if (!(b < c)) return 0;  /* at least two operands */
+//				break;
+//			  }
+//			  case OpCode.OP_TFORLOOP: {
+//				if (!(c >= 1)) return 0;  /* at least one result (control variable) */
+//				checkreg(pt, a+2+c);  /* space for results */
+//				if (reg >= a+2) last = pc;  /* affect all regs above its base */
+//				break;
+//			  }
+//			  case OpCode.OP_FORLOOP:
+//			  case OpCode.OP_FORPREP:
+//				checkreg(pt, a+3);
+//				/* go through ...no, on second thoughts don't, because this is C# */
+//				dest = pc + 1 + b;
+//				/* not full check and jump is forward and do not skip `lastpc'? */
+//				if (reg != NO_REG && pc < dest && dest <= lastpc)
+//					pc += b;  /* do the jump */
+//				break;
+//
+//			  case OpCode.OP_JMP: {
+//				dest = pc+1+b;
+//				/* not full check and jump is forward and do not skip `lastpc'? */
+//				if (reg != NO_REG && pc < dest && dest <= lastpc)
+//				  pc += b;  /* do the jump */
+//				break;
+//			  }
+//			  case OpCode.OP_CALL:
+//			  case OpCode.OP_TAILCALL: {
+//				if (b != 0) {
+//				  checkreg(pt, a+b-1);
+//				}
+//				c--;  /* c = num. returns */
+//				if (c == LUA_MULTRET) {
+//				  if (checkopenop(pt, pc)==0) return 0;
+//				}
+//				else if (c != 0)
+//				  checkreg(pt, a+c-1);
+//				if (reg >= a) last = pc;  /* affect all registers above base */
+//				break;
+//			  }
+//			  case OpCode.OP_RETURN: {
+//				b--;  /* b = num. returns */
+//				if (b > 0) checkreg(pt, a+b-1);
+//				break;
+//			  }
+//			  case OpCode.OP_SETLIST: {
+//				if (b > 0) checkreg(pt, a + b);
+//				if (c == 0) {
+//				  pc++;
+//				  if (!(pc < pt.sizecode - 1)) return 0;
+//				}
+//				break;
+//			  }
+//			  case OpCode.OP_CLOSURE: {
+//				int nup, j;
+//				if (!(b < pt.sizep)) return 0;
+//				nup = pt.p[b].nups;
+//				if (!(pc + nup < pt.sizecode)) return 0;
+//				for (j = 1; j <= nup; j++) {
+//				  OpCode op1 = GET_OPCODE(pt.code[pc + j]);
+//				  if (!(op1 == OpCode.OP_GETUPVAL || op1 == OpCode.OP_MOVE)) return 0;
+//				}
+//				if (reg != NO_REG)  /* tracing? */
+//				  pc += nup;  /* do not 'execute' these pseudo-instructions */
+//				break;
+//			  }
+//			  case OpCode.OP_VARARG: {
+//				if (!(	(pt.is_vararg & VARARG_ISVARARG)!=0 &&
+//						(pt.is_vararg & VARARG_NEEDSARG)==0		)) return 0;
+//				b--;
+//				if (b == LUA_MULTRET) if (checkopenop(pt, pc)==0) return 0;
+//				checkreg(pt, a+b-1);
+//				break;
+//			  }
+//			  default:
+//				  break;
+//			}
+//		  }
+//		  return pt.code[last];
+			return 0;
 		}
 
 		//#undef check
@@ -477,7 +486,8 @@ namespace lua40mod
 
 
 		public static int luaG_checkcode (Proto pt) {
-		  return (symbexec(pt, pt.sizecode, NO_REG) != 0) ? 1 : 0;
+//		  return (symbexec(pt, pt.sizecode, NO_REG) != 0) ? 1 : 0;
+			return 0;
 		}
 
 
@@ -554,9 +564,9 @@ namespace lua40mod
 
 		/* only ANSI way to check whether a pointer points to an array */
 		private static int isinstack (CallInfo ci, TValue o) {
-		  StkId p;
-		  for (p = ci.base_; p < ci.top; StkId.inc(ref p))
-			if (o == p) return 1;
+//		  StkId p;
+//		  for (p = ci.base_; p < ci.top; StkId.inc(ref p))
+//			if (o == p) return 1;
 		  return 0;
 		}
 
@@ -591,12 +601,12 @@ namespace lua40mod
 
 
 		public static int luaG_ordererror (lua_State L, TValue p1, TValue p2) {
-		  CharPtr t1 = luaT_typenames[ttype(p1)];
-		  CharPtr t2 = luaT_typenames[ttype(p2)];
-		  if (t1[2] == t2[2])
-			luaG_runerror(L, "attempt to compare two %s values", t1);
-		  else
-			luaG_runerror(L, "attempt to compare %s with %s", t1, t2);
+//		  CharPtr t1 = luaT_typenames[ttype(p1)];
+//		  CharPtr t2 = luaT_typenames[ttype(p2)];
+//		  if (t1[2] == t2[2])
+//			luaG_runerror(L, "attempt to compare two %s values", t1);
+//		  else
+//			luaG_runerror(L, "attempt to compare %s with %s", t1, t2);
 		  return 0;
 		}
 

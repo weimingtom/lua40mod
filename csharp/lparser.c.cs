@@ -15,7 +15,10 @@ namespace lua40mod
 
 		public static int hasmultret(expkind k)		{return ((k) == expkind.VCALL || (k) == expkind.VVARARG) ? 1 : 0;}
 
-		public static LocVar getlocvar(FuncState fs, int i)	{return fs.f.locvars[fs.actvar[i]];}
+		public static LocVar getlocvar(FuncState fs, int i)	{
+//			return fs.f.locvars[fs.actvar[i]];
+			return null;
+		}
 
 		public static void luaY_checklimit(FuncState fs, int v, int l, CharPtr m) { if ((v) > (l)) errorlimit(fs, l, m); }
 
@@ -34,10 +37,10 @@ namespace lua40mod
 
 
 		private static void anchor_token (LexState ls) {
-		  if (ls.t.token == (int)RESERVED.TK_NAME || ls.t.token == (int)RESERVED.TK_STRING) {
-			TString ts = ls.t.seminfo.ts;
-			luaX_newstring(ls, getstr(ts), ts.tsv.len);
-		  }
+//		  if (ls.t.token == (int)RESERVED.TK_NAME || ls.t.token == (int)RESERVED.TK_STRING) {
+//			TString ts = ls.t.seminfo.ts;
+//			luaX_newstring(ls, getstr(ts), ts.tsv.len);
+//		  }
 		}
 
 
@@ -48,11 +51,11 @@ namespace lua40mod
 
 
 		private static void errorlimit (FuncState fs, int limit, CharPtr what) {
-		  CharPtr msg = (fs.f.linedefined == 0) ?
-			luaO_pushfstring(fs.L, "main function has more than %d %s", limit, what) :
-			luaO_pushfstring(fs.L, "function at line %d has more than %d %s",
-									fs.f.linedefined, limit, what);
-		  luaX_lexerror(fs.ls, msg, 0);
+//		  CharPtr msg = (fs.f.linedefined == 0) ?
+//			luaO_pushfstring(fs.L, "main function has more than %d %s", limit, what) :
+//			luaO_pushfstring(fs.L, "function at line %d has more than %d %s",
+//									fs.f.linedefined, limit, what);
+//		  luaX_lexerror(fs.ls, msg, 0);
 		}
 
 
@@ -307,30 +310,30 @@ namespace lua40mod
 
 
 		private static void open_func (LexState ls, FuncState fs) {
-		  lua_State L = ls.L;
-		  Proto f = luaF_newproto(L);
-		  fs.f = f;
-		  fs.prev = ls.fs;  /* linked list of funcstates */
-		  fs.ls = ls;
-		  fs.L = L;
-		  ls.fs = fs;
-		  fs.pc = 0;
-		  fs.lasttarget = -1;
-		  fs.jpc = NO_JUMP;
-		  fs.freereg = 0;
-		  fs.nk = 0;
-		  fs.np = 0;
-		  fs.nlocvars = 0;
-		  fs.nactvar = 0;
-		  fs.bl = null;
-		  f.source = ls.source;
-		  f.maxstacksize = 2;  /* registers 0/1 are always valid */
-		  fs.h = luaH_new(L, 0, 0);
-		  /* anchor table of constants and prototype (to avoid being collected) */
-		  sethvalue2s(L, L.top, fs.h);
-		  incr_top(L);
-		  setptvalue2s(L, L.top, f);
-		  incr_top(L);
+//		  lua_State L = ls.L;
+//		  Proto f = luaF_newproto(L);
+//		  fs.f = f;
+//		  fs.prev = ls.fs;  /* linked list of funcstates */
+//		  fs.ls = ls;
+//		  fs.L = L;
+//		  ls.fs = fs;
+//		  fs.pc = 0;
+//		  fs.lasttarget = -1;
+//		  fs.jpc = NO_JUMP;
+//		  fs.freereg = 0;
+//		  fs.nk = 0;
+//		  fs.np = 0;
+//		  fs.nlocvars = 0;
+//		  fs.nactvar = 0;
+//		  fs.bl = null;
+//		  f.source = ls.source;
+//		  f.maxstacksize = 2;  /* registers 0/1 are always valid */
+//		  fs.h = luaH_new(L, 0, 0);
+//		  /* anchor table of constants and prototype (to avoid being collected) */
+//		  sethvalue2s(L, L.top, fs.h);
+//		  incr_top(L);
+//		  setptvalue2s(L, L.top, f);
+//		  incr_top(L);
 		}
 
 		static Proto lastfunc;
@@ -563,22 +566,22 @@ namespace lua40mod
 
 
 		private static void body (LexState ls, expdesc e, int needself, int line) {
-		  /* body .  `(' parlist `)' chunk END */
-		  FuncState new_fs = new FuncState();
-		  open_func(ls, new_fs);
-		  new_fs.f.linedefined = line;
-		  checknext(ls, '(');
-		  if (needself != 0) {
-			new_localvarliteral(ls, "self", 0);
-			adjustlocalvars(ls, 1);
-		  }
-		  parlist(ls);
-		  checknext(ls, ')');
-		  chunk(ls);
-		  new_fs.f.lastlinedefined = ls.linenumber;
-		  check_match(ls, (int)RESERVED.TK_END, (int)RESERVED.TK_FUNCTION, line);
-		  close_func(ls);
-		  pushclosure(ls, new_fs, e);
+//		  /* body .  `(' parlist `)' chunk END */
+//		  FuncState new_fs = new FuncState();
+//		  open_func(ls, new_fs);
+//		  new_fs.f.linedefined = line;
+//		  checknext(ls, '(');
+//		  if (needself != 0) {
+//			new_localvarliteral(ls, "self", 0);
+//			adjustlocalvars(ls, 1);
+//		  }
+//		  parlist(ls);
+//		  checknext(ls, ')');
+//		  chunk(ls);
+//		  new_fs.f.lastlinedefined = ls.linenumber;
+//		  check_match(ls, (int)RESERVED.TK_END, (int)RESERVED.TK_FUNCTION, line);
+//		  close_func(ls);
+//		  pushclosure(ls, new_fs, e);
 		}
 
 
@@ -713,53 +716,53 @@ namespace lua40mod
 
 
 		private static void simpleexp (LexState ls, expdesc v) {
-		  /* simpleexp . NUMBER | STRING | NIL | true | false | ... |
-						  constructor | FUNCTION body | primaryexp */
-		  switch (ls.t.token) {
-			case (int)RESERVED.TK_NUMBER: {
-			  init_exp(v, expkind.VKNUM, 0);
-			  v.u.nval = ls.t.seminfo.r;
-			  break;
-			}
-			case (int)RESERVED.TK_STRING: {
-			  codestring(ls, v, ls.t.seminfo.ts);
-			  break;
-			}
-			case (int)RESERVED.TK_NIL: {
-			  init_exp(v, expkind.VNIL, 0);
-			  break;
-			}
-//			case (int)RESERVED.TK_TRUE: {
-//			  init_exp(v, expkind.VTRUE, 0);
+//		  /* simpleexp . NUMBER | STRING | NIL | true | false | ... |
+//						  constructor | FUNCTION body | primaryexp */
+//		  switch (ls.t.token) {
+//			case (int)RESERVED.TK_NUMBER: {
+//			  init_exp(v, expkind.VKNUM, 0);
+//			  v.u.nval = ls.t.seminfo.r;
 //			  break;
 //			}
-//			case (int)RESERVED.TK_FALSE: {
-//			  init_exp(v, expkind.VFALSE, 0);
+//			case (int)RESERVED.TK_STRING: {
+//			  codestring(ls, v, ls.t.seminfo.ts);
 //			  break;
 //			}
-			case (int)RESERVED.TK_DOTS: {  /* vararg */
-			  FuncState fs = ls.fs;
-			  check_condition(ls, fs.f.is_vararg!=0,
-							  "cannot use " + LUA_QL("...") + " outside a vararg function");
-			  fs.f.is_vararg &= unchecked((lu_byte)(~VARARG_NEEDSARG));  /* don't need 'arg' */
-			  init_exp(v, expkind.VVARARG, luaK_codeABC(fs, OpCode.OP_VARARG, 0, 1, 0));
-			  break;
-			}
-			case '{': {  /* constructor */
-			  constructor(ls, v);
-			  return;
-			}
-			case (int)RESERVED.TK_FUNCTION: {
-			  luaX_next(ls);
-			  body(ls, v, 0, ls.linenumber);
-			  return;
-			}
-			default: {
-			  primaryexp(ls, v);
-			  return;
-			}
-		  }
-		  luaX_next(ls);
+//			case (int)RESERVED.TK_NIL: {
+//			  init_exp(v, expkind.VNIL, 0);
+//			  break;
+//			}
+////			case (int)RESERVED.TK_TRUE: {
+////			  init_exp(v, expkind.VTRUE, 0);
+////			  break;
+////			}
+////			case (int)RESERVED.TK_FALSE: {
+////			  init_exp(v, expkind.VFALSE, 0);
+////			  break;
+////			}
+//			case (int)RESERVED.TK_DOTS: {  /* vararg */
+//			  FuncState fs = ls.fs;
+//			  check_condition(ls, fs.f.is_vararg!=0,
+//							  "cannot use " + LUA_QL("...") + " outside a vararg function");
+//			  fs.f.is_vararg &= unchecked((lu_byte)(~VARARG_NEEDSARG));  /* don't need 'arg' */
+//			  init_exp(v, expkind.VVARARG, luaK_codeABC(fs, OpCode.OP_VARARG, 0, 1, 0));
+//			  break;
+//			}
+//			case '{': {  /* constructor */
+//			  constructor(ls, v);
+//			  return;
+//			}
+//			case (int)RESERVED.TK_FUNCTION: {
+//			  luaX_next(ls);
+//			  body(ls, v, 0, ls.linenumber);
+//			  return;
+//			}
+//			default: {
+//			  primaryexp(ls, v);
+//			  return;
+//			}
+//		  }
+//		  luaX_next(ls);
 		}
 
 

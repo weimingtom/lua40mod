@@ -8,7 +8,7 @@ using System;
 
 namespace lua40mod
 {
-	using TValue = Lua.lua_TValue;
+	using TValue = Lua.Value;
 	using lua_Number = System.Double;
 	using Instruction = System.UInt32;
 
@@ -26,26 +26,26 @@ namespace lua40mod
 
 
 		public static void luaK_nil (FuncState fs, int from, int n) {
-		  InstructionPtr previous;
-		  if (fs.pc > fs.lasttarget) {  /* no jumps to current position? */
-			if (fs.pc == 0) {  /* function start? */
-			  if (from >= fs.nactvar)
-				return;  /* positions are already clean */
-			}
-			else {
-			  previous = new InstructionPtr(fs.f.code, fs.pc-1);
-			  if (GET_OPCODE(previous) == OpCode.OP_LOADNIL) {
-				int pfrom = GETARG_A(previous);
-				int pto = GETARG_B(previous);
-				if (pfrom <= from && from <= pto+1) {  /* can connect both? */
-				  if (from+n-1 > pto)
-					SETARG_B(previous, from+n-1);
-				  return;
-				}
-			  }
-			}
-		  }
-		  luaK_codeABC(fs, OpCode.OP_LOADNIL, from, from + n - 1, 0);  /* else no optimization */
+//		  InstructionPtr previous;
+//		  if (fs.pc > fs.lasttarget) {  /* no jumps to current position? */
+//			if (fs.pc == 0) {  /* function start? */
+//			  if (from >= fs.nactvar)
+//				return;  /* positions are already clean */
+//			}
+//			else {
+//			  previous = new InstructionPtr(fs.f.code, fs.pc-1);
+//			  if (GET_OPCODE(previous) == OpCode.OP_LOADNIL) {
+//				int pfrom = GETARG_A(previous);
+//				int pto = GETARG_B(previous);
+//				if (pfrom <= from && from <= pto+1) {  /* can connect both? */
+//				  if (from+n-1 > pto)
+//					SETARG_B(previous, from+n-1);
+//				  return;
+//				}
+//			  }
+//			}
+//		  }
+//		  luaK_codeABC(fs, OpCode.OP_LOADNIL, from, from + n - 1, 0);  /* else no optimization */
 		}
 
 
@@ -71,12 +71,12 @@ namespace lua40mod
 
 
 		private static void fixjump (FuncState fs, int pc, int dest) {
-		  InstructionPtr jmp = new InstructionPtr(fs.f.code, pc);
-		  int offset = dest-(pc+1);
-//		  lua_assert(dest != NO_JUMP);
-		  if (abs(offset) > MAXARG_sBx)
-			luaX_syntaxerror(fs.ls, "control structure too long");
-		  SETARG_sBx(jmp, offset);
+//		  InstructionPtr jmp = new InstructionPtr(fs.f.code, pc);
+//		  int offset = dest-(pc+1);
+////		  lua_assert(dest != NO_JUMP);
+//		  if (abs(offset) > MAXARG_sBx)
+//			luaX_syntaxerror(fs.ls, "control structure too long");
+//		  SETARG_sBx(jmp, offset);
 		}
 
 
@@ -91,19 +91,21 @@ namespace lua40mod
 
 
 		private static int getjump (FuncState fs, int pc) {
-		  int offset = GETARG_sBx(fs.f.code[pc]);
-		  if (offset == NO_JUMP)  /* point to itself represents end of list */
-			return NO_JUMP;  /* end of list */
-		  else
-			return (pc+1)+offset;  /* turn offset into absolute position */
+//		  int offset = GETARG_sBx(fs.f.code[pc]);
+//		  if (offset == NO_JUMP)  /* point to itself represents end of list */
+//			return NO_JUMP;  /* end of list */
+//		  else
+//			return (pc+1)+offset;  /* turn offset into absolute position */
+			return 0;
 		}
 
 		private static InstructionPtr getjumpcontrol (FuncState fs, int pc) {
-		  InstructionPtr pi = new InstructionPtr(fs.f.code, pc);
-		  if (pc >= 1 && (testTMode(GET_OPCODE(pi[-1]))!=0))
-			return new InstructionPtr(pi.codes, pi.pc-1);
-		  else
-			return new InstructionPtr(pi.codes, pi.pc);
+//		  InstructionPtr pi = new InstructionPtr(fs.f.code, pc);
+//		  if (pc >= 1 && (testTMode(GET_OPCODE(pi[-1]))!=0))
+//			return new InstructionPtr(pi.codes, pi.pc-1);
+//		  else
+//			return new InstructionPtr(pi.codes, pi.pc);
+			return null;
 		}
 
 
@@ -242,32 +244,36 @@ return 0;
 
 
 		public static int luaK_stringK (FuncState fs, TString s) {
-		  TValue o = new TValue();
-		  setsvalue(fs.L, o, s);
-		  return addk(fs, o, o);
+//		  TValue o = new TValue();
+//		  setsvalue(fs.L, o, s);
+//		  return addk(fs, o, o);
+			return 0;
 		}
 
 
 		public static int luaK_numberK (FuncState fs, lua_Number r) {
-		  TValue o = new TValue();
-		  setnvalue(o, r);
-		  return addk(fs, o, o);
+//		  TValue o = new TValue();
+//		  setnvalue(o, r);
+//		  return addk(fs, o, o);
+			return 0;
 		}
 
 
 		private static int boolK (FuncState fs, int b) {
-		  TValue o = new TValue();
-		  setbvalue(o, b);
-		  return addk(fs, o, o);
+//		  TValue o = new TValue();
+//		  setbvalue(o, b);
+//		  return addk(fs, o, o);
+			return 0;
 		}
 
 
 		private static int nilK (FuncState fs) {
-		  TValue k = new TValue(), v = new TValue();
-		  setnilvalue(v);
-		  /* cannot use nil as key; instead use table itself to represent nil */
-		  sethvalue(fs.L, k, fs.h);
-		  return addk(fs, k, v);
+//		  TValue k = new TValue(), v = new TValue();
+//		  setnilvalue(v);
+//		  /* cannot use nil as key; instead use table itself to represent nil */
+//		  sethvalue(fs.L, k, fs.h);
+//		  return addk(fs, k, v);
+			return 0;
 		}
 
 

@@ -6,7 +6,7 @@
 
 namespace lua40mod
 {
-	using TValue = Lua.lua_TValue;
+	using TValue = Lua.Value;
 	using lua_Number = System.Double;
 
 	public partial class Lua
@@ -85,12 +85,12 @@ namespace lua40mod
 		}
 
 		public static void luaX_lexerror (LexState ls, CharPtr msg, int token) {
-		  CharPtr buff = new char[MAXSRC];
-		  luaO_chunkid(buff, getstr(ls.source), MAXSRC);
-		  msg = luaO_pushfstring(ls.L, "%s:%d: %s", buff, ls.linenumber, msg);
-		  if (token != 0)
-			luaO_pushfstring(ls.L, "%s near " + LUA_QS, msg, txtToken(ls, token));
-		  luaD_throw(ls.L, LUA_ERRSYNTAX);
+//		  CharPtr buff = new char[MAXSRC];
+//		  luaO_chunkid(buff, getstr(ls.source), MAXSRC);
+//		  msg = luaO_pushfstring(ls.L, "%s:%d: %s", buff, ls.linenumber, msg);
+//		  if (token != 0)
+//			luaO_pushfstring(ls.L, "%s near " + LUA_QS, msg, txtToken(ls, token));
+//		  luaD_throw(ls.L, LUA_ERRSYNTAX);
 		}
 
 		public static void luaX_syntaxerror (LexState ls, CharPtr msg) {
@@ -99,12 +99,13 @@ namespace lua40mod
 
 		public static TString luaX_newstring(LexState ls, CharPtr str, uint l)
 		{
-		  lua_State L = ls.L;
-		  TString ts = luaS_newlstr(L, str, l);
-		  TValue o = luaH_setstr(L, ls.fs.h, ts);  /* entry for `str' */
-		  if (ttisnil(o))
-			setbvalue(o, 1);  /* make sure `str' will not be collected */
-		  return ts;
+//		  lua_State L = ls.L;
+//		  TString ts = luaS_newlstr(L, str, l);
+//		  TValue o = luaH_setstr(L, ls.fs.h, ts);  /* entry for `str' */
+//		  if (ttisnil(o))
+//			setbvalue(o, 1);  /* make sure `str' will not be collected */
+//		  return ts;
+			return null;
 		}
 
 

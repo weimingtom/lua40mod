@@ -14,7 +14,7 @@ namespace lua40mod
 	using LUA_NUMBER	= System.Double;
 	using LUAI_UACNUMBER	= System.Double;
 	using LUA_INTFRM_T		= System.Int64;
-	using TValue = Lua.lua_TValue;
+	using TValue = Lua.Value;
 	//using lua_Number = System.Double;
 	
 	using lua_Number = System.Double;
@@ -2021,18 +2021,18 @@ namespace lua40mod
 				return 376;
 			else if (t == typeof(CallInfo))
 				return 24;
-			else if (t == typeof(lua_TValue))
+			else if (t == typeof(Value))
 				return 16;
-			else if (t == typeof(Table))
-				return 32;
+//			else if (t == typeof(Table))
+//				return 32;
 			else if (t == typeof(Node))
 				return 32;
 			else if (t == typeof(GCObject))
 				return 120;
 			else if (t == typeof(GCObjectRef))
 				return 4;
-			else if (t == typeof(ArrayRef))
-				return 4;
+//			else if (t == typeof(ArrayRef))
+//				return 4;
 			else if (t == typeof(Closure))
 				return 0;	// handle this one manually in the code
 			else if (t == typeof(Proto))
@@ -2061,22 +2061,22 @@ namespace lua40mod
 				return 52;
 			else if (t == typeof(FuncState))
 				return 572;
-			else if (t == typeof(GCheader))
-				return 8;
-			else if (t == typeof(lua_TValue))
+//			else if (t == typeof(GCheader))
+//				return 8;
+			else if (t == typeof(Value))
 				return 16;
 			else if (t == typeof(TString))
 				return 16;
 			else if (t == typeof(LocVar))
 				return 12;
-			else if (t == typeof(UpVal))
-				return 32;
-			else if (t == typeof(CClosure))
-				return 40;
-			else if (t == typeof(LClosure))
-				return 24;
-			else if (t == typeof(TKey))
-				return 16;
+//			else if (t == typeof(UpVal))
+//				return 32;
+//			else if (t == typeof(CClosure))
+//				return 40;
+//			else if (t == typeof(LClosure))
+//				return 24;
+//			else if (t == typeof(TKey))
+//				return 16;
 			else if (t == typeof(ConsControl))
 				return 40;
 			else if (t == typeof(LHS_assign))
@@ -2099,8 +2099,8 @@ namespace lua40mod
 				return 12;
 			else if (t == typeof(FilePtr))
 				return 4;
-			else if (t == typeof(Udata))
-				return 24;
+//			else if (t == typeof(Udata))
+//				return 24;
 			else if (t == typeof(Char))
 				return 1;
 			else if (t == typeof(UInt16))

@@ -82,7 +82,7 @@ namespace lua40mod
 		  }
 
 		  public Proto f;  /* current function header */
-		  public Table h;  /* table to find (and reuse) elements in `k' */
+//		  public Table h;  /* table to find (and reuse) elements in `k' */
 		  public FuncState prev;  /* enclosing function */
 		  public LexState ls;  /* lexical state */
 		  public lua_State L;  /* copy of the Lua state */

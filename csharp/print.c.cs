@@ -6,7 +6,7 @@
 
 namespace lua40mod
 {
-	using TValue = Lua.lua_TValue;
+	using TValue = Lua.Value;
 	using Instruction = System.UInt32;
 
 	public partial class Lua
@@ -19,31 +19,31 @@ namespace lua40mod
 
 		public static void PrintString(TString ts)
 		{
-		 CharPtr s=getstr(ts);
-		 uint i,n=ts.tsv.len;
-		 putchar('"');
-		 for (i=0; i<n; i++)
-		 {
-		  int c=s[i];
-		  switch (c)
-		  {
-		   case '"': printf("\\\""); break;
-		   case '\\': printf("\\\\"); break;
-		   case '\a': printf("\\a"); break;
-		   case '\b': printf("\\b"); break;
-		   case '\f': printf("\\f"); break;
-		   case '\n': printf("\\n"); break;
-		   case '\r': printf("\\r"); break;
-		   case '\t': printf("\\t"); break;
-		   case '\v': printf("\\v"); break;
-		   default:	if (isprint((byte)c))
-   					putchar(c);
-				else
-					printf("\\%03u",(byte)c);
-				break;
-		  }
-		 }
-		 putchar('"');
+//		 CharPtr s=getstr(ts);
+//		 uint i,n=ts.tsv.len;
+//		 putchar('"');
+//		 for (i=0; i<n; i++)
+//		 {
+//		  int c=s[i];
+//		  switch (c)
+//		  {
+//		   case '"': printf("\\\""); break;
+//		   case '\\': printf("\\\\"); break;
+//		   case '\a': printf("\\a"); break;
+//		   case '\b': printf("\\b"); break;
+//		   case '\f': printf("\\f"); break;
+//		   case '\n': printf("\\n"); break;
+//		   case '\r': printf("\\r"); break;
+//		   case '\t': printf("\\t"); break;
+//		   case '\v': printf("\\v"); break;
+//		   default:	if (isprint((byte)c))
+//   					putchar(c);
+//				else
+//					printf("\\%03u",(byte)c);
+//				break;
+//		  }
+//		 }
+//		 putchar('"');
 		}
 
 		private static void PrintConstant(Proto f, int i)
@@ -158,70 +158,70 @@ namespace lua40mod
 
 		private static void PrintHeader(Proto f)
 		{
-		 CharPtr s=getstr(f.source);
-		 if (s[0]=='@' || s[0]=='=')
-		  s  = s.next();
-		 else if (s[0]==LUA_SIGNATURE[0])
-		  s="(bstring)";
-		 else
-		  s="(string)";
-		 printf("\n%s <%s:%d,%d> (%d Instruction%s, %d bytes at %p)\n",
- 			(f.linedefined==0)?"main":"function",s,
-			f.linedefined,f.lastlinedefined,
-			f.sizecode, SS(f.sizecode), f.sizecode * GetUnmanagedSize(typeof(Instruction)), VOID(f));
-		 printf("%d%s param%s, %d slot%s, %d upvalue%s, ",
-			f.numparams,(f.is_vararg != 0) ? "+" : "", SS(f.numparams),
-			f.maxstacksize, SS(f.maxstacksize), f.nups, SS(f.nups));
-		 printf("%d local%s, %d constant%s, %d function%s\n",
-			f.sizelocvars, SS(f.sizelocvars), f.sizek, SS(f.sizek), f.sizep, SS(f.sizep));
+//		 CharPtr s=getstr(f.source);
+//		 if (s[0]=='@' || s[0]=='=')
+//		  s  = s.next();
+//		 else if (s[0]==LUA_SIGNATURE[0])
+//		  s="(bstring)";
+//		 else
+//		  s="(string)";
+//		 printf("\n%s <%s:%d,%d> (%d Instruction%s, %d bytes at %p)\n",
+// 			(f.linedefined==0)?"main":"function",s,
+//			f.linedefined,f.lastlinedefined,
+//			f.sizecode, SS(f.sizecode), f.sizecode * GetUnmanagedSize(typeof(Instruction)), VOID(f));
+//		 printf("%d%s param%s, %d slot%s, %d upvalue%s, ",
+//			f.numparams,(f.is_vararg != 0) ? "+" : "", SS(f.numparams),
+//			f.maxstacksize, SS(f.maxstacksize), f.nups, SS(f.nups));
+//		 printf("%d local%s, %d constant%s, %d function%s\n",
+//			f.sizelocvars, SS(f.sizelocvars), f.sizek, SS(f.sizek), f.sizep, SS(f.sizep));
 		}
 
 		private static void PrintConstants(Proto f)
 		{
-		 int i,n=f.sizek;
-		 printf("constants (%d) for %p:\n",n,VOID(f));
-		 for (i=0; i<n; i++)
-		 {
-		  printf("\t%d\t",i+1);
-		  PrintConstant(f,i);
-		  printf("\n");
-		 }
+//		 int i,n=f.sizek;
+//		 printf("constants (%d) for %p:\n",n,VOID(f));
+//		 for (i=0; i<n; i++)
+//		 {
+//		  printf("\t%d\t",i+1);
+//		  PrintConstant(f,i);
+//		  printf("\n");
+//		 }
 		}
 
 		private static void PrintLocals(Proto f)
 		{
-		 int i,n=f.sizelocvars;
-		 printf("locals (%d) for %p:\n",n,VOID(f));
-		 for (i=0; i<n; i++)
-		 {
-		  printf("\t%d\t%s\t%d\t%d\n",
-		  i,getstr(f.locvars[i].varname),f.locvars[i].startpc+1,f.locvars[i].endpc+1);
-		 }
+//		 int i,n=f.sizelocvars;
+//		 printf("locals (%d) for %p:\n",n,VOID(f));
+//		 for (i=0; i<n; i++)
+//		 {
+//		  printf("\t%d\t%s\t%d\t%d\n",
+//		  i,getstr(f.locvars[i].varname),f.locvars[i].startpc+1,f.locvars[i].endpc+1);
+//		 }
 		}
 
 		private static void PrintUpvalues(Proto f)
 		{
-		 int i,n=f.sizeupvalues;
-		 printf("upvalues (%d) for %p:\n",n,VOID(f));
-		 if (f.upvalues==null) return;
-		 for (i=0; i<n; i++)
-		 {
-		  printf("\t%d\t%s\n",i,getstr(f.upvalues[i]));
-		 }
+//		 int i,n=f.sizeupvalues;
+//		 printf("upvalues (%d) for %p:\n",n,VOID(f));
+//		 if (f.upvalues==null) return;
+//		 for (i=0; i<n; i++)
+//		 {
+//		  printf("\t%d\t%s\n",i,getstr(f.upvalues[i]));
+//		 }
 		}
 
 		public static void PrintFunction(Proto f, int full)
 		{
-		 int i,n=f.sizep;
-		 PrintHeader(f);
-		 PrintCode(f);
-		 if (full != 0)
-		 {
-		  PrintConstants(f);
-		  PrintLocals(f);
-		  PrintUpvalues(f);
-		 }
-		 for (i=0; i<n; i++) PrintFunction(f.p[i],full);
+//		 int i,n=f.sizep;
+//		 PrintHeader(f);
+//		 PrintCode(f);
+//		 if (full != 0)
+//		 {
+//		  PrintConstants(f);
+//		  PrintLocals(f);
+//		  PrintUpvalues(f);
+//		 }
+//		 for (i=0; i<n; i++) PrintFunction(f.p[i],full);
 		}
 	}
 }

@@ -7,14 +7,14 @@
 
 namespace lua40mod
 {
-	using TValue = Lua.lua_TValue;
-	using StkId = Lua.lua_TValue;
+	using TValue = Lua.Value;
+	using StkId = Lua.Value;
 	using Instruction = System.UInt32;
 
 	public partial class Lua
 	{
 
-		public static Closure luaF_newCclosure (lua_State L, int nelems, Table e) {
+		public static Closure luaF_newCclosure (lua_State L, int nelems, object/*Table*/ e) {
 		  //Closure c = (Closure)luaM_malloc(L, sizeCclosure(nelems));	
 //		  Closure c = luaM_new<Closure>(L);
 //		  AddTotalBytes(L, sizeCclosure(nelems));
@@ -30,7 +30,7 @@ namespace lua40mod
 		}
 
 
-		public static Closure luaF_newLclosure (lua_State L, int nelems, Table e) {
+		public static Closure luaF_newLclosure (lua_State L, int nelems, object/*Table*/ e) {
 		  //Closure c = (Closure)luaM_malloc(L, sizeLclosure(nelems));
 //		  Closure c = luaM_new<Closure>(L);
 //		  AddTotalBytes(L, sizeLclosure(nelems));
@@ -47,15 +47,16 @@ namespace lua40mod
 		}
 
 
-		public static UpVal luaF_newupval (lua_State L) {
-		  UpVal uv = luaM_new<UpVal>(L);
-		  luaC_link(L, obj2gco(uv), LUA_TUPVAL);
-		  uv.v = uv.u.value;
-		  setnilvalue(uv.v);
-		  return uv;
+		public static object/*UpVal*/ luaF_newupval (lua_State L) {
+//		  UpVal uv = luaM_new<UpVal>(L);
+//		  luaC_link(L, obj2gco(uv), LUA_TUPVAL);
+//		  uv.v = uv.u.value;
+//		  setnilvalue(uv.v);
+//		  return uv;
+			return null;
 		}
 
-		public static UpVal luaF_findupval (lua_State L, StkId level) {
+		public static object/*UpVal*/ luaF_findupval (lua_State L, StkId level) {
 //		  global_State g = G(L);
 //		  GCObjectRef pp = new OpenValRef(L);
 //		  UpVal p;
@@ -85,17 +86,17 @@ namespace lua40mod
 		}
 
 
-		private static void unlinkupval (UpVal uv) {
+		private static void unlinkupval (object/*UpVal*/ uv) {
 //		  lua_assert(uv.u.l.next.u.l.prev == uv && uv.u.l.prev.u.l.next == uv);
 //		  uv.u.l.next.u.l.prev = uv.u.l.prev;  /* remove from `uvhead' list */
 //		  uv.u.l.prev.u.l.next = uv.u.l.next;
 		}
 
 
-		public static void luaF_freeupval (lua_State L, UpVal uv) {
-		  if (uv.v != uv.u.value)  /* is it open? */
-			unlinkupval(uv);  /* remove from open list */
-		  luaM_free(L, uv);  /* free upvalue */
+		public static void luaF_freeupval (lua_State L, object/*UpVal*/ uv) {
+//		  if (uv.v != uv.u.value)  /* is it open? */
+//			unlinkupval(uv);  /* remove from open list */
+//		  luaM_free(L, uv);  /* free upvalue */
 		}
 
 
@@ -119,28 +120,29 @@ namespace lua40mod
 
 
 		public static Proto luaF_newproto (lua_State L) {
-		  Proto f = luaM_new<Proto>(L);
-		  luaC_link(L, obj2gco(f), LUA_TPROTO);
-		  f.k = null;
-		  f.sizek = 0;
-		  f.p = null;
-		  f.sizep = 0;
-		  f.code = null;
-		  f.sizecode = 0;
-		  f.sizelineinfo = 0;
-		  f.sizeupvalues = 0;
-		  f.nups = 0;
-		  f.upvalues = null;
-		  f.numparams = 0;
-		  f.is_vararg = 0;
-		  f.maxstacksize = 0;
-		  f.lineinfo = null;
-		  f.sizelocvars = 0;
-		  f.locvars = null;
-		  f.linedefined = 0;
-		  f.lastlinedefined = 0;
-		  f.source = null;
-		  return f;
+//		  Proto f = luaM_new<Proto>(L);
+//		  luaC_link(L, obj2gco(f), LUA_TPROTO);
+//		  f.k = null;
+//		  f.sizek = 0;
+//		  f.p = null;
+//		  f.sizep = 0;
+//		  f.code = null;
+//		  f.sizecode = 0;
+//		  f.sizelineinfo = 0;
+//		  f.sizeupvalues = 0;
+//		  f.nups = 0;
+//		  f.upvalues = null;
+//		  f.numparams = 0;
+//		  f.is_vararg = 0;
+//		  f.maxstacksize = 0;
+//		  f.lineinfo = null;
+//		  f.sizelocvars = 0;
+//		  f.locvars = null;
+//		  f.linedefined = 0;
+//		  f.lastlinedefined = 0;
+//		  f.source = null;
+//		  return f;
+			return null;
 		}
 
 		public static void luaF_freeproto (lua_State L, Proto f) {
@@ -167,14 +169,14 @@ namespace lua40mod
 		** Returns null if not found.
 		*/
 		public static CharPtr luaF_getlocalname (Proto f, int local_number, int pc) {
-		  int i;
-		  for (i = 0; i<f.sizelocvars && f.locvars[i].startpc <= pc; i++) {
-			if (pc < f.locvars[i].endpc) {  /* is variable active? */
-			  local_number--;
-			  if (local_number == 0)
-				return getstr(f.locvars[i].varname);
-			}
-		  }
+//		  int i;
+//		  for (i = 0; i<f.sizelocvars && f.locvars[i].startpc <= pc; i++) {
+//			if (pc < f.locvars[i].endpc) {  /* is variable active? */
+//			  local_number--;
+//			  if (local_number == 0)
+//				return getstr(f.locvars[i].varname);
+//			}
+//		  }
 		  return null;  /* not found */
 		}
 

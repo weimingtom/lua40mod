@@ -9,8 +9,8 @@ namespace lua40mod
 	using lu_byte = System.Byte;
 	using lu_int32 = System.Int32;
 	using lu_mem = System.UInt32;
-	using TValue = Lua.lua_TValue;
-	using StkId = Lua.lua_TValue;
+	using TValue = Lua.Value;
+	using StkId = Lua.Value;
 	using ptrdiff_t = System.Int32;
 	using Instruction = System.UInt32;
 
@@ -43,21 +43,21 @@ namespace lua40mod
 
 
 		private static void stack_init (lua_State L1, lua_State L) {
-		  /* initialize CallInfo array */
-		  L1.base_ci = luaM_newvector<CallInfo>(L, BASIC_CI_SIZE);
-		  L1.ci = L1.base_ci[0];
-		  L1.size_ci = BASIC_CI_SIZE;
-		  L1.end_ci = L1.base_ci[L1.size_ci - 1];
-		  /* initialize stack array */
-		  L1.stack = luaM_newvector<TValue>(L, BASIC_STACK_SIZE + EXTRA_STACK);
-		  L1.stacksize = BASIC_STACK_SIZE + EXTRA_STACK;
-		  L1.top = L1.stack[0];
-		  L1.stack_last = L1.stack[L1.stacksize - EXTRA_STACK - 1];
-		  /* initialize first ci */
-		  L1.ci.func = L1.top;
-		  setnilvalue(StkId.inc(ref L1.top));  /* `function' entry for this `ci' */
-		  L1.base_ = L1.ci.base_ = L1.top;
-		  L1.ci.top = L1.top + LUA_MINSTACK;
+//		  /* initialize CallInfo array */
+//		  L1.base_ci = luaM_newvector<CallInfo>(L, BASIC_CI_SIZE);
+//		  L1.ci = L1.base_ci[0];
+//		  L1.size_ci = BASIC_CI_SIZE;
+//		  L1.end_ci = L1.base_ci[L1.size_ci - 1];
+//		  /* initialize stack array */
+//		  L1.stack = luaM_newvector<TValue>(L, BASIC_STACK_SIZE + EXTRA_STACK);
+//		  L1.stacksize = BASIC_STACK_SIZE + EXTRA_STACK;
+//		  L1.top = L1.stack[0];
+//		  L1.stack_last = L1.stack[L1.stacksize - EXTRA_STACK - 1];
+//		  /* initialize first ci */
+//		  L1.ci.func = L1.top;
+//		  setnilvalue(StkId.inc(ref L1.top));  /* `function' entry for this `ci' */
+//		  L1.base_ = L1.ci.base_ = L1.top;
+//		  L1.ci.top = L1.top + LUA_MINSTACK;
 		}
 
 
@@ -85,24 +85,24 @@ namespace lua40mod
 
 
 		private static void preinit_state (lua_State L, global_State g) {
-		  G_set(L, g);
-		  L.stack = null;
-		  L.stacksize = 0;
-		  L.errorJmp = null;
-		  L.hook = null;
-		  L.hookmask = 0;
-		  L.basehookcount = 0;
-		  L.allowhook = 1;
-//		  resethookcount(L);
-		  L.openupval = null;
-		  L.size_ci = 0;
-		  L.nCcalls = L.baseCcalls = 0;
-		  L.status = 0;
-		  L.base_ci = null;
-		  L.ci = null;
-		  L.savedpc = new InstructionPtr();
-		  L.errfunc = 0;
-		  setnilvalue(gt(L));
+//		  G_set(L, g);
+//		  L.stack = null;
+//		  L.stacksize = 0;
+//		  L.errorJmp = null;
+//		  L.hook = null;
+//		  L.hookmask = 0;
+//		  L.basehookcount = 0;
+//		  L.allowhook = 1;
+////		  resethookcount(L);
+//		  L.openupval = null;
+//		  L.size_ci = 0;
+//		  L.nCcalls = L.baseCcalls = 0;
+//		  L.status = 0;
+//		  L.base_ci = null;
+//		  L.ci = null;
+//		  L.savedpc = new InstructionPtr();
+//		  L.errfunc = 0;
+//		  setnilvalue(gt(L));
 		}
 
 

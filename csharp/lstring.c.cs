@@ -103,7 +103,7 @@ namespace lua40mod
 		}
 
 
-		public static Udata luaS_newudata(lua_State L, uint s, Table e)
+		public static object/*Udata*/ luaS_newudata(lua_State L, uint s, /*Table*/object e)
 		{
 //			Udata u = new Udata();
 //			u.uv.marked = luaC_white(G(L));  /* is not finalized */
@@ -119,7 +119,7 @@ namespace lua40mod
 			return null;
 		}
 
-		public static Udata luaS_newudata(lua_State L, Type t, Table e)
+		public static object/*Udata*/ luaS_newudata(lua_State L, Type t, object/*Table*/ e)
 		{
 //			Udata u = new Udata();
 //			u.uv.marked = luaC_white(G(L));  /* is not finalized */

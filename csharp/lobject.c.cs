@@ -7,8 +7,8 @@
 
 namespace lua40mod
 {
-	using TValue = Lua.lua_TValue;
-	using StkId = Lua.lua_TValue;
+	using TValue = Lua.Value;
+	using StkId = Lua.Value;
 	using lu_byte = System.Byte;
 	using lua_Number = System.Double;
 	using l_uacNumber = System.Double;
@@ -16,8 +16,7 @@ namespace lua40mod
 
 	public partial class Lua
 	{
-
-	
+		public static CharPtr[] luaO_typenames;
 
 
 		/*
@@ -98,8 +97,8 @@ namespace lua40mod
 
 
 		private static void pushstr (lua_State L, CharPtr str) {
-		  setsvalue2s(L, L.top, luaS_new(L, str));
-		  incr_top(L);
+//		  setsvalue2s(L, L.top, luaS_new(L, str));
+//		  incr_top(L);
 		}
 
 

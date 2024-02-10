@@ -8,10 +8,10 @@ using System;
 
 namespace lua40mod
 {
-	using TValue = Lua.lua_TValue;
+	using TValue = Lua.Value;
 	using lua_Number = System.Double;
 	using lu_byte = System.Byte;
-	using StkId = Lua.lua_TValue;
+	using StkId = Lua.Value;
 	using Instruction = System.UInt32;
 
 	public partial class Lua
@@ -104,93 +104,94 @@ namespace lua40mod
 
 		private static void LoadCode(LoadState S, Proto f)
 		{
-		 int n=LoadInt(S);
-		 f.code = luaM_newvector<Instruction>(S.L, n);
-		 f.sizecode=n;
-		 f.code = (Instruction[])LoadVector(S, typeof(Instruction), n);
+//		 int n=LoadInt(S);
+//		 f.code = luaM_newvector<Instruction>(S.L, n);
+//		 f.sizecode=n;
+//		 f.code = (Instruction[])LoadVector(S, typeof(Instruction), n);
 		}
 
 		private static void LoadConstants(LoadState S, Proto f)
 		{
-		 int i,n;
-		 n=LoadInt(S);
-		 f.k = luaM_newvector<TValue>(S.L, n);
-		 f.sizek=n;
-		 for (i=0; i<n; i++) setnilvalue(f.k[i]);
-		 for (i=0; i<n; i++)
-		 {
-		  TValue o=f.k[i];
-		  int t=LoadChar(S);
-		  switch (t)
-		  {
-		   case LUA_TNIL:
-   			setnilvalue(o);
-			break;
-		   case LUA_TBOOLEAN:
-   			setbvalue(o, LoadChar(S));
-			break;
-		   case LUA_TNUMBER:
-			setnvalue(o, LoadNumber(S));
-			break;
-		   case LUA_TSTRING:
-			setsvalue2n(S.L, o, LoadString(S));
-			break;
-		   default:
-			error(S,"bad constant");
-			break;
-		  }
-		 }
-		 n=LoadInt(S);
-		 f.p=luaM_newvector<Proto>(S.L,n);
-		 f.sizep=n;
-		 for (i=0; i<n; i++) f.p[i]=null;
-		 for (i=0; i<n; i++) f.p[i]=LoadFunction(S,f.source);
+//		 int i,n;
+//		 n=LoadInt(S);
+//		 f.k = luaM_newvector<TValue>(S.L, n);
+//		 f.sizek=n;
+//		 for (i=0; i<n; i++) setnilvalue(f.k[i]);
+//		 for (i=0; i<n; i++)
+//		 {
+//		  TValue o=f.k[i];
+//		  int t=LoadChar(S);
+//		  switch (t)
+//		  {
+//		   case LUA_TNIL:
+//   			setnilvalue(o);
+//			break;
+//		   case LUA_TBOOLEAN:
+//   			setbvalue(o, LoadChar(S));
+//			break;
+//		   case LUA_TNUMBER:
+//			setnvalue(o, LoadNumber(S));
+//			break;
+//		   case LUA_TSTRING:
+//			setsvalue2n(S.L, o, LoadString(S));
+//			break;
+//		   default:
+//			error(S,"bad constant");
+//			break;
+//		  }
+//		 }
+//		 n=LoadInt(S);
+//		 f.p=luaM_newvector<Proto>(S.L,n);
+//		 f.sizep=n;
+//		 for (i=0; i<n; i++) f.p[i]=null;
+//		 for (i=0; i<n; i++) f.p[i]=LoadFunction(S,f.source);
 		}
 
 		private static void LoadDebug(LoadState S, Proto f)
 		{
-		 int i,n;
-		 n=LoadInt(S);
-		 f.lineinfo=luaM_newvector<int>(S.L,n);
-		 f.sizelineinfo=n;
-		 f.lineinfo = (int[])LoadVector(S, typeof(int), n);
-		 n=LoadInt(S);
-		 f.locvars=luaM_newvector<LocVar>(S.L,n);
-		 f.sizelocvars=n;
-		 for (i=0; i<n; i++) f.locvars[i].varname=null;
-		 for (i=0; i<n; i++)
-		 {
-		  f.locvars[i].varname=LoadString(S);
-		  f.locvars[i].startpc=LoadInt(S);
-		  f.locvars[i].endpc=LoadInt(S);
-		 }
-		 n=LoadInt(S);
-		 f.upvalues=luaM_newvector<TString>(S.L, n);
-		 f.sizeupvalues=n;
-		 for (i=0; i<n; i++) f.upvalues[i]=null;
-		 for (i=0; i<n; i++) f.upvalues[i]=LoadString(S);
+//		 int i,n;
+//		 n=LoadInt(S);
+//		 f.lineinfo=luaM_newvector<int>(S.L,n);
+//		 f.sizelineinfo=n;
+//		 f.lineinfo = (int[])LoadVector(S, typeof(int), n);
+//		 n=LoadInt(S);
+//		 f.locvars=luaM_newvector<LocVar>(S.L,n);
+//		 f.sizelocvars=n;
+//		 for (i=0; i<n; i++) f.locvars[i].varname=null;
+//		 for (i=0; i<n; i++)
+//		 {
+//		  f.locvars[i].varname=LoadString(S);
+//		  f.locvars[i].startpc=LoadInt(S);
+//		  f.locvars[i].endpc=LoadInt(S);
+//		 }
+//		 n=LoadInt(S);
+//		 f.upvalues=luaM_newvector<TString>(S.L, n);
+//		 f.sizeupvalues=n;
+//		 for (i=0; i<n; i++) f.upvalues[i]=null;
+//		 for (i=0; i<n; i++) f.upvalues[i]=LoadString(S);
 		}
 
 		private static Proto LoadFunction(LoadState S, TString p)
 		{
-		 Proto f;
-		 if (++S.L.nCcalls > LUAI_MAXCCALLS) error(S,"code too deep");
-		 f=luaF_newproto(S.L);
-		 setptvalue2s(S.L,S.L.top,f); incr_top(S.L);
-		 f.source=LoadString(S); if (f.source==null) f.source=p;
-		 f.linedefined=LoadInt(S);
-		 f.lastlinedefined=LoadInt(S);
-		 f.nups=LoadByte(S);
-		 f.numparams=LoadByte(S);
-		 f.is_vararg=LoadByte(S);
-		 f.maxstacksize=LoadByte(S);
-		 LoadCode(S,f);
-		 LoadConstants(S,f);
-		 LoadDebug(S,f);
-		 IF (luaG_checkcode(f)==0 ? 1 : 0, "bad code");
-		 StkId.dec(ref S.L.top);
-		 S.L.nCcalls--;
-		 return f;
+//		 Proto f;
+//		 if (++S.L.nCcalls > LUAI_MAXCCALLS) error(S,"code too deep");
+//		 f=luaF_newproto(S.L);
+//		 setptvalue2s(S.L,S.L.top,f); incr_top(S.L);
+//		 f.source=LoadString(S); if (f.source==null) f.source=p;
+//		 f.linedefined=LoadInt(S);
+//		 f.lastlinedefined=LoadInt(S);
+//		 f.nups=LoadByte(S);
+//		 f.numparams=LoadByte(S);
+//		 f.is_vararg=LoadByte(S);
+//		 f.maxstacksize=LoadByte(S);
+//		 LoadCode(S,f);
+//		 LoadConstants(S,f);
+//		 LoadDebug(S,f);
+//		 IF (luaG_checkcode(f)==0 ? 1 : 0, "bad code");
+//		 StkId.dec(ref S.L.top);
+//		 S.L.nCcalls--;
+//		 return f;
+			return null;
 		}
 
 		private static void LoadHeader(LoadState S)

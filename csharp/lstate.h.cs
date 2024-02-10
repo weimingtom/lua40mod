@@ -3,8 +3,8 @@ namespace lua40mod
 	using lu_byte = System.Byte;
 	using lu_int32 = System.Int32;
 	using lu_mem = System.UInt32;
-	using TValue = Lua.lua_TValue;
-	using StkId = Lua.lua_TValue;
+	using TValue = Lua.Value;
+	using StkId = Lua.Value;
 	using ptrdiff_t = System.Int32;
 	
 	public partial class Lua
@@ -36,92 +36,92 @@ namespace lua40mod
 		/*
 		** informations about a call
 		*/
-		public class CallInfo : ArrayElement
-		{
-			private CallInfo[] values = null;
-			private int index = -1;
-
-			public void set_index(int index)
-			{
-				this.index = index;
-			}
-
-			public void set_array(object array)
-			{
-				this.values = (CallInfo[])array;
-				debug_assert(this.values != null);
-			}
-
-			public CallInfo this[int offset]
-			{
-				get { return values[index+offset]; }
-			}
-
-			public static CallInfo operator +(CallInfo value, int offset)
-			{
-				return value.values[value.index + offset];
-			}
-
-			public static CallInfo operator -(CallInfo value, int offset)
-			{
-				return value.values[value.index - offset];
-			}
-
-			public static int operator -(CallInfo ci, CallInfo[] values)
-			{
-				debug_assert(ci.values == values);
-				return ci.index;
-			}
-
-			public static int operator -(CallInfo ci1, CallInfo ci2)
-			{
-				debug_assert(ci1.values == ci2.values);
-				return ci1.index - ci2.index;
-			}
-
-			public static bool operator <(CallInfo ci1, CallInfo ci2)
-			{
-				debug_assert(ci1.values == ci2.values);
-				return ci1.index < ci2.index;
-			}
-
-			public static bool operator <=(CallInfo ci1, CallInfo ci2)
-			{
-				debug_assert(ci1.values == ci2.values);
-				return ci1.index <= ci2.index;
-			}
-
-			public static bool operator >(CallInfo ci1, CallInfo ci2)
-			{
-				debug_assert(ci1.values == ci2.values);
-				return ci1.index > ci2.index;
-			}
-
-			public static bool operator >=(CallInfo ci1, CallInfo ci2)
-			{
-				debug_assert(ci1.values == ci2.values);
-				return ci1.index >= ci2.index;
-			}
-
-			public static CallInfo inc(ref CallInfo value)
-			{
-				value = value[1];
-				return value[-1];
-			}
-
-			public static CallInfo dec(ref CallInfo value)
-			{
-				value = value[-1];
-				return value[1];
-			}
-
-			public StkId base_;  /* base for this function */
-			public StkId func;  /* function index in the stack */
-			public StkId top;  /* top for this function */
-			public InstructionPtr savedpc;
-			public int nresults;  /* expected number of results from this function */
-			public int tailcalls;  /* number of tail calls lost under this entry */
-		};
+//		public class CallInfo : ArrayElement
+//		{
+//			private CallInfo[] values = null;
+//			private int index = -1;
+//
+//			public void set_index(int index)
+//			{
+//				this.index = index;
+//			}
+//
+//			public void set_array(object array)
+//			{
+//				this.values = (CallInfo[])array;
+//				debug_assert(this.values != null);
+//			}
+//
+//			public CallInfo this[int offset]
+//			{
+//				get { return values[index+offset]; }
+//			}
+//
+//			public static CallInfo operator +(CallInfo value, int offset)
+//			{
+//				return value.values[value.index + offset];
+//			}
+//
+//			public static CallInfo operator -(CallInfo value, int offset)
+//			{
+//				return value.values[value.index - offset];
+//			}
+//
+//			public static int operator -(CallInfo ci, CallInfo[] values)
+//			{
+//				debug_assert(ci.values == values);
+//				return ci.index;
+//			}
+//
+//			public static int operator -(CallInfo ci1, CallInfo ci2)
+//			{
+//				debug_assert(ci1.values == ci2.values);
+//				return ci1.index - ci2.index;
+//			}
+//
+//			public static bool operator <(CallInfo ci1, CallInfo ci2)
+//			{
+//				debug_assert(ci1.values == ci2.values);
+//				return ci1.index < ci2.index;
+//			}
+//
+//			public static bool operator <=(CallInfo ci1, CallInfo ci2)
+//			{
+//				debug_assert(ci1.values == ci2.values);
+//				return ci1.index <= ci2.index;
+//			}
+//
+//			public static bool operator >(CallInfo ci1, CallInfo ci2)
+//			{
+//				debug_assert(ci1.values == ci2.values);
+//				return ci1.index > ci2.index;
+//			}
+//
+//			public static bool operator >=(CallInfo ci1, CallInfo ci2)
+//			{
+//				debug_assert(ci1.values == ci2.values);
+//				return ci1.index >= ci2.index;
+//			}
+//
+//			public static CallInfo inc(ref CallInfo value)
+//			{
+//				value = value[1];
+//				return value[-1];
+//			}
+//
+//			public static CallInfo dec(ref CallInfo value)
+//			{
+//				value = value[-1];
+//				return value[1];
+//			}
+//
+//			public StkId base_;  /* base for this function */
+//			public StkId func;  /* function index in the stack */
+//			public StkId top;  /* top for this function */
+//			public InstructionPtr savedpc;
+//			public int nresults;  /* expected number of results from this function */
+//			public int tailcalls;  /* number of tail calls lost under this entry */
+//		};
 
 
 
@@ -157,8 +157,8 @@ namespace lua40mod
 		  public lua_CFunction panic;  /* to be called in unprotected errors */
 		  public TValue l_registry = new TValue();
 		  public lua_State mainthread;
-		  public UpVal uvhead = new UpVal();  /* head of double-linked list of all open upvalues */
-		  public Table[] mt = new Table[NUM_TAGS];  /* metatables for basic types */
+//		  public UpVal uvhead = new UpVal();  /* head of double-linked list of all open upvalues */
+//		  public Table[] mt = new Table[NUM_TAGS];  /* metatables for basic types */
 		  public TString[] tmname = new TString[(int)TMS.TM_N];  /* array with tag-method names */
 		};
 
@@ -203,7 +203,7 @@ namespace lua40mod
 		/*
 		** Union of all collectable objects (not a union anymore in the C# port)
 		*/
-		public class GCObject : GCheader, ArrayElement
+		public class GCObject
 		{
 			// todo: remove this?
 			//private GCObject[] values = null;
@@ -220,13 +220,13 @@ namespace lua40mod
 				//Debug.Assert(this.values != null);
 			}
 
-			public GCheader gch {get{return (GCheader)this;}}
-			public TString ts {get{return (TString)this;}}
-			public Udata u {get{return (Udata)this;}}
-			public Closure cl {get{return (Closure)this;}}
-			public Table h {get{return (Table)this;}}
+//			public GCheader gch {get{return (GCheader)this;}}
+//			public TString ts {get{return (TString)this;}}
+//			public Udata u {get{return (Udata)this;}}
+//			public Closure cl {get{return (Closure)this;}}
+//			public Table h {get{return (Table)this;}}
 			public Proto p {get{return (Proto)this;}}
-			public UpVal uv {get{return (UpVal)this;}}
+//			public UpVal uv {get{return (UpVal)this;}}
 			public lua_State th {get{return (lua_State)this;}}
 		};
 
@@ -253,46 +253,46 @@ namespace lua40mod
 			int index;
 		}
 		 * */
-		public class ArrayRef : GCObjectRef, ArrayElement
-		{
-			public ArrayRef()
-			{
-				this.array_elements = null;
-				this.array_index = 0;
-				this.vals = null;
-				this.index = 0;
-			}
-			public ArrayRef(GCObject[] array_elements, int array_index)
-			{
-				this.array_elements = array_elements;
-				this.array_index = array_index;
-				this.vals = null;
-				this.index = 0;
-			}
-			public void set(GCObject value) { array_elements[array_index] = value; }
-			public GCObject get() { return array_elements[array_index]; }
-
-			public void set_index(int index)
-			{
-				this.index = index;
-			}
-			public void set_array(object vals)
-			{
-				// don't actually need this
-				this.vals = (ArrayRef[])vals;
-				debug_assert(this.vals != null);
-			}
-
-			// ArrayRef is used to reference GCObject objects in an array, the next two members
-			// point to that array and the index of the GCObject element we are referencing
-			GCObject[] array_elements;
-			int array_index;
-
-			// ArrayRef is itself stored in an array and derived from ArrayElement, the next
-			// two members refer to itself i.e. the array and index of it's own instance.
-			ArrayRef[] vals;
-			int index;
-		}
+//		public class ArrayRef : GCObjectRef, ArrayElement
+//		{
+//			public ArrayRef()
+//			{
+//				this.array_elements = null;
+//				this.array_index = 0;
+//				this.vals = null;
+//				this.index = 0;
+//			}
+//			public ArrayRef(GCObject[] array_elements, int array_index)
+//			{
+//				this.array_elements = array_elements;
+//				this.array_index = array_index;
+//				this.vals = null;
+//				this.index = 0;
+//			}
+//			public void set(GCObject value) { array_elements[array_index] = value; }
+//			public GCObject get() { return array_elements[array_index]; }
+//
+//			public void set_index(int index)
+//			{
+//				this.index = index;
+//			}
+//			public void set_array(object vals)
+//			{
+//				// don't actually need this
+//				this.vals = (ArrayRef[])vals;
+//				debug_assert(this.vals != null);
+//			}
+//
+//			// ArrayRef is used to reference GCObject objects in an array, the next two members
+//			// point to that array and the index of the GCObject element we are referencing
+//			GCObject[] array_elements;
+//			int array_index;
+//
+//			// ArrayRef is itself stored in an array and derived from ArrayElement, the next
+//			// two members refer to itself i.e. the array and index of it's own instance.
+//			ArrayRef[] vals;
+//			int index;
+//		}
 
 		public class OpenValRef : GCObjectRef
 		{
@@ -312,10 +312,10 @@ namespace lua40mod
 
 		public class NextRef : GCObjectRef
 		{
-			public NextRef(GCheader header) { this.header = header; }
-			public void set(GCObject value) { this.header.next = value; }
-			public GCObject get() { return this.header.next; }
-			GCheader header;
+//			public NextRef(GCheader header) { this.header = header; }
+			public void set(GCObject value) { /*this.header.next = value;*/ }
+			public GCObject get() { return null;/*this.header.next;*/ }
+//			GCheader header;
 		}
 
 		

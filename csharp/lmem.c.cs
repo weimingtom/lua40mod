@@ -102,26 +102,27 @@ namespace lua40mod
 
 		public static object luaM_realloc_<T>(lua_State L, T[] old_block, int new_size)
 		{
-			int unmanaged_size = (int)GetUnmanagedSize(typeof(T));
-			int old_size = (old_block == null) ? 0 : old_block.Length;
-			int osize = old_size * unmanaged_size;
-			int nsize = new_size * unmanaged_size;
-			T[] new_block = new T[new_size];
-			for (int i = 0; i < Math.Min(old_size, new_size); i++)
-				new_block[i] = old_block[i];
-			for (int i = old_size; i < new_size; i++)
-				new_block[i] = (T)System.Activator.CreateInstance(typeof(T));
-			if (CanIndex(typeof(T)))
-				for (int i = 0; i < new_size; i++)
-				{
-					ArrayElement elem = new_block[i] as ArrayElement;
-					debug_assert(elem != null, String.Format("Need to derive type {0} from ArrayElement", typeof(T).ToString()));
-					elem.set_index(i);
-					elem.set_array(new_block);
-				}
-			SubtractTotalBytes(L, osize);
-			AddTotalBytes(L, nsize);
-			return new_block;
+//			int unmanaged_size = (int)GetUnmanagedSize(typeof(T));
+//			int old_size = (old_block == null) ? 0 : old_block.Length;
+//			int osize = old_size * unmanaged_size;
+//			int nsize = new_size * unmanaged_size;
+//			T[] new_block = new T[new_size];
+//			for (int i = 0; i < Math.Min(old_size, new_size); i++)
+//				new_block[i] = old_block[i];
+//			for (int i = old_size; i < new_size; i++)
+//				new_block[i] = (T)System.Activator.CreateInstance(typeof(T));
+//			if (CanIndex(typeof(T)))
+//				for (int i = 0; i < new_size; i++)
+//				{
+//					ArrayElement elem = new_block[i] as ArrayElement;
+//					debug_assert(elem != null, String.Format("Need to derive type {0} from ArrayElement", typeof(T).ToString()));
+//					elem.set_index(i);
+//					elem.set_array(new_block);
+//				}
+//			SubtractTotalBytes(L, osize);
+//			AddTotalBytes(L, nsize);
+//			return new_block;
+			return null;
 		}
 
 		public static bool CanIndex(Type t)

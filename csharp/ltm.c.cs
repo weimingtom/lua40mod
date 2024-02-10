@@ -6,7 +6,7 @@
 
 namespace lua40mod
 {
-	using TValue = Lua.lua_TValue;
+	using TValue = Lua.Value;
 	
 	public partial class Lua
 	{
@@ -37,7 +37,7 @@ namespace lua40mod
 		** function to be used with macro "fasttm": optimized for absence of
 		** tag methods
 		*/
-		public static TValue luaT_gettm (Table events, TMS event_, TString ename) {
+		public static TValue luaT_gettm (object/*Table*/ events, TMS event_, TString ename) {
 //		  /*const*/ TValue tm = luaH_getstr(events, ename);
 //		  lua_assert(event_ <= TMS.TM_EQ);
 //		  if (ttisnil(tm)) {  /* no tag method? */

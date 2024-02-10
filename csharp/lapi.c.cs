@@ -9,8 +9,8 @@ using System;
 namespace lua40mod
 {
 	using lu_mem = System.UInt32;
-	using TValue = Lua.lua_TValue;
-	using StkId = Lua.lua_TValue;
+	using TValue = Lua.Value;
+	using StkId = Lua.Value;
 	using lua_Integer = System.Int32;
 	using lua_Number = System.Double;
 	using ptrdiff_t = System.Int32;
@@ -72,7 +72,7 @@ namespace lua40mod
 		}
 
 
-		private static Table getcurrenv (lua_State L) {
+		private static object/*Table*/ getcurrenv (lua_State L) {
 //		  if (L.ci == L.base_ci[0])  /* no enclosing function? */
 //			return hvalue(gt(L));  /* use global table as environment */
 //		  else {
@@ -84,8 +84,8 @@ namespace lua40mod
 
 
 		public static void luaA_pushobject (lua_State L, TValue o) {
-		  setobj2s(L, L.top, o);
-		  api_incr_top(L);
+//		  setobj2s(L, L.top, o);
+//		  api_incr_top(L);
 		}
 
 
@@ -240,8 +240,9 @@ return null;
 
 
 		public static int lua_type (lua_State L, int idx) {
-		  StkId o = index2adr(L, idx);
-		  return (o == luaO_nilobject) ? LUA_TNONE : ttype(o);
+//		  StkId o = index2adr(L, idx);
+//		  return (o == luaO_nilobject) ? LUA_TNONE : ttype(o);
+			return 0;
 		}
 
 
@@ -272,16 +273,18 @@ return null;
 
 
 		public static int lua_isuserdata (lua_State L, int idx) {
-		  TValue o = index2adr(L, idx);
-		  return (ttisuserdata(o) || ttislightuserdata(o)) ? 1 : 0;
+//		  TValue o = index2adr(L, idx);
+//		  return (ttisuserdata(o) || ttislightuserdata(o)) ? 1 : 0;
+			return 0;
 		}
 
 
 		public static int lua_rawequal (lua_State L, int index1, int index2) {
-		  StkId o1 = index2adr(L, index1);
-		  StkId o2 = index2adr(L, index2);
-		  return (o1 == luaO_nilobject || o2 == luaO_nilobject) ? 0
-				 : luaO_rawequalObj(o1, o2);
+//		  StkId o1 = index2adr(L, index1);
+//		  StkId o2 = index2adr(L, index2);
+//		  return (o1 == luaO_nilobject || o2 == luaO_nilobject) ? 0
+//				 : luaO_rawequalObj(o1, o2);
+			return 0;
 		}
 
 
@@ -789,8 +792,8 @@ return 0;
 
 
 		public static void adjustresults(lua_State L, int nres) {
-			if (nres == LUA_MULTRET && L.top >= L.ci.top)
-				L.ci.top = L.top;
+//			if (nres == LUA_MULTRET && L.top >= L.ci.top)
+//				L.ci.top = L.top;
 		}
 
 
@@ -862,15 +865,15 @@ return 0;
 
 
 		static void f_Ccall (lua_State L, object ud) {
-		  CCallS c = ud as CCallS;
-		  Closure cl;
-		  cl = luaF_newCclosure(L, 0, getcurrenv(L));
-		  cl.c.f = c.func;
-		  setclvalue(L, L.top, cl);  /* push function */
-		  api_incr_top(L);
-		  setpvalue(L.top, c.ud);  /* push only argument */
-		  api_incr_top(L);
-		  luaD_call(L, L.top - 2, 0);
+//		  CCallS c = ud as CCallS;
+//		  Closure cl;
+//		  cl = luaF_newCclosure(L, 0, getcurrenv(L));
+//		  cl.c.f = c.func;
+//		  setclvalue(L, L.top, cl);  /* push function */
+//		  api_incr_top(L);
+//		  setpvalue(L.top, c.ud);  /* push only argument */
+//		  api_incr_top(L);
+//		  luaD_call(L, L.top - 2, 0);
 		}
 
 

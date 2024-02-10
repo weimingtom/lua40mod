@@ -1,6 +1,6 @@
 namespace lua40mod
 {
-	using TValue = Lua.lua_TValue;
+	using TValue = Lua.Value;
 	
 	public partial class Lua
 	{
@@ -29,13 +29,14 @@ namespace lua40mod
 		  TM_N		/* number of elements in the enum */
 		};
 
-		public static TValue gfasttm(global_State g, Table et, TMS e)
+		public static TValue gfasttm(global_State g, object/*Table*/ et, TMS e)
 		{
-			return (et == null) ? null : 
-			((et.flags & (1 << (int)e)) != 0) ? null :
-			luaT_gettm(et, e, g.tmname[(int)e]);
+//			return (et == null) ? null : 
+//			((et.flags & (1 << (int)e)) != 0) ? null :
+//			luaT_gettm(et, e, g.tmname[(int)e]);
+			return null;
 		}
 
-		public static TValue fasttm(lua_State l, Table et, TMS e)	{return gfasttm(G(l), et, e);}
+		public static TValue fasttm(lua_State l, object/*Table*/ et, TMS e)	{return gfasttm(G(l), et, e);}
 	}
 }

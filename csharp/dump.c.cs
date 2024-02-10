@@ -59,14 +59,14 @@ namespace lua40mod
 
 		private static void DumpLocals(Proto tf, StreamProxy D)
 		{
-			int i,n=tf.nlocvars;
-			DumpInt(n,D);
-			for (i=0; i<n; i++)
-			{
-				DumpString(tf.locvars[i].varname,D);
-				DumpInt(tf.locvars[i].startpc,D);
-				DumpInt(tf.locvars[i].endpc,D);
-			}
+//			int i,n=tf.nlocvars;
+//			DumpInt(n,D);
+//			for (i=0; i<n; i++)
+//			{
+//				DumpString(tf.locvars[i].varname,D);
+//				DumpInt(tf.locvars[i].startpc,D);
+//				DumpInt(tf.locvars[i].endpc,D);
+//			}
 		}
 
 		private static void DumpLines(Proto tf, StreamProxy D)
@@ -92,20 +92,20 @@ namespace lua40mod
 
 		private static void DumpFunction(Proto tf, StreamProxy D)
 		{
-			DumpString(tf.source,D);
-			DumpInt(tf.lineDefined,D);
-			DumpInt(tf.numparams,D);
-			DumpByte(tf.is_vararg,D);
-			DumpInt(tf.maxstacksize,D);
-			DumpLocals(tf,D);
-			DumpLines(tf,D);
-			DumpConstants(tf,D);
-			DumpCode(tf,D);
-			if (0!=ferror(D))
-			{
-				perror("luac: write error");
-				exit(1);
-			}
+//			DumpString(tf.source,D);
+//			DumpInt(tf.lineDefined,D);
+//			DumpInt(tf.numparams,D);
+//			DumpByte(tf.is_vararg,D);
+//			DumpInt(tf.maxstacksize,D);
+//			DumpLocals(tf,D);
+//			DumpLines(tf,D);
+//			DumpConstants(tf,D);
+//			DumpCode(tf,D);
+//			if (0!=ferror(D))
+//			{
+//				perror("luac: write error");
+//				exit(1);
+//			}
 		}
 
 		private static void DumpHeader(StreamProxy D)

@@ -8,8 +8,8 @@ namespace lua40mod
 {
 	using lua_Integer = System.Int32;
 	using ptrdiff_t = System.Int32;
-	using TValue = Lua.lua_TValue;
-	using StkId = Lua.lua_TValue;
+	using TValue = Lua.Value;
+	using StkId = Lua.Value;
 	using lu_byte = System.Byte;
 
 	public partial class Lua
@@ -76,15 +76,15 @@ public static void luaD_checkstack (lua_State L, int n) {
 
 
 		private static void resetstack (lua_State L, int status) {
-		  L.ci = L.base_ci[0];
-		  L.base_ = L.ci.base_;
-		  luaF_close(L, L.base_);  /* close eventual pending closures */
-		  luaD_seterrorobj(L, status, L.base_);
-		  L.nCcalls = L.baseCcalls;
-		  L.allowhook = 1;
-		  restore_stack_limit(L);
-		  L.errfunc = 0;
-		  L.errorJmp = null;
+//		  L.ci = L.base_ci[0];
+//		  L.base_ = L.ci.base_;
+//		  luaF_close(L, L.base_);  /* close eventual pending closures */
+//		  luaD_seterrorobj(L, status, L.base_);
+//		  L.nCcalls = L.baseCcalls;
+//		  L.allowhook = 1;
+//		  restore_stack_limit(L);
+//		  L.errfunc = 0;
+//		  L.errorJmp = null;
 		}
 
 
@@ -172,22 +172,23 @@ public static void luaD_checkstack (lua_State L, int n) {
 		}
 
 		public static void luaD_growstack (lua_State L, int n) {
-		  if (n <= L.stacksize)  /* double size is enough? */
-			luaD_reallocstack(L, 2*L.stacksize);
-		  else
-			luaD_reallocstack(L, L.stacksize + n);
+//		  if (n <= L.stacksize)  /* double size is enough? */
+//			luaD_reallocstack(L, 2*L.stacksize);
+//		  else
+//			luaD_reallocstack(L, L.stacksize + n);
 		}
 
 		private static CallInfo growCI (lua_State L) {
-		  if (L.size_ci > LUAI_MAXCALLS)  /* overflow while handling overflow? */
-			luaD_throw(L, LUA_ERRERR);
-		  else {
-			luaD_reallocCI(L, 2*L.size_ci);
-			if (L.size_ci > LUAI_MAXCALLS)
-			  luaG_runerror(L, "stack overflow");
-		  }
-		  CallInfo.inc(ref L.ci);
-		  return L.ci;
+//		  if (L.size_ci > LUAI_MAXCALLS)  /* overflow while handling overflow? */
+//			luaD_throw(L, LUA_ERRERR);
+//		  else {
+//			luaD_reallocCI(L, 2*L.size_ci);
+//			if (L.size_ci > LUAI_MAXCALLS)
+//			  luaG_runerror(L, "stack overflow");
+//		  }
+//		  CallInfo.inc(ref L.ci);
+//		  return L.ci;
+			return null;
 		}
 
 
@@ -275,10 +276,11 @@ public static void luaD_checkstack (lua_State L, int n) {
 
 		public static CallInfo inc_ci(lua_State L)
 		{
-			if (L.ci == L.end_ci) return growCI(L);
-			//   (condhardstacktests(luaD_reallocCI(L, L.size_ci)), ++L.ci))
-			CallInfo.inc(ref L.ci);
-			return L.ci;
+//			if (L.ci == L.end_ci) return growCI(L);
+//			//   (condhardstacktests(luaD_reallocCI(L, L.size_ci)), ++L.ci))
+//			CallInfo.inc(ref L.ci);
+//			return L.ci;
+			return null;
 		}
 
 
@@ -363,27 +365,28 @@ public static void luaD_checkstack (lua_State L, int n) {
 
 
 		public static int luaD_poscall (lua_State L, StkId firstResult) {
-		  StkId res;
-		  int wanted, i;
-		  CallInfo ci;
-		  if ((L.hookmask & LUA_MASKRET) != 0)
-			firstResult = callrethooks(L, firstResult);
-		  ci = CallInfo.dec(ref L.ci);
-		  res = ci.func;  /* res == final position of 1st result */
-		  wanted = ci.nresults;
-		  L.base_ = (ci - 1).base_;  /* restore base */
-		  InstructionPtr.Assign((ci - 1).savedpc, ref L.savedpc);  /* restore savedpc */
-		  /* move results to correct place */
-		  for (i = wanted; i != 0 && firstResult < L.top; i--)
-		  {
-			  setobjs2s(L, res, firstResult);
-			  res = res + 1;
-			  firstResult = firstResult + 1;
-		  }
-		  while (i-- > 0)
-			  setnilvalue(StkId.inc(ref res));
-		  L.top = res;
-		  return (wanted - LUA_MULTRET);  /* 0 iff wanted == LUA_MULTRET */
+//		  StkId res;
+//		  int wanted, i;
+//		  CallInfo ci;
+//		  if ((L.hookmask & LUA_MASKRET) != 0)
+//			firstResult = callrethooks(L, firstResult);
+//		  ci = CallInfo.dec(ref L.ci);
+//		  res = ci.func;  /* res == final position of 1st result */
+//		  wanted = ci.nresults;
+//		  L.base_ = (ci - 1).base_;  /* restore base */
+//		  InstructionPtr.Assign((ci - 1).savedpc, ref L.savedpc);  /* restore savedpc */
+//		  /* move results to correct place */
+//		  for (i = wanted; i != 0 && firstResult < L.top; i--)
+//		  {
+//			  setobjs2s(L, res, firstResult);
+//			  res = res + 1;
+//			  firstResult = firstResult + 1;
+//		  }
+//		  while (i-- > 0)
+//			  setnilvalue(StkId.inc(ref res));
+//		  L.top = res;
+//		  return (wanted - LUA_MULTRET);  /* 0 iff wanted == LUA_MULTRET */
+			return 0;
 		}
 
 

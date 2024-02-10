@@ -8,8 +8,8 @@ using System;
 
 namespace lua40mod
 {
-	using TValue = Lua.lua_TValue;
-	using StkId = Lua.lua_TValue;
+	using TValue = Lua.Value;
+	using StkId = Lua.Value;
 	using lua_Number = System.Double;
 
 	public partial class Lua
@@ -42,19 +42,28 @@ namespace lua40mod
 
 
 		//public static Node gnode(Table t, int i)	{return t.node[i];}
-		public static Node hashpow2(Table t, lua_Number n)      {return gnode(t, (int)lmod(n, sizenode(t)));}
+		public static Node hashpow2(object/*Table*/ t, lua_Number n)      {
+//			return gnode(t, (int)lmod(n, sizenode(t)));
+			return null;
+		}
 		  
-		public static Node hashstr(Table t, TString str)  {return hashpow2(t, str.tsv.hash);}
-		public static Node hashboolean(Table t, int p)        {return hashpow2(t, p);}
+		public static Node hashstr(object/*Table*/ t, TString str)  {
+//			return hashpow2(t, str.tsv.hash);
+			return null;
+		}
+		public static Node hashboolean(object/*Table*/ t, int p)        {return hashpow2(t, p);}
 
 
 		/*
 		** for some types, it is better to avoid modulus by power of 2, as
 		** they tend to have many 2 factors.
 		*/
-		public static Node hashmod(Table t, int n) { return gnode(t, (n % ((sizenode(t) - 1) | 1))); }
+		public static Node hashmod(object/*Table*/ t, int n) { 
+//			return gnode(t, (n % ((sizenode(t) - 1) | 1))); 
+			return null;
+		}
 
-		public static Node hashpointer(Table t, object p) { return hashmod(t, p.GetHashCode()); }
+		public static Node hashpointer(object/*Table*/ t, object p) { return hashmod(t, p.GetHashCode()); }
 
 
 		/*
@@ -67,13 +76,13 @@ namespace lua40mod
 		//{{null}, LUA_TNIL},  /* value */
 		  //{{{null}, LUA_TNIL, null}}  /* key */
 		//};
-		public static Node dummynode_ = new Node(new TValue(new Value(), LUA_TNIL), new TKey(new Value(), LUA_TNIL, null));
-		public static Node dummynode = dummynode_;
+//		public static Node dummynode_ = new Node(new TValue(new Value(), LUA_TNIL), new TKey(new Value(), LUA_TNIL, null));
+//		public static Node dummynode = dummynode_;
 
 		/*
 		** hash for lua_Numbers
 		*/
-		private static Node hashnum (Table t, lua_Number n) {
+		private static Node hashnum (object/*Table*/ t, lua_Number n) {
     	  byte[] a = BitConverter.GetBytes(n);
 		  for (int i = 1; i < a.Length; i++) a[0] = (byte)(((int)(a[0]) + (int)(a[i])) & 0xff);
 		  return hashmod(t, (int)a[0]);
@@ -85,7 +94,7 @@ namespace lua40mod
 		** returns the `main' position of an element in a table (that is, the index
 		** of its hash value)
 		*/
-		private static Node mainposition (Table t, TValue key) {
+		private static Node mainposition (object/*Table*/ t, TValue key) {
 //		  switch (ttype(key)) {
 //			case LUA_TNUMBER:
 //			  return hashnum(t, nvalue(key));
@@ -123,7 +132,7 @@ namespace lua40mod
 		** elements in the array part, then elements in the hash part. The
 		** beginning of a traversal is signalled by -1.
 		*/
-		private static int findindex (lua_State L, Table t, StkId key) {
+		private static int findindex (lua_State L, object/*Table*/ t, StkId key) {
 //		  int i;
 //		  if (ttisnil(key)) return -1;  /* first iteration */
 //		  i = arrayindex(key);
@@ -149,7 +158,7 @@ namespace lua40mod
 		}
 
 
-		public static int luaH_next (lua_State L, Table t, StkId key) {
+		public static int luaH_next (lua_State L, object/*Table*/ t, StkId key) {
 //		  int i = findindex(L, t, key);  /* find original element */
 //		  for (i++; i < t.sizearray; i++) {  /* try first array part */
 //			if (!ttisnil(t.array[i])) {  /* a non-nil value? */
@@ -200,58 +209,61 @@ namespace lua40mod
 
 
 		private static int countint (TValue key, int[] nums) {
-		  int k = arrayindex(key);
-		  if (0 < k && k <= MAXASIZE) {  /* is `key' an appropriate array index? */
-			nums[ceillog2(k)]++;  /* count as such */
-			return 1;
-		  }
-		  else
+//		  int k = arrayindex(key);
+//		  if (0 < k && k <= MAXASIZE) {  /* is `key' an appropriate array index? */
+//			nums[ceillog2(k)]++;  /* count as such */
+//			return 1;
+//		  }
+//		  else
+//			return 0;
 			return 0;
 		}
 
 
-		private static int numusearray (Table t, int[] nums) {
-		  int lg;
-		  int ttlg;  /* 2^lg */
-		  int ause = 0;  /* summation of `nums' */
-		  int i = 1;  /* count to traverse all array keys */
-		  for (lg=0, ttlg=1; lg<=MAXBITS; lg++, ttlg*=2) {  /* for each slice */
-			int lc = 0;  /* counter */
-			int lim = ttlg;
-			if (lim > t.sizearray) {
-			  lim = t.sizearray;  /* adjust upper limit */
-			  if (i > lim)
-				break;  /* no more elements to count */
-			}
-			/* count elements in range (2^(lg-1), 2^lg] */
-			for (; i <= lim; i++) {
-			  if (!ttisnil(t.array[i-1]))
-				lc++;
-			}
-			nums[lg] += lc;
-			ause += lc;
-		  }
-		  return ause;
+		private static int numusearray (object/*Table*/ t, int[] nums) {
+//		  int lg;
+//		  int ttlg;  /* 2^lg */
+//		  int ause = 0;  /* summation of `nums' */
+//		  int i = 1;  /* count to traverse all array keys */
+//		  for (lg=0, ttlg=1; lg<=MAXBITS; lg++, ttlg*=2) {  /* for each slice */
+//			int lc = 0;  /* counter */
+//			int lim = ttlg;
+//			if (lim > t.sizearray) {
+//			  lim = t.sizearray;  /* adjust upper limit */
+//			  if (i > lim)
+//				break;  /* no more elements to count */
+//			}
+//			/* count elements in range (2^(lg-1), 2^lg] */
+//			for (; i <= lim; i++) {
+//			  if (!ttisnil(t.array[i-1]))
+//				lc++;
+//			}
+//			nums[lg] += lc;
+//			ause += lc;
+//		  }
+//		  return ause;
+			return 0;
 		}
 
 
-		private static int numusehash (Table t, int[] nums, ref int pnasize) {
-		  int totaluse = 0;  /* total number of elements */
-		  int ause = 0;  /* summation of `nums' */
-		  int i = sizenode(t);
-		  while ((i--) != 0) {
-			Node n = t.node[i];
-			if (!ttisnil(gval(n))) {
-			  ause += countint(key2tval(n), nums);
-			  totaluse++;
-			}
-		  }
-		  pnasize += ause;
-		  return totaluse;
+		private static int numusehash (object/*Table*/ t, int[] nums, ref int pnasize) {
+//		  int totaluse = 0;  /* total number of elements */
+//		  int ause = 0;  /* summation of `nums' */
+//		  int i = sizenode(t);
+//		  while ((i--) != 0) {
+//			Node n = t.node[i];
+//			if (!ttisnil(gval(n))) {
+//			  ause += countint(key2tval(n), nums);
+//			  totaluse++;
+//			}
+//		  }
+//		  pnasize += ause;
+//		  return totaluse;
+			return 0;
 		}
 
 
-		private static void setarrayvector (lua_State L, Table t, int size) {
+		private static void setarrayvector (lua_State L, object/*Table*/ t, int size) {
 //		  int i;
 //		  luaM_reallocvector<TValue>(L, ref t.array, t.sizearray, size/*, TValue*/);
 //		  for (i=t.sizearray; i<size; i++)
@@ -260,7 +272,7 @@ namespace lua40mod
 		}
 
 
-		private static void setnodevector (lua_State L, Table t, int size) {
+		private static void setnodevector (lua_State L, object/*Table*/ t, int size) {
 //		  int lsize;
 //		  if (size == 0) {  /* no elements to hash part? */
 //			  t.node = new Node[] { dummynode };  /* use common `dummynode' */
@@ -286,7 +298,7 @@ namespace lua40mod
 		}
 
 
-		private static void resize (lua_State L, Table t, int nasize, int nhsize) {
+		private static void resize (lua_State L, object/*Table*/ t, int nasize, int nhsize) {
 //		  int i;
 //		  int oldasize = t.sizearray;
 //		  int oldhsize = t.lsizenode;
@@ -316,13 +328,13 @@ namespace lua40mod
 		}
 
 
-		public static void luaH_resizearray (lua_State L, Table t, int nasize) {
-		  int nsize = (t.node[0] == dummynode) ? 0 : sizenode(t);
-		  resize(L, t, nasize, nsize);
+		public static void luaH_resizearray (lua_State L, object/*Table*/ t, int nasize) {
+//		  int nsize = (t.node[0] == dummynode) ? 0 : sizenode(t);
+//		  resize(L, t, nasize, nsize);
 		}
 
 
-		private static void rehash (lua_State L, Table t, TValue ek) {
+		private static void rehash (lua_State L, object/*Table*/ t, TValue ek) {
 		  int nasize, na;
 		  int[] nums = new int[MAXBITS+1];  /* nums[i] = number of keys between 2^(i-1) and 2^i */
 		  int i;
@@ -347,7 +359,7 @@ namespace lua40mod
 		*/
 
 
-		public static Table luaH_new (lua_State L, int narray, int nhash) {
+		public static object/*Table*/ luaH_new (lua_State L, int narray, int nhash) {
 //		  Table t = luaM_new<Table>(L);
 //		  luaC_link(L, obj2gco(t), LUA_TTABLE);
 //		  t.metatable = null;
@@ -364,7 +376,7 @@ namespace lua40mod
 		}
 
 
-		public static void luaH_free (lua_State L, Table t) {
+		public static void luaH_free (lua_State L, object/*Table*/ t) {
 //		  if (t.node[0] != dummynode)
 //			luaM_freearray(L, t.node);
 //		  luaM_freearray(L, t.array);
@@ -372,11 +384,11 @@ namespace lua40mod
 		}
 
 
-		private static Node getfreepos (Table t) {
-		  while (t.lastfree-- > 0) {
-			if (ttisnil(gkey(t.node[t.lastfree])))
-			  return t.node[t.lastfree];
-		  }
+		private static Node getfreepos (object/*Table*/ t) {
+//		  while (t.lastfree-- > 0) {
+//			if (ttisnil(gkey(t.node[t.lastfree])))
+//			  return t.node[t.lastfree];
+//		  }
 		  return null;  /* could not find a free place */
 		}
 
@@ -389,7 +401,7 @@ namespace lua40mod
 		** put new key in its main position; otherwise (colliding node is in its main 
 		** position), new key goes to an empty position. 
 		*/
-		private static TValue newkey (lua_State L, Table t, TValue key) {
+		private static TValue newkey (lua_State L, object/*Table*/ t, TValue key) {
 //		  Node mp = mainposition(t, key);
 //		  if (!ttisnil(gval(mp)) || mp == dummynode) {
 //			Node othern;
@@ -426,7 +438,7 @@ namespace lua40mod
 		/*
 		** search function for integers
 		*/
-		public static TValue luaH_getnum(Table t, int key)
+		public static TValue luaH_getnum(object/*Table*/ t, int key)
 		{
 //		  /* (1 <= key && key <= t.sizearray) */
 //		  if ((uint)(key-1) < (uint)t.sizearray)
@@ -448,7 +460,7 @@ namespace lua40mod
 		/*
 		** search function for strings
 		*/
-		public static TValue luaH_getstr (Table t, TString key) {
+		public static TValue luaH_getstr (object/*Table*/ t, TString key) {
 //		  Node n = hashstr(t, key);
 //		  do {  /* check whether `key' is somewhere in the chain */
 //			if (ttisstring(gkey(n)) && rawtsvalue(gkey(n)) == key)
@@ -463,7 +475,7 @@ namespace lua40mod
 		/*
 		** main search function
 		*/
-		public static TValue luaH_get (Table t, TValue key) {
+		public static TValue luaH_get (object/*Table*/ t, TValue key) {
 //		  switch (ttype(key)) {
 //			case LUA_TNIL: return luaO_nilobject;
 //			case LUA_TSTRING: return luaH_getstr(t, rawtsvalue(key));
@@ -497,7 +509,7 @@ namespace lua40mod
 		}
 
 
-		public static TValue luaH_set (lua_State L, Table t, TValue key) {
+		public static TValue luaH_set (lua_State L, object/*Table*/ t, TValue key) {
 //		  TValue p = luaH_get(t, key);
 //		  t.flags = 0;
 //		  if (p != luaO_nilobject)
@@ -512,7 +524,7 @@ namespace lua40mod
 		}
 
 
-		public static TValue luaH_setnum (lua_State L, Table t, int key) {
+		public static TValue luaH_setnum (lua_State L, object/*Table*/ t, int key) {
 //		  TValue p = luaH_getnum(t, key);
 //		  if (p != luaO_nilobject)
 //			return (TValue)p;
@@ -524,39 +536,41 @@ namespace lua40mod
 			return null;
 		}
 
-		public static TValue luaH_setstr (lua_State L, Table t, TString key) {
-		  TValue p = luaH_getstr(t, key);
-		  if (p != luaO_nilobject)
-			return (TValue)p;
-		  else {
-			TValue k = new TValue();
-			setsvalue(L, k, key);
-			return newkey(L, t, k);
-		  }
+		public static TValue luaH_setstr (lua_State L, object/*Table*/ t, TString key) {
+//		  TValue p = luaH_getstr(t, key);
+//		  if (p != luaO_nilobject)
+//			return (TValue)p;
+//		  else {
+//			TValue k = new TValue();
+//			setsvalue(L, k, key);
+//			return newkey(L, t, k);
+//		  }
+			return null;
 		}
 
 
-		public static int unbound_search (Table t, uint j) {
-		  uint i = j;  /* i is zero or a present index */
-		  j++;
-		  /* find `i' and `j' such that i is present and j is not */
-		  while (!ttisnil(luaH_getnum(t, (int)j))) {
-			i = j;
-			j *= 2;
-			if (j > (uint)MAX_INT) {  /* overflow? */
-			  /* table was built with bad purposes: resort to linear search */
-			  i = 1;
-			  while (!ttisnil(luaH_getnum(t, (int)i))) i++;
-			  return (int)(i - 1);
-			}
-		  }
-		  /* now do a binary search between them */
-		  while (j - i > 1) {
-			uint m = (i+j)/2;
-			if (ttisnil(luaH_getnum(t, (int)m))) j = m;
-			else i = m;
-		  }
-		  return (int)i;
+		public static int unbound_search (object/*Table*/ t, uint j) {
+//		  uint i = j;  /* i is zero or a present index */
+//		  j++;
+//		  /* find `i' and `j' such that i is present and j is not */
+//		  while (!ttisnil(luaH_getnum(t, (int)j))) {
+//			i = j;
+//			j *= 2;
+//			if (j > (uint)MAX_INT) {  /* overflow? */
+//			  /* table was built with bad purposes: resort to linear search */
+//			  i = 1;
+//			  while (!ttisnil(luaH_getnum(t, (int)i))) i++;
+//			  return (int)(i - 1);
+//			}
+//		  }
+//		  /* now do a binary search between them */
+//		  while (j - i > 1) {
+//			uint m = (i+j)/2;
+//			if (ttisnil(luaH_getnum(t, (int)m))) j = m;
+//			else i = m;
+//		  }
+//		  return (int)i;
+			return 0;
 		}
 
 
@@ -564,22 +578,23 @@ namespace lua40mod
 		** Try to find a boundary in table `t'. A `boundary' is an integer index
 		** such that t[i] is non-nil and t[i+1] is nil (and 0 if t[1] is nil).
 		*/
-		public static int luaH_getn (Table t) {
-		  uint j = (uint)t.sizearray;
-		  if (j > 0 && ttisnil(t.array[j - 1])) {
-			/* there is a boundary in the array part: (binary) search for it */
-			uint i = 0;
-			while (j - i > 1) {
-			  uint m = (i+j)/2;
-			  if (ttisnil(t.array[m - 1])) j = m;
-			  else i = m;
-			}
-			return (int)i;
-		  }
-		  /* else must find a boundary in hash part */
-		  else if (t.node[0] == dummynode)  /* hash part is empty? */
-			return (int)j;  /* that is easy... */
-		  else return unbound_search(t, j);
+		public static int luaH_getn (object/*Table*/ t) {
+//		  uint j = (uint)t.sizearray;
+//		  if (j > 0 && ttisnil(t.array[j - 1])) {
+//			/* there is a boundary in the array part: (binary) search for it */
+//			uint i = 0;
+//			while (j - i > 1) {
+//			  uint m = (i+j)/2;
+//			  if (ttisnil(t.array[m - 1])) j = m;
+//			  else i = m;
+//			}
+//			return (int)i;
+//		  }
+//		  /* else must find a boundary in hash part */
+//		  else if (t.node[0] == dummynode)  /* hash part is empty? */
+//			return (int)j;  /* that is easy... */
+//		  else return unbound_search(t, j);
+			return 0;
 		}
 
 

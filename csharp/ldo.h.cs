@@ -14,7 +14,7 @@
 
 namespace lua40mod
 {
-	using StkId = Lua.lua_TValue;
+	using StkId = Lua.Value;
 	
 	public partial class Lua
 	{
@@ -23,7 +23,9 @@ namespace lua40mod
 		** macro to increment stack top.
 		** There must be always an empty slot at the L->stack.top
 		*/
-		public static void incr_top(lua_State L) { if (L.top == L.stack_last) luaD_checkstack(L, 1); StkId.inc(ref L.top);}
+		public static void incr_top(lua_State L) { 
+//			if (L.top == L.stack_last) luaD_checkstack(L, 1); StkId.inc(ref L.top);
+		}
 
 
 //void luaD_init (lua_State *L, int stacksize);

@@ -8,8 +8,8 @@ using System;
 
 namespace lua40mod
 {
-	using TValue = Lua.lua_TValue;
-	using StkId = Lua.lua_TValue;
+	using TValue = Lua.Value;
+	using StkId = Lua.Value;
 	using lua_Number = System.Double;
 	using lu_byte = System.Byte;
 	using ptrdiff_t = System.Int32;
@@ -155,25 +155,25 @@ namespace lua40mod
 
 		private static int call_binTM (lua_State L, TValue p1, TValue p2,
 							   StkId res, TMS event_) {
-		  TValue tm = luaT_gettmbyobj(L, p1, event_);  /* try first operand */
-		  if (ttisnil(tm))
-			tm = luaT_gettmbyobj(L, p2, event_);  /* try second operand */
-		  if (ttisnil(tm)) return 0;
-		  callTMres(L, res, tm, p1, p2);
+//		  TValue tm = luaT_gettmbyobj(L, p1, event_);  /* try first operand */
+//		  if (ttisnil(tm))
+//			tm = luaT_gettmbyobj(L, p2, event_);  /* try second operand */
+//		  if (ttisnil(tm)) return 0;
+//		  callTMres(L, res, tm, p1, p2);
 		  return 1;
 		}
 
 
-		private static TValue get_compTM (lua_State L, Table mt1, Table mt2,
+		private static TValue get_compTM (lua_State L, object/*Table*/ mt1, object/*Table*/ mt2,
 										  TMS event_) {
-		  TValue tm1 = fasttm(L, mt1, event_);
-		  TValue tm2;
-		  if (tm1 == null) return null;  /* no metamethod */
-		  if (mt1 == mt2) return tm1;  /* same metatables => same metamethods */
-		  tm2 = fasttm(L, mt2, event_);
-		  if (tm2 == null) return null;  /* no metamethod */
-		  if (luaO_rawequalObj(tm1, tm2) != 0)  /* same metamethods? */
-			return tm1;
+//		  TValue tm1 = fasttm(L, mt1, event_);
+//		  TValue tm2;
+//		  if (tm1 == null) return null;  /* no metamethod */
+//		  if (mt1 == mt2) return tm1;  /* same metatables => same metamethods */
+//		  tm2 = fasttm(L, mt2, event_);
+//		  if (tm2 == null) return null;  /* no metamethod */
+//		  if (luaO_rawequalObj(tm1, tm2) != 0)  /* same metamethods? */
+//			return tm1;
 		return null;
 		}
 
@@ -193,25 +193,26 @@ namespace lua40mod
 
 
 		private static int l_strcmp (TString ls, TString rs) {
-		  CharPtr l = getstr(ls);
-		  uint ll = ls.tsv.len;
-		  CharPtr r = getstr(rs);
-		  uint lr = rs.tsv.len;
-		  for (;;) {
-		    //int temp = strcoll(l, r);
-		      int temp = String.Compare(l.ToString(), r.ToString());
-		    if (temp != 0) return temp;
-		    else {  /* strings are equal up to a `\0' */
-		      uint len = (uint)l.ToString().Length;  /* index of first `\0' in both strings */
-		      if (len == lr)  /* r is finished? */
-		        return (len == ll) ? 0 : 1;
-		      else if (len == ll)  /* l is finished? */
-		        return -1;  /* l is smaller than r (because r is not finished) */
-		      /* both strings longer than `len'; go on comparing (after the `\0') */
-		      len++;
-		      l += len; ll -= len; r += len; lr -= len;
-		    }
-		  }
+//		  CharPtr l = getstr(ls);
+//		  uint ll = ls.tsv.len;
+//		  CharPtr r = getstr(rs);
+//		  uint lr = rs.tsv.len;
+//		  for (;;) {
+//		    //int temp = strcoll(l, r);
+//		      int temp = String.Compare(l.ToString(), r.ToString());
+//		    if (temp != 0) return temp;
+//		    else {  /* strings are equal up to a `\0' */
+//		      uint len = (uint)l.ToString().Length;  /* index of first `\0' in both strings */
+//		      if (len == lr)  /* r is finished? */
+//		        return (len == ll) ? 0 : 1;
+//		      else if (len == ll)  /* l is finished? */
+//		        return -1;  /* l is smaller than r (because r is not finished) */
+//		      /* both strings longer than `len'; go on comparing (after the `\0') */
+//		      len++;
+//		      l += len; ll -= len; r += len; lr -= len;
+//		    }
+//		  }
+			return 0;
 		}
 
 
@@ -354,11 +355,26 @@ namespace lua40mod
 		//#define KBx(i)	check_exp(getBMode(GET_OPCODE(i)) == OpArgMask.OpArgK, k+GETARG_Bx(i))
 
 		// todo: implement proper checks, as above
-		public static TValue RA(lua_State L, StkId base_, Instruction i) { return base_ + GETARG_A(i); }
-		public static TValue RB(lua_State L, StkId base_, Instruction i) { return base_ + GETARG_B(i); }
-		public static TValue RC(lua_State L, StkId base_, Instruction i) { return base_ + GETARG_C(i); }
-		public static TValue RKB(lua_State L, StkId base_, Instruction i, TValue[] k) { return ISK(GETARG_B(i)) != 0 ? k[INDEXK(GETARG_B(i))] : base_ + GETARG_B(i); }
-		public static TValue RKC(lua_State L, StkId base_, Instruction i, TValue[] k) { return ISK(GETARG_C(i)) != 0 ? k[INDEXK(GETARG_C(i))] : base_ + GETARG_C(i); }
+		public static TValue RA(lua_State L, StkId base_, Instruction i) { 
+//			return base_ + GETARG_A(i);
+return null;			
+		}
+		public static TValue RB(lua_State L, StkId base_, Instruction i) { 
+//			return base_ + GETARG_B(i); 
+			return null;
+		}
+		public static TValue RC(lua_State L, StkId base_, Instruction i) { 
+//			return base_ + GETARG_C(i); 
+			return null;
+		}
+		public static TValue RKB(lua_State L, StkId base_, Instruction i, TValue[] k) { 
+//			return ISK(GETARG_B(i)) != 0 ? k[INDEXK(GETARG_B(i))] : base_ + GETARG_B(i); 
+			return null;
+		}
+		public static TValue RKC(lua_State L, StkId base_, Instruction i, TValue[] k) { 
+//			return ISK(GETARG_C(i)) != 0 ? k[INDEXK(GETARG_C(i))] : base_ + GETARG_C(i); 
+			return null;
+		}
 		public static TValue KBx(lua_State L, Instruction i, TValue[] k) { return k[GETARG_Bx(i)]; }
 
 

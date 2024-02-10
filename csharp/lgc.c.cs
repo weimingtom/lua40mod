@@ -9,8 +9,8 @@ namespace lua40mod
 	using lu_int32 = System.UInt32;
 	using l_mem = System.Int32;
 	using lu_mem = System.UInt32;
-	using TValue = Lua.lua_TValue;
-	using StkId = Lua.lua_TValue;
+	using TValue = Lua.Value;
+	using StkId = Lua.Value;
 	using lu_byte = System.Byte;
 	using Instruction = System.UInt32;
 
@@ -119,14 +119,14 @@ namespace lua40mod
 
 
 		private static void marktmu (global_State g) {
-		  GCObject u = g.tmudata;
-		  if (u != null) {
-			do {
-			  u = u.gch.next;
-			  makewhite(g, u);  /* may be marked, if left from previous GC */
-			  reallymarkobject(g, u);
-			} while (u != g.tmudata);
-		  }
+//		  GCObject u = g.tmudata;
+//		  if (u != null) {
+//			do {
+//			  u = u.gch.next;
+//			  makewhite(g, u);  /* may be marked, if left from previous GC */
+//			  reallymarkobject(g, u);
+//			} while (u != g.tmudata);
+//		  }
 		}
 
 
@@ -162,7 +162,7 @@ namespace lua40mod
 		}
 
 
-		private static int traversetable (global_State g, Table h) {
+		private static int traversetable (global_State g, object/*Table*/ h) {
 //		  int i;
 //		  int weakkey = 0;
 //		  int weakvalue = 0;
@@ -508,9 +508,9 @@ return 0;
 
 
 		private static void markmt (global_State g) {
-		  int i;
-		  for (i=0; i<NUM_TAGS; i++)
-			if (g.mt[i] != null) markobject(g, g.mt[i]);
+//		  int i;
+//		  for (i=0; i<NUM_TAGS; i++)
+//			if (g.mt[i] != null) markobject(g, g.mt[i]);
 		}
 
 
@@ -689,7 +689,7 @@ return 0;
 		}
 
 
-		public static void luaC_barrierback(lua_State L, Table t)
+		public static void luaC_barrierback(lua_State L, object/*Table*/ t)
 		{
 //		  global_State g = G(L);
 //		  GCObject o = obj2gco(t);
@@ -710,7 +710,7 @@ return 0;
 		}
 
 
-		public static void luaC_linkupval (lua_State L, UpVal uv) {
+		public static void luaC_linkupval (lua_State L, /*UpVal*/object uv) {
 //		  global_State g = G(L);
 //		  GCObject o = obj2gco(uv);
 //		  o.gch.next = g.rootgc;  /* link upvalue into `rootgc' list */

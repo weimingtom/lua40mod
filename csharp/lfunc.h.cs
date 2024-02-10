@@ -12,7 +12,7 @@
 
 namespace lua40mod
 {
-	using TValue = Lua.lua_TValue;
+	using TValue = Lua.Value;
 	
 	public partial class Lua
 	{
